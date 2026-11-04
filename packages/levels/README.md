@@ -54,3 +54,30 @@ Niveaux 1 à 15 (accueil) : 92 à 95 %, sans badge. Tous les niveaux tutoriels s
 | Lierre | 112 | Gagne une case par coup si aucun lierre n'est détruit ; jamais sur une case d'apparition, ni sous 50 % de pièces libres |
 
 Les Bulles, Portails, Tapis roulants, Générateurs et Coffres à clé ne sont pas encore implémentés (voir le compte rendu du livrable 4).
+
+## Résultats de la génération (version de contenu 1)
+
+`data/generated/summary.json`, 4 workers sur 4 cœurs :
+
+| Mesure | Résultat |
+|---|---|
+| Niveaux générés et validés | 9 850 (151 à 10 000) |
+| Durée | 2 328 s pour la passe complète, puis 286 s et 302 s de régénérations ciblées (≈ 49 min au total) |
+| Niveaux infaisables | 0 |
+| Dans la fourchette [cible, cible + 10 points] | 9 804 (99,5 %) |
+| Sous la cible | 46, de 2,5 points au plus (au plafond de coups) |
+| Audit hors échantillon (985 niveaux, 200 parties neuves) | 100 % à moins de 10 points de la cible |
+
+Les régénérations ciblées corrigent la règle d'acceptation, qui gardait des niveaux jusqu'à 10 points sous la cible. Seuls les niveaux concernés changent : chaque niveau est généré indépendamment des autres. `scripts/merge-generated.py` fusionne les passes.
+
+## FAIR-02 : joueur gratuit à 10 niveaux par jour
+
+1 000 joueurs simulés sur les niveaux 1 à 10 000, avec 20 défaites par jour. Les taux sont ceux du bot, ce qui reste une hypothèse : un humain ne joue pas comme le bot.
+
+| Scénario | Joueurs bloqués plus de 2 jours au moins une fois |
+|---|---|
+| Aucune aide | 25 / 1 000 (3 jours au plus) |
+| Aide gratuite après 8 échecs (+25 points sur un essai) | 6 / 1 000 |
+| Aide après 5 échecs | 1 / 1 000 |
+| **Aide après 8 échecs + 1 booster gratuit par jour (roue, quêtes) — retenu** | **0 / 1 000** |
+| Aucune aide, 30 défaites par jour | 0 / 1 000 |

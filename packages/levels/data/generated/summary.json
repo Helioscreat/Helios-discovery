@@ -1,0 +1,24 @@
+{
+  "command": "generate",
+  "from": 151,
+  "to": 10000,
+  "version": 1,
+  "runs": 200,
+  "workers": 4,
+  "seconds": 2328,
+  "repairSeconds": [
+    286,
+    302
+  ],
+  "note": "seconds = g\u00e9n\u00e9ration compl\u00e8te en une passe ; repairSeconds = r\u00e9g\u00e9n\u00e9rations cibl\u00e9es apr\u00e8s correction de la r\u00e8gle d'acceptation (voir README).",
+  "levels": 9850,
+  "infeasible": 0,
+  "errors": [],
+  "inRange": 9804,
+  "inRangeShare": 0.9953299492385786,
+  "belowTarget": 46,
+  "maxBelowTarget": 0.025,
+  "audited": 985,
+  "auditInRange": 985,
+  "auditInRangeShare": 1.0
+}

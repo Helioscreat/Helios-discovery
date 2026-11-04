@@ -18,24 +18,24 @@
     ". . . . . . . . ."
   ],
   "colors": 6,
-  "moves": 60,
+  "moves": 52,
   "goals": [
     {
       "type": "drop",
-      "count": 5
+      "count": 4
     }
   ],
   "drops": {
-    "total": 5,
+    "total": 4,
     "maxOnBoard": 2
   },
-  "seed": "L87v1a0:296ce948",
-  "attempt": 0,
-  "scale": 1,
+  "seed": "L87v1a1:2a6ceadb",
+  "attempt": 1,
+  "scale": 0.8,
   "validation": {
     "runs": 200,
-    "botRate": 0.29,
-    "avgMovesLeft": 13.17,
+    "botRate": 0.35,
+    "avgMovesLeft": 11.81,
     "status": "ok"
   }
 }

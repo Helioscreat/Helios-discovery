@@ -323,6 +323,12 @@ describe("niveaux réels et obstacles", () => {
   it("le niveau 13 présente le Gel avec son tutoriel ; les objectifs d'obstacle s'affichent", async () => {
     const { page, ctx, errors } = await phone();
     await page.evaluate(() => window.__helios!.chooseLevel(13));
+    // Au niveau 13, les tutoriels des boosters déjà débloqués (Marteau, Bombe) passent d'abord.
+    for (let k = 0; k < 2; k++) {
+      const tuto = page.locator('[data-modal="booster-tutorial"]');
+      await tuto.waitFor();
+      await tuto.getByRole("button").click();
+    }
     await page.locator('[data-modal="level-start"]').waitFor();
     expect(await page.locator('[data-testid="level-tutorial"]').innerText()).toMatch(/Gel/);
     await page.locator('[data-choice="accept"]').click();

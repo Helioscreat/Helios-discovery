@@ -18,11 +18,11 @@
     ". . . . . . . . ."
   ],
   "colors": 6,
-  "moves": 60,
+  "moves": 42,
   "goals": [
     {
       "type": "drop",
-      "count": 4
+      "count": 3
     },
     {
       "type": "clear",
@@ -31,16 +31,16 @@
     }
   ],
   "drops": {
-    "total": 4,
+    "total": 3,
     "maxOnBoard": 2
   },
-  "seed": "L146v1a0:15631ed0",
-  "attempt": 0,
-  "scale": 1,
+  "seed": "L146v1a1:16632063",
+  "attempt": 1,
+  "scale": 0.8,
   "validation": {
     "runs": 200,
-    "botRate": 0.535,
-    "avgMovesLeft": 17,
+    "botRate": 0.6,
+    "avgMovesLeft": 13.91,
     "status": "ok"
   }
 }

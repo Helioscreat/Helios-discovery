@@ -85,9 +85,9 @@ N,type,difficulte,cible,taux_bot,coups,coups_restants_moyens,taux_audit,tentativ
 84,mixed,medium,0.60,0.600,14,2.78,,1,ok,chainIce,5,clear:chain:16+clear:ice:31+collect:1:20
 85,mixed,medium,0.60,0.605,19,6.25,,1,ok,dropCrates,5,drop:3+clear:crate:6
 86,clear,medium,0.60,0.600,43,8.48,,1,ok,iceFloor,6,clear:ice:36
-87,drop,hard,0.35,0.290,60,13.17,,1,ok,dropOpen,6,drop:5
+87,drop,hard,0.35,0.350,52,11.81,,2,ok,dropOpen,6,drop:4
 88,clear,medium,0.60,0.610,21,4.25,,1,ok,crateHeavy,6,clear:crate:13
-89,score,medium,0.60,0.555,60,12.07,,1,ok,twin,6,score:9000
+89,score,medium,0.60,0.610,53,9.73,,2,ok,twin,6,score:7200
 90,mixed,veryHard,0.20,0.200,17,2.80,,1,ok,crateIce,6,clear:crate:8+clear:ice:45+collect:0:20
 91,collect,relax,0.90,0.915,13,4.78,0.915,1,ok,corners,5,collect:2:40
 92,clear,relax,0.95,1.000,12,9.19,,1,ok,tutCage,4,clear:cage:4
@@ -116,7 +116,7 @@ N,type,difficulte,cible,taux_bot,coups,coups_restants_moyens,taux_audit,tentativ
 115,mixed,medium,0.60,0.600,16,3.76,,3,ok,ivyCrates,5,clear:ivy:4+collect:0:50
 116,mixed,medium,0.60,0.635,13,3.18,,3,ok,cageGrid,5,clear:cage:12+collect:4:38
 117,mixed,hard,0.35,0.370,14,2.95,,3,ok,ivyCrates,5,clear:ivy:4+clear:crate:2+collect:2:50
-118,drop,medium,0.60,0.585,60,21.16,,1,ok,dropCrates,6,drop:4
+118,drop,medium,0.60,0.600,53,16.23,,2,ok,dropCrates,6,drop:3
 119,mixed,medium,0.60,0.625,15,2.98,,2,ok,ivyCorners,6,clear:ivy:6+collect:5:18
 120,mixed,veryHard,0.20,0.220,16,2.45,,3,ok,ivyCrates,6,clear:ivy:4+clear:crate:2+collect:0:45
 121,collect,relax,0.90,0.935,16,6.22,0.905,1,ok,open9,5,collect:1:46
@@ -144,7 +144,7 @@ N,type,difficulte,cible,taux_bot,coups,coups_restants_moyens,taux_audit,tentativ
 143,mixed,easy,0.85,0.890,20,5.62,,2,ok,ivyCrates,6,clear:ivy:4+clear:crate:2+collect:5:18
 144,mixed,medium,0.60,0.665,16,3.04,,1,ok,mixA,6,clear:ice:23+clear:crate:4+clear:cage:2
 145,mixed,medium,0.60,0.610,27,4.25,,1,ok,crateHeavy,6,clear:crate:13+collect:1:24
-146,mixed,medium,0.60,0.535,60,17.00,,1,ok,mixC,6,drop:4+clear:chain:4
+146,mixed,medium,0.60,0.600,42,13.91,,2,ok,mixC,6,drop:3+clear:chain:4
 147,mixed,hard,0.35,0.390,36,5.36,,1,ok,iceFloor,6,clear:ice:36+collect:2:20
 148,mixed,medium,0.60,0.610,26,5.74,,1,ok,cageIce,6,clear:cage:9+clear:ice:36
 149,mixed,medium,0.60,0.640,33,4.75,,1,ok,diamond,6,collect:3:36+collect:4:36

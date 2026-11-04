@@ -118,5 +118,8 @@ legend { padding: 0 6px; font-weight: 700; }
 
 html[data-reduced-motion="true"] * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 
-.pager { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+/* Pagination : les boutons passent à la ligne avec le texte agrandi. */
+.pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.pager > span { flex: 1 1 100%; order: -1; text-align: center; }
+.pager .btn { flex: 1 1 8rem; }
 .tutorial-text { background: var(--surfaceRaised); border-radius: 12px; padding: 8px 12px; }

@@ -18,20 +18,20 @@
     ". . . . . . . . ."
   ],
   "colors": 6,
-  "moves": 60,
+  "moves": 53,
   "goals": [
     {
       "type": "score",
-      "target": 9000
+      "target": 7200
     }
   ],
-  "seed": "L89v1a0:7c150212",
-  "attempt": 0,
-  "scale": 1,
+  "seed": "L89v1a1:7d1503a5",
+  "attempt": 1,
+  "scale": 0.8,
   "validation": {
     "runs": 200,
-    "botRate": 0.555,
-    "avgMovesLeft": 12.07,
+    "botRate": 0.61,
+    "avgMovesLeft": 9.73,
     "status": "ok"
   }
 }

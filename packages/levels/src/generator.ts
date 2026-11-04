@@ -144,7 +144,7 @@ export interface GenerateOptions {
   auditRuns: number;
 }
 
-export const DEFAULT_GENERATE: GenerateOptions = { runs: 200, cap: 50, minMoves: 16, maxAttempts: 7, auditRuns: 0 };
+export const DEFAULT_GENERATE: GenerateOptions = { runs: 200, cap: 50, minMoves: 16, maxAttempts: 10, auditRuns: 0 };
 
 export interface GeneratedLevel {
   level: LevelFile;
@@ -184,30 +184,34 @@ export function generateLevel(n: number, opts: GenerateOptions = DEFAULT_GENERAT
     } catch {
       continue; // layout non remplissable : tentative suivante
     }
-    const pilot = calibrate(cand.spec, target, { runs: 40, cap: opts.cap, minMoves: opts.minMoves });
+    // À partir de la 4e tentative, le plafond de coups monte de 10 : un niveau long vaut mieux qu'un niveau sous la cible.
+    const cap = attempt >= 3 ? opts.cap + 10 : opts.cap;
+    const pilot = calibrate(cand.spec, target, { runs: 40, cap, minMoves: opts.minMoves });
     if (pilot.wins === 0 || Math.abs(pilot.rate - target) > TOLERANCE + 0.15) {
       if (pilot.wins === 0 || pilot.rate < target) scale *= pilot.wins === 0 ? 0.6 : 0.8;
       else scale *= 1.3;
       if (!best || (best.cal.wins === 0 && pilot.wins > 0)) best = { cand, cal: pilot, attempt, scale: usedScale, mc: false };
       continue;
     }
-    const cal = calibrate(cand.spec, target, { runs: opts.runs, cap: opts.cap, minMoves: opts.minMoves });
+    const cal = calibrate(cand.spec, target, { runs: opts.runs, cap, minMoves: opts.minMoves });
     let mc = false;
     if (cal.wins === 0) {
       mc = true;
       let mcWins = 0;
-      for (let r = 0; r < 6 && mcWins === 0; r++) if (runMonteCarlo(cand.spec, `${cand.spec.seed}:mc:${r}`, opts.cap).won) mcWins++;
+      for (let r = 0; r < 6 && mcWins === 0; r++) if (runMonteCarlo(cand.spec, `${cand.spec.seed}:mc:${r}`, cap).won) mcWins++;
       if (mcWins === 0) { scale *= 0.6; continue; } // infaisable sans booster : rejeté
     }
-    const err = Math.abs(cal.rate - target);
-    if (!best || best.cal.wins === 0 || best.cal.movesToWin.length < opts.runs || err < Math.abs(best.cal.rate - target))
-      best = { cand, cal, attempt, scale: usedScale, mc };
-    if (err <= TOLERANCE && cal.wins > 0) break;
+    // Acceptation : taux dans [cible, cible + tolérance]. Jamais sous la cible (protège FAIR-02).
+    const accepted = cal.wins > 0 && cal.rate >= target - 1e-9 && cal.rate <= target + TOLERANCE;
+    const err = cal.rate < target ? (target - cal.rate) * 3 : cal.rate - target; // être sous la cible coûte plus
+    const bestErr = best ? (best.cal.rate < target ? (target - best.cal.rate) * 3 : best.cal.rate - target) : Infinity;
+    if (!best || best.cal.wins === 0 || best.cal.movesToWin.length < opts.runs || err < bestErr) best = { cand, cal, attempt, scale: usedScale, mc };
+    if (accepted) break;
     scale *= cal.rate < target ? 0.8 : 1.25;
   }
   if (!best || best.cal.wins === 0) throw new Error(`niveau ${n} : aucun candidat faisable`);
   // Le meilleur candidat n'a eu qu'un pré-test : calibrage complet.
-  if (best.cal.movesToWin.length < opts.runs) best.cal = calibrate(best.cand.spec, target, { runs: opts.runs, cap: opts.cap, minMoves: opts.minMoves });
+  if (best.cal.movesToWin.length < opts.runs) best.cal = calibrate(best.cand.spec, target, { runs: opts.runs, cap: best.attempt >= 3 ? opts.cap + 10 : opts.cap, minMoves: opts.minMoves });
   if (best.cal.wins === 0) throw new Error(`niveau ${n} : aucun candidat faisable`);
   const { cand, cal } = best;
   let auditRate: number | undefined;
@@ -237,7 +241,7 @@ export function generateLevel(n: number, opts: GenerateOptions = DEFAULT_GENERAT
       runs: cal.movesToWin.length,
       botRate: cal.rate,
       avgMovesLeft: Math.round(cal.avgMovesLeft * 100) / 100,
-      status: Math.abs(cal.rate - target) <= TOLERANCE ? "ok" : "out_of_range",
+      status: cal.rate >= target - 1e-9 && cal.rate <= target + TOLERANCE ? "ok" : "out_of_range",
       ...(auditRate !== undefined ? { auditRate } : {}),
     },
   };

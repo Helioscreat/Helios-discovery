@@ -62,7 +62,8 @@ async function main(argv: string[]) {
   // Audit hors échantillon : un niveau sur 1/auditShare, réparti régulièrement.
   const step = auditShare > 0 ? Math.max(1, Math.round(1 / auditShare)) : Infinity;
   const queue: Job[] = [];
-  for (let n = from; n <= to; n++) queue.push({ n, audit: (n - from) % step === 0, mode: cmd });
+  const only = arg(argv, "only")?.split(",").map(Number);
+  for (let n = from; n <= to; n++) if (!only || only.includes(n)) queue.push({ n, audit: (n - from) % step === 0, mode: cmd });
   const total = queue.length;
   const results = new Map<number, GeneratedLevel>();
   const errors: { n: number; error: string }[] = [];

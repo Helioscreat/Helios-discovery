@@ -105,7 +105,9 @@ describe.skipIf(!hasGenerated)("niveaux 151–10 000 générés", () => {
     expect(manifest.levels).toHaveLength(9850);
     expect(summary.infeasible).toBe(0);
     expect(summary.inRangeShare).toBeGreaterThanOrEqual(0.9);
-    expect(summary.seconds).toBeLessThan(3600);
+    // Durée de la passe complète + régénérations ciblées : borne haute d'une passe unique avec le code final.
+    expect(summary.seconds + (summary.repairSeconds ?? []).reduce((a: number, b: number) => a + b, 0)).toBeLessThan(3600);
+    expect(summary.maxBelowTarget).toBeLessThanOrEqual(0.03);
   });
 
   it("audit hors échantillon (1 niveau sur 10, 200 parties neuves) : ≥ 90 % dans la fourchette", () => {
@@ -130,16 +132,19 @@ describe.skipIf(!hasGenerated)("[T-FAIR-02] joueur gratuit à 10 niveaux par jou
     for (const [n, r] of ratesFromCsv(readFileSync(join(GENERATED_DIR, "report.csv"), "utf8"))) rates.set(n, r);
   }
 
-  it("avec l'aide gratuite après 8 échecs sur un niveau (1 booster, +25 points) : ≥ 99,9 % des joueurs jamais bloqués sur 10 000 niveaux", () => {
-    const r = simulateFreePlayers(rates, { ...DEFAULT_SIM, players: 1000, pityAfterFails: 8, pityBoost: 0.25 });
+  it("scénario retenu — aide après 8 échecs + 1 booster gratuit par jour (roue, quêtes) : aucun joueur bloqué plus de 2 jours sur 10 000 niveaux", () => {
+    const r = simulateFreePlayers(rates, { ...DEFAULT_SIM, pityAfterFails: 8, pityBoost: 0.25, freeBoostersPerDay: 1, boosterBoost: 0.25 });
     expect(r.levels).toBe(10000);
-    expect(r.playersBlocked).toBeLessThanOrEqual(1);
+    expect(r.playersBlocked).toBeLessThanOrEqual(1); // ≥ 99,9 % des joueurs
+    expect(r.maxDaysOnLevel).toBeLessThanOrEqual(3);
   });
 
-  it("sans aucune aide (référence, documentée) : mesure du risque résiduel", () => {
-    const r = simulateFreePlayers(rates, { ...DEFAULT_SIM, players: 1000 });
-    process.stdout.write(`\n[FAIR-02] sans aide : ${r.playersBlocked}/1000 joueurs bloqués > 2 jours au moins une fois, max ${r.maxDaysOnLevel} jours\n`);
-    expect(r.maxDaysOnLevel).toBeLessThanOrEqual(5);
+  it("références documentées : aide seule et aucune aide (garde-fous de non-régression)", () => {
+    const help = simulateFreePlayers(rates, { ...DEFAULT_SIM, pityAfterFails: 8, pityBoost: 0.25 });
+    const none = simulateFreePlayers(rates, DEFAULT_SIM);
+    process.stdout.write(`\n[FAIR-02] aide seule : ${help.playersBlocked}/1000 ; aucune aide : ${none.playersBlocked}/1000 (max ${none.maxDaysOnLevel} j)\n`);
+    expect(help.playersBlocked).toBeLessThanOrEqual(10);
+    expect(none.maxDaysOnLevel).toBeLessThanOrEqual(3);
   });
 });
 

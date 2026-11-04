@@ -5,7 +5,7 @@
   "version": 1,
   "runs": 200,
   "workers": 4,
-  "seconds": 31,
+  "seconds": 29,
   "levels": 150,
   "infeasible": 0,
   "errors": [],
