@@ -1,0 +1,14 @@
+{
+  "name": "@helios/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p .",
+    "build": "node scripts/build.mjs",
+    "start": "node --no-warnings dist/server.cjs"
+  },
+  "dependencies": { "@helios/compliance": "0.1.0", "@helios/economy": "0.1.0" }
+}
