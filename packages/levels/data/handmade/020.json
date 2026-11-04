@@ -18,7 +18,7 @@
     "# # # i1. i1. i1. # # #"
   ],
   "colors": 5,
-  "moves": 17,
+  "moves": 18,
   "goals": [
     {
       "type": "clear",
@@ -31,8 +31,8 @@
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.195,
-    "avgMovesLeft": 1.82,
+    "botRate": 0.275,
+    "avgMovesLeft": 2,
     "status": "ok"
   }
 }

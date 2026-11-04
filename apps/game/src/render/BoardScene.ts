@@ -28,7 +28,12 @@ interface View {
   id: number;
   color: number;
   special: Special | null;
+  kind: NonNullable<Piece["kind"]>;
+  hp: number;
+  lock: Piece["lock"] | null;
 }
+
+type PieceLike = Pick<Piece, "id" | "color" | "special"> & Partial<Pick<Piece, "kind" | "hp" | "lock">>;
 
 const hex = (s: string) => parseInt(s.slice(1), 16);
 const HINT_DELAY_MS = 5000;
@@ -36,6 +41,7 @@ const HINT_DELAY_MS = 5000;
 export class BoardScene extends Phaser.Scene {
   private deps!: BoardDeps;
   private views = new Map<Pos, View>();
+  private iceViews = new Map<Pos, Phaser.GameObjects.Image>();
   private busy = false;
   private selected: Pos | null = null;
   private dragStart: { pos: Pos; x: number; y: number } | null = null;
@@ -161,6 +167,51 @@ export class BoardScene extends Phaser.Scene {
       g.lineStyle(Math.max(3, s * 0.06), 0xffffff, 1).strokePoints(hexPts, true, true);
       g.fillStyle(0xffffff, 1).fillCircle(r, r, r * 0.2);
     });
+    // Obstacles : formes distinctes, lisibles sans la couleur.
+    for (let hp = 1; hp <= 3; hp++)
+      make(`crate-${hp}`, (g) => {
+        g.fillStyle(0xa0652e, 1).fillRoundedRect(s * 0.06, s * 0.06, s * 0.88, s * 0.88, s * 0.08);
+        g.lineStyle(Math.max(2, s * 0.05), 0x5a3412, 1).strokeRoundedRect(s * 0.06, s * 0.06, s * 0.88, s * 0.88, s * 0.08);
+        for (let k = 0; k < hp; k++) {
+          const y = s * (0.3 + k * 0.2);
+          g.lineStyle(Math.max(2, s * 0.06), 0x5a3412, 1).lineBetween(s * 0.14, y, s * 0.86, y);
+        }
+        g.lineStyle(Math.max(2, s * 0.04), 0x5a3412, 1).lineBetween(s * 0.14, s * 0.14, s * 0.86, s * 0.86);
+      });
+    make("ivy", (g) => {
+      g.fillStyle(0x1b5e20, 1).fillRoundedRect(s * 0.08, s * 0.08, s * 0.84, s * 0.84, s * 0.2);
+      g.fillStyle(0x43a047, 1);
+      for (const [x, y] of [[0.3, 0.3], [0.68, 0.32], [0.32, 0.68], [0.7, 0.7], [0.5, 0.5]]) g.fillEllipse(s * x, s * y, s * 0.3, s * 0.18);
+      g.lineStyle(Math.max(2, s * 0.04), 0x0b3d0f, 1).strokeRoundedRect(s * 0.08, s * 0.08, s * 0.84, s * 0.84, s * 0.2);
+    });
+    make("drop", (g) => {
+      g.fillStyle(0xffd166, 1).fillCircle(r, r, r * 0.5);
+      g.lineStyle(Math.max(2, s * 0.05), 0x7a5200, 1).strokeCircle(r, r, r * 0.5);
+      g.lineStyle(Math.max(2, s * 0.06), 0xffd166, 1);
+      for (let k = 0; k < 8; k++) {
+        const a = (k * Math.PI) / 4;
+        g.lineBetween(r + Math.cos(a) * r * 0.62, r + Math.sin(a) * r * 0.62, r + Math.cos(a) * r * 0.9, r + Math.sin(a) * r * 0.9);
+      }
+    });
+    make("ov-chain", (g) => {
+      g.lineStyle(Math.max(3, s * 0.07), 0xc8cdd4, 1);
+      for (const [x, y] of [[0.25, 0.25], [0.5, 0.5], [0.75, 0.75], [0.75, 0.25], [0.25, 0.75]]) g.strokeEllipse(s * x, s * y, s * 0.26, s * 0.16);
+    });
+    make("ov-cage", (g) => {
+      g.lineStyle(Math.max(3, s * 0.06), 0xe8edf3, 1).strokeRoundedRect(s * 0.06, s * 0.06, s * 0.88, s * 0.88, s * 0.1);
+      for (const x of [0.3, 0.5, 0.7]) g.lineBetween(s * x, s * 0.06, s * x, s * 0.94);
+    });
+    for (let layer = 1; layer <= 3; layer++) {
+      const key = `ice-${layer}`;
+      if (this.textures.exists(key)) continue;
+      const g = this.make.graphics({}, false);
+      const c = this.cell;
+      g.fillStyle(0xbfe8ff, 0.25 + layer * 0.17).fillRoundedRect(2, 2, c - 4, c - 4, c * 0.14);
+      g.lineStyle(Math.max(2, c * 0.03), 0xffffff, 0.9);
+      for (let k = 0; k < layer; k++) g.lineBetween(c * (0.15 + k * 0.22), c * 0.85, c * (0.4 + k * 0.22), c * 0.15);
+      g.generateTexture(key, c, c);
+      g.destroy();
+    }
     if (!this.textures.exists("spark")) {
       const g = this.make.graphics({}, false);
       g.fillStyle(0xffffff, 1).fillCircle(8, 8, 8);
@@ -187,18 +238,38 @@ export class BoardScene extends Phaser.Scene {
   private fillView(v: View): void {
     v.c.removeAll(true);
     const cb = this.deps.settings.value.colorblind;
-    if (v.special === "prism") v.c.add(this.add.image(0, 0, "prism"));
+    if (v.kind === "crate") v.c.add(this.add.image(0, 0, `crate-${Math.min(3, Math.max(1, v.hp))}`));
+    else if (v.kind === "ivy") v.c.add(this.add.image(0, 0, "ivy"));
+    else if (v.kind === "drop") v.c.add(this.add.image(0, 0, "drop"));
+    else if (v.special === "prism") v.c.add(this.add.image(0, 0, "prism"));
     else {
       v.c.add(this.add.image(0, 0, `piece-${v.color}${cb ? "-cb" : ""}`));
       if (v.special) v.c.add(this.add.image(0, 0, `ov-${v.special}`));
     }
+    if (v.lock) v.c.add(this.add.image(0, 0, `ov-${v.lock}`));
   }
 
-  private makeView(i: Pos, p: Pick<Piece, "id" | "color" | "special">): View {
+  private makeView(i: Pos, p: PieceLike): View {
     const [cx, cy] = this.center(i);
-    const v: View = { c: this.add.container(cx, cy).setDepth(2), id: p.id, color: p.color, special: p.special };
+    const v: View = {
+      c: this.add.container(cx, cy).setDepth(2), id: p.id, color: p.color, special: p.special,
+      kind: p.kind ?? "piece", hp: p.hp ?? 1, lock: p.lock ?? null,
+    };
     this.fillView(v);
     return v;
+  }
+
+  private drawIce(i: Pos): void {
+    const layers = this.st.ice ? this.st.ice[i] : 0;
+    const cur = this.iceViews.get(i);
+    if (layers <= 0) {
+      cur?.destroy();
+      this.iceViews.delete(i);
+      return;
+    }
+    const [cx, cy] = this.center(i);
+    if (cur) cur.setTexture(`ice-${layers}`);
+    else this.iceViews.set(i, this.add.image(cx, cy, `ice-${layers}`).setDepth(1));
   }
 
   /** Resynchronise l'affichage après une modification externe de l'état (outils de test, éditeur). */
@@ -209,6 +280,7 @@ export class BoardScene extends Phaser.Scene {
   /** Aligne l'affichage sur l'état du moteur (filet de sécurité après chaque animation). */
   private syncToState(forceRedraw = false): void {
     const st = this.st;
+    for (let i = 0; i < st.cells.length; i++) this.drawIce(i);
     for (let i = 0; i < st.cells.length; i++) {
       const p = st.cells[i];
       const v = this.views.get(i);
@@ -220,9 +292,12 @@ export class BoardScene extends Phaser.Scene {
         v?.c.destroy();
         this.views.set(i, this.makeView(i, p));
       } else {
-        if (forceRedraw || v.color !== p.color || v.special !== p.special) {
+        if (forceRedraw || v.color !== p.color || v.special !== p.special || v.hp !== (p.hp ?? 1) || v.lock !== (p.lock ?? null) || v.kind !== (p.kind ?? "piece")) {
           v.color = p.color;
           v.special = p.special;
+          v.hp = p.hp ?? 1;
+          v.lock = p.lock ?? null;
+          v.kind = p.kind ?? "piece";
           this.fillView(v);
         }
         const [cx, cy] = this.center(i);
@@ -295,7 +370,15 @@ export class BoardScene extends Phaser.Scene {
     const [cx, cy] = this.center(this.cursor);
     this.cursorBox.setPosition(cx, cy).setVisible(this.keyboardMode);
     const p = this.st.cells[this.cursor];
-    const name = !p ? "—" : p.special === "prism" ? t("special.prism") : t(`piece.${p.color}` as never) + (p.special ? `, ${t(`special.${p.special}` as never)}` : "");
+    const base = !p
+      ? "—"
+      : p.kind === "crate" ? `${t("obstacle.crate")} ${p.hp ?? 1}`
+      : p.kind === "ivy" ? t("obstacle.ivy")
+      : p.kind === "drop" ? t("obstacle.drop")
+      : p.special === "prism" ? t("special.prism")
+      : t(`piece.${p.color}` as never) + (p.special ? `, ${t(`special.${p.special}` as never)}` : "");
+    const extras = [p?.lock ? t(`obstacle.${p.lock}` as never) : "", this.st.ice && this.st.ice[this.cursor] > 0 ? `${t("obstacle.ice")} ${this.st.ice[this.cursor]}` : ""].filter(Boolean);
+    const name = [base, ...extras].join(", ");
     const [x, y] = this.xy(this.cursor);
     this.deps.onAnnounce(t("a11y.cursor", { x: x + 1, y: y + 1, piece: name }));
   }
@@ -440,6 +523,37 @@ export class BoardScene extends Phaser.Scene {
           pending.push(this.tween({ targets: v.c, scale: 1, duration: 180, ease: "Back.Out" }));
           break;
         }
+        case "damaged": {
+          if (e.obstacle === "ice") this.drawIce(e.at);
+          else {
+            const v = this.views.get(e.at);
+            if (v) {
+              if (e.obstacle === "crate" || e.obstacle === "ivy") v.hp = e.left;
+              else v.lock = null;
+              if (v.hp > 0 || e.obstacle !== "crate") this.fillView(v);
+              pending.push(this.tween({ targets: v.c, scale: 0.88, duration: 70, yoyo: true }));
+            }
+          }
+          break;
+        }
+        case "dropCollected": {
+          await flush();
+          const v = this.views.get(e.at);
+          if (v) {
+            this.views.delete(e.at);
+            pending.push(this.tween({ targets: v.c, y: v.c.y + this.cell, alpha: 0, duration: 260 }).then(() => v.c.destroy()));
+          }
+          break;
+        }
+        case "ivySpread": {
+          await flush();
+          this.views.get(e.at)?.c.destroy();
+          const v = this.makeView(e.at, { id: e.id, color: -1, special: null, kind: "ivy", hp: 1 });
+          this.views.set(e.at, v);
+          v.c.setScale(0.3);
+          pending.push(this.tween({ targets: v.c, scale: 1, duration: 220, ease: "Back.Out" }));
+          break;
+        }
         case "gravity":
           await flush();
           pending.push(this.fxGravity(e.moves));
@@ -509,20 +623,20 @@ export class BoardScene extends Phaser.Scene {
       const v = this.views.get(from);
       if (!v) continue;
       next.set(to, v);
-      const [, y] = this.center(to);
+      const [x, y] = this.center(to);
       const dist = Math.abs(Math.floor(to / this.st.width) - Math.floor(from / this.st.width));
-      tws.push(this.tween({ targets: v.c, y, duration: Math.min(320, 70 + dist * 45), ease: "Quad.In" }));
+      tws.push(this.tween({ targets: v.c, x, y, duration: Math.min(320, 70 + dist * 45), ease: "Quad.In" }));
     }
     this.views = next;
     return Promise.all(tws).then(() => undefined);
   }
 
-  private fxSpawn(pieces: { at: Pos; id: number; color: number }[]): Promise<void> {
+  private fxSpawn(pieces: { at: Pos; id: number; color: number; kind?: Piece["kind"] }[]): Promise<void> {
     const perCol = new Map<number, number>();
     for (const p of pieces) perCol.set(p.at % this.st.width, (perCol.get(p.at % this.st.width) ?? 0) + 1);
     const tws: Promise<void>[] = [];
     for (const p of pieces) {
-      const v = this.makeView(p.at, { id: p.id, color: p.color, special: null });
+      const v = this.makeView(p.at, { id: p.id, color: p.color, special: null, kind: p.kind });
       this.views.get(p.at)?.c.destroy();
       this.views.set(p.at, v);
       const [, y] = this.center(p.at);

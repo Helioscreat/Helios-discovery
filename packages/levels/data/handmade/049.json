@@ -18,7 +18,7 @@
     "i2. i2. i1. . . . i1. i2. i2."
   ],
   "colors": 5,
-  "moves": 20,
+  "moves": 21,
   "goals": [
     {
       "type": "clear",
@@ -35,8 +35,8 @@
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.595,
-    "avgMovesLeft": 4.27,
+    "botRate": 0.645,
+    "avgMovesLeft": 4.86,
     "status": "ok"
   }
 }

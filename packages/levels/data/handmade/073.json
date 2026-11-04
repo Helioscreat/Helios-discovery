@@ -18,7 +18,7 @@
     ". . . . . . . . ."
   ],
   "colors": 5,
-  "moves": 34,
+  "moves": 35,
   "goals": [
     {
       "type": "drop",
@@ -39,8 +39,8 @@
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.84,
-    "avgMovesLeft": 11.82,
+    "botRate": 0.86,
+    "avgMovesLeft": 12.52,
     "status": "ok"
   }
 }

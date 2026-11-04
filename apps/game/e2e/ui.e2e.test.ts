@@ -260,18 +260,20 @@ describe("gestes de jeu réels", () => {
   it("toucher-toucher : deux pièces voisines touchées l'une après l'autre", async () => {
     const { page, ctx } = await phone();
     await startLevel(page, 6);
+    const before = Number(await movesText(page));
     const m = (await page.evaluate(() => window.__helios!.hint()))!;
     const a = await cellCenter(page, m.from), b = await cellCenter(page, m.to);
     await page.mouse.click(a.x, a.y);
     await page.mouse.click(b.x, b.y);
     await waitIdle(page);
-    expect(await movesText(page)).toBe("23");
+    expect(Number(await movesText(page))).toBe(before - 1);
     await ctx.close();
   });
 
   it("clavier seul : flèches + Entrée jouent un coup, le curseur est annoncé", async () => {
     const { page, ctx } = await phone();
     await startLevel(page, 4);
+    const before = Number(await movesText(page));
     const m = (await page.evaluate(() => window.__helios!.hint()))!;
     const st = await page.evaluate(() => ({ w: window.__helios!.session()!.state.width, first: window.__helios!.session()!.state.mask.indexOf(true) }));
     await page.locator("canvas").focus();
@@ -285,7 +287,7 @@ describe("gestes de jeu réels", () => {
     await go(m.from, m.to);
     await page.keyboard.press("Enter");
     await waitIdle(page);
-    expect(await movesText(page)).toBe("23");
+    expect(Number(await movesText(page))).toBe(before - 1);
     expect(await page.locator('[data-testid="announcer"]').innerText()).not.toBe("");
     await ctx.close();
   });
@@ -302,6 +304,7 @@ describe("gestes de jeu réels", () => {
     await page.waitForSelector("canvas");
     await page.waitForTimeout(300);
     const hammer = page.locator('[data-booster="hammer"]');
+    const movesBefore = await movesText(page);
     expect(await hammer.getAttribute("aria-label")).toContain("3");
     expect(await page.locator('[data-booster="rainbow"]').isDisabled()).toBe(true);
     await hammer.click();
@@ -310,7 +313,38 @@ describe("gestes de jeu réels", () => {
     await page.mouse.click(c.x, c.y);
     await waitIdle(page);
     expect(await hammer.getAttribute("aria-label")).toContain("2");
-    expect(await movesText(page)).toBe("24");
+    expect(await movesText(page)).toBe(movesBefore);
+    expect(errors).toEqual([]);
+    await ctx.close();
+  });
+});
+
+describe("niveaux réels et obstacles", () => {
+  it("le niveau 13 présente le Gel avec son tutoriel ; les objectifs d'obstacle s'affichent", async () => {
+    const { page, ctx, errors } = await phone();
+    await page.evaluate(() => window.__helios!.chooseLevel(13));
+    await page.locator('[data-modal="level-start"]').waitFor();
+    expect(await page.locator('[data-testid="level-tutorial"]').innerText()).toMatch(/Gel/);
+    await page.locator('[data-choice="accept"]').click();
+    await page.waitForSelector("canvas");
+    expect(await page.locator(".hud .goals").innerText()).toMatch(/Gel : 0 sur \d+/);
+    expect(errors).toEqual([]);
+    await ctx.close();
+  });
+
+  it("un niveau avec caisses, chaînes, cages, lierre et objets se joue sans erreur (10 coups)", async () => {
+    const { page, ctx, errors } = await phone();
+    for (const n of [77, 122, 126]) {
+      await startLevel(page, n);
+      for (let k = 0; k < 10; k++) {
+        const m = await page.evaluate(() => (window.__helios!.session()!.state.status === "playing" ? window.__helios!.hint() : null));
+        if (!m) break;
+        const a = await cellCenter(page, m.from), b = await cellCenter(page, m.to);
+        await page.mouse.click(a.x, a.y);
+        await page.mouse.click(b.x, b.y);
+        await page.waitForTimeout(1200);
+      }
+    }
     expect(errors).toEqual([]);
     await ctx.close();
   });

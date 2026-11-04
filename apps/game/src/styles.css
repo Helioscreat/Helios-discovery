@@ -117,3 +117,6 @@ legend { padding: 0 6px; font-weight: 700; }
 .tutorial-glyph svg { width: 64px; height: 64px; }
 
 html[data-reduced-motion="true"] * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+
+.pager { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.tutorial-text { background: var(--surfaceRaised); border-radius: 12px; padding: 8px 12px; }

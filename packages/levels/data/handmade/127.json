@@ -29,15 +29,20 @@
       "type": "clear",
       "target": "crate",
       "count": 4
+    },
+    {
+      "type": "collect",
+      "color": 1,
+      "count": 18
     }
   ],
-  "seed": "L127v1a0:3764719d",
-  "attempt": 0,
-  "scale": 1,
+  "seed": "L127v1a1:3664700a",
+  "attempt": 1,
+  "scale": 1.25,
   "validation": {
     "runs": 200,
-    "botRate": 0.34,
-    "avgMovesLeft": 2.82,
+    "botRate": 0.39,
+    "avgMovesLeft": 2.5,
     "status": "ok"
   }
 }

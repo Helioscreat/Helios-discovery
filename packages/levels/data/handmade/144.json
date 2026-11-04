@@ -18,7 +18,7 @@
     ". . . . . . . . ."
   ],
   "colors": 6,
-  "moves": 15,
+  "moves": 16,
   "goals": [
     {
       "type": "clear",
@@ -41,8 +41,8 @@
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.56,
-    "avgMovesLeft": 2.61,
+    "botRate": 0.665,
+    "avgMovesLeft": 3.04,
     "status": "ok"
   }
 }

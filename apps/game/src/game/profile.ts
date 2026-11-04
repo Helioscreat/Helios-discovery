@@ -10,6 +10,8 @@ export interface Profile {
   /** Boosters dont les 3 exemplaires offerts et le tutoriel ont déjà été donnés. */
   granted: Booster[];
   stars: Record<number, number>;
+  /** Nombre d'essais par niveau (sert uniquement à varier la suite des pièces qui tombent). */
+  attempts: Record<number, number>;
 }
 
 export function newProfile(): Profile {
@@ -18,6 +20,7 @@ export function newProfile(): Profile {
     inventory: Object.fromEntries(ALL_BOOSTERS.map((b) => [b, 0])) as Record<Booster, number>,
     granted: [],
     stars: {},
+    attempts: {},
   };
 }
 

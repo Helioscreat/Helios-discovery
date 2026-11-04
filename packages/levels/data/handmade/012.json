@@ -19,7 +19,7 @@
     ". . . . . . . . ."
   ],
   "colors": 5,
-  "moves": 22,
+  "moves": 23,
   "goals": [
     {
       "type": "collect",
@@ -32,8 +32,8 @@
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.835,
-    "avgMovesLeft": 6.26,
+    "botRate": 0.89,
+    "avgMovesLeft": 6.81,
     "status": "ok"
   }
 }

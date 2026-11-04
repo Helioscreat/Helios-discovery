@@ -18,21 +18,21 @@
     ". . . . . . . . ."
   ],
   "colors": 5,
-  "moves": 18,
+  "moves": 24,
   "goals": [
     {
       "type": "collect",
       "color": 4,
-      "count": 40
+      "count": 50
     }
   ],
-  "seed": "L27v1a0:60d0216a",
-  "attempt": 0,
-  "scale": 1,
+  "seed": "L27v1a1:61d022fd",
+  "attempt": 1,
+  "scale": 1.25,
   "validation": {
     "runs": 200,
-    "botRate": 0.34,
-    "avgMovesLeft": 3.35,
+    "botRate": 0.385,
+    "avgMovesLeft": 3.32,
     "status": "ok"
   }
 }

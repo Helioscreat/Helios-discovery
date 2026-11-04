@@ -18,7 +18,7 @@
     "i3. i3. i3. i3. i3. i3. i3. i3. i3."
   ],
   "colors": 5,
-  "moves": 25,
+  "moves": 26,
   "goals": [
     {
       "type": "clear",
@@ -31,8 +31,8 @@
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.58,
-    "avgMovesLeft": 4.82,
+    "botRate": 0.64,
+    "avgMovesLeft": 5.27,
     "status": "ok"
   }
 }

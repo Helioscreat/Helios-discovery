@@ -53,11 +53,17 @@ describe("session de jeu", () => {
     expect(hashState(next)).toBe(hashState(applyMove(b, getHint(b)!).state));
   });
 
-  it("niveaux de démonstration : badges Difficile (7) et Très difficile (10) dans chaque bloc de 10", () => {
-    expect(difficultyOf(7)).toBe("hard");
+  it("niveaux réels : badges Difficile (7e) et Très difficile (10e) de chaque bloc, parcours d'accueil sans badge", () => {
+    expect(difficultyOf(7)).toBe("normal");
     expect(difficultyOf(17)).toBe("hard");
-    expect(difficultyOf(10)).toBe("veryHard");
-    expect(difficultyOf(11)).toBe("normal");
-    expect(levelSpec(10).moves).toBeLessThan(levelSpec(11).moves);
+    expect(difficultyOf(20)).toBe("veryHard");
+    expect(difficultyOf(21)).toBe("normal");
+    expect(levelSpec(13).layout?.join(" ")).toMatch(/i1/);
+  });
+
+  it("l'essai change la suite des pièces, pas la grille de départ", () => {
+    const a = levelSpec(30, 0), b = levelSpec(30, 1);
+    expect(a.layout).toEqual(b.layout);
+    expect(a.playSeed).not.toBe(b.playSeed);
   });
 });

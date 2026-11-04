@@ -117,8 +117,11 @@ export function rateAt(movesToWin: number[], m: number): number {
 }
 
 /**
- * Calibre le nombre de coups d'un niveau : joue `runs` parties gloutonnes (plafond `cap`), puis choisit
- * le budget M dont le taux de réussite est le plus proche de `target` (égalité : le plus petit).
+ * Calibre le nombre de coups d'un niveau : joue `runs` parties gloutonnes (plafond `cap`), puis retient
+ * le PLUS PETIT budget M dont le taux de réussite atteint au moins `target` (borne basse, jamais en dessous).
+ * Si même le plafond ne l'atteint pas, M = plafond (le générateur rend alors le niveau plus facile).
+ * Pourquoi une borne basse plutôt que « le plus proche » : un niveau sous la cible (ex. 12 % pour 20 %)
+ * peut bloquer un joueur gratuit plusieurs jours (critère FAIR-02).
  */
 export function calibrate(spec: LevelSpec, target: number, opts: { runs: number; cap: number; minMoves: number; botSalt?: string }): Calibration {
   const movesToWin: number[] = [];
@@ -127,11 +130,9 @@ export function calibrate(spec: LevelSpec, target: number, opts: { runs: number;
     movesToWin.push(res.won ? res.movesUsed : Infinity);
   }
   const wins = movesToWin.filter(Number.isFinite).length;
-  let best = opts.cap, bestErr = Infinity;
+  let best = opts.cap;
   for (let m = opts.minMoves; m <= opts.cap; m++) {
-    const err = Math.abs(rateAt(movesToWin, m) - target);
-    if (err < bestErr - 1e-9) [best, bestErr] = [m, err]; // égalité : le plus petit budget (niveau trivial = court, pas 60 coups)
-    if (rateAt(movesToWin, m) > target + 0.15) break; // au-delà, l'erreur ne peut que croître
+    if (rateAt(movesToWin, m) >= target - 1e-9) { best = m; break; }
   }
   const won = movesToWin.filter((x) => x <= best);
   return {

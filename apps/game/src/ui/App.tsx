@@ -3,14 +3,14 @@ import {
 } from "@helios/core";
 import { useEffect, useLayoutEffect, useMemo, useState } from "preact/hooks";
 import type { Feedback } from "../feedback";
-import { DEMO_LEVEL_COUNT, difficultyOf, levelSpec } from "../game/levels";
+import { difficultyOf, levelCount, levelFile, levelSpec, loadGeneratedLevels } from "../game/levels";
 import { grantUnlocks, saveProfile, type Profile } from "../game/profile";
 import { GameSession } from "../game/session";
 import { CATALOGS, getLocale, setLocale, t, type Locale } from "../i18n";
 import type { BoardScene } from "../render/BoardScene";
 import { TEXT_SCALES, type Settings, type SettingsStore } from "../settings";
 import { BoardHost } from "./BoardHost";
-import { BoosterGlyph, DualChoice, Modal, PieceIcon } from "./components";
+import { BoosterGlyph, DualChoice, Modal, ObstacleIcon, PieceIcon } from "./components";
 
 type Overlay =
   | { kind: "none" }
@@ -56,14 +56,24 @@ function GoalList(props: { state: GameState; compact?: boolean }) {
         const total = g.type === "score" ? g.target : g.count;
         return (
           <li key={k}>
-            {g.type === "collect" ? <PieceIcon color={g.color} /> : null}
-            <span>{g.type === "collect" ? t("goal.collect", { name: t(`piece.${g.color}` as never), done, count: total }) : t("goal.score", { done, count: total })}</span>
+            {g.type === "collect" ? <PieceIcon color={g.color} /> : g.type === "clear" ? <ObstacleIcon kind={g.target} /> : g.type === "drop" ? <ObstacleIcon kind="drop" /> : null}
+            <span>
+              {g.type === "collect"
+                ? t("goal.collect", { name: t(`piece.${g.color}` as never), done, count: total })
+                : g.type === "clear"
+                  ? t(`goal.clear.${g.target}` as never, { done, count: total })
+                  : g.type === "drop"
+                    ? t("goal.drop", { done, count: total })
+                    : t("goal.score", { done, count: total })}
+            </span>
           </li>
         );
       })}
     </ul>
   );
 }
+
+const PAGE = 30;
 
 export function App(props: AppProps) {
   const settings = useSettings(props.settings);
@@ -88,6 +98,8 @@ export function App(props: AppProps) {
   }, [settings]);
 
   useEffect(() => props.feedback.onCaption((text) => { setCaption(text); setAnnounce(text); }), []);
+  useEffect(() => { void loadGeneratedLevels().then(refresh); }, []);
+  const [page, setPage] = useState(() => Math.floor((profile.levelReached - 1) / PAGE));
   useEffect(() => {
     if (!caption) return;
     const id = setTimeout(() => setCaption(""), 1600);
@@ -115,7 +127,7 @@ export function App(props: AppProps) {
     if (!session) return;
     if (session.state.status === "won") {
       const n = session.level;
-      profile.levelReached = Math.max(profile.levelReached, Math.min(DEMO_LEVEL_COUNT, n + 1));
+      profile.levelReached = Math.max(profile.levelReached, Math.min(levelCount(), n + 1));
       profile.stars[n] = Math.max(profile.stars[n] ?? 0, session.stars());
       saveProfile(profile);
       setOverlay({ kind: "end-win" });
@@ -174,8 +186,13 @@ export function App(props: AppProps) {
             <h1>{t("app.title")}</h1>
             <p class="muted">{t("home.subtitle")}</p>
           </header>
+          <nav class="pager" aria-label={t("home.levels")}>
+            <button type="button" class="btn small" disabled={page === 0} onClick={() => setPage(page - 1)}>{t("home.prev")}</button>
+            <span>{t("home.range", { a: page * PAGE + 1, b: Math.min(levelCount(), (page + 1) * PAGE) })}</span>
+            <button type="button" class="btn small" disabled={(page + 1) * PAGE >= levelCount()} onClick={() => setPage(page + 1)}>{t("home.next")}</button>
+          </nav>
           <section class="level-grid" aria-label={t("home.levels")}>
-            {Array.from({ length: DEMO_LEVEL_COUNT }, (_, k) => k + 1).map((n) => {
+            {Array.from({ length: Math.min(PAGE, levelCount() - page * PAGE) }, (_, k) => page * PAGE + k + 1).map((n) => {
               const locked = n > profile.levelReached;
               const d = difficultyOf(n);
               return (
@@ -294,12 +311,14 @@ export function App(props: AppProps) {
       {overlay.kind === "level-start" && (() => {
         const n = overlay.level;
         const spec = levelSpec(n);
+        const file = levelFile(n);
         const d = difficultyOf(n);
         const kitLocked = n < BOOSTER_UNLOCK_LEVEL.starterKit && !profile.granted.includes("starterKit");
         const preview: GameState = { ...({} as GameState), goals: spec.goals, progress: spec.goals.map(() => 0) };
         return (
           <Modal name="level-start" title={t("level.start.title", { n })} onEscape={() => setOverlay({ kind: "none" })}>
             {d !== "normal" ? <p class={`badge ${d}`}>{t(d === "hard" ? "level.badge.hard" : "level.badge.veryHard")}</p> : null}
+            {file.tutorial ? <p class="tutorial-text" data-testid="level-tutorial">{t(`tutorial.level.${file.tutorial}` as never)}</p> : null}
             <h3>{t("level.start.goals")}</h3>
             <GoalList state={preview} />
             <p>{t("level.start.moves", { n: spec.moves })}</p>

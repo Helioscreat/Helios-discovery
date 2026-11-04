@@ -18,7 +18,7 @@
     "V V . . . . . V V"
   ],
   "colors": 5,
-  "moves": 15,
+  "moves": 16,
   "goals": [
     {
       "type": "clear",
@@ -36,8 +36,8 @@
   "scale": 1.5625,
   "validation": {
     "runs": 200,
-    "botRate": 0.825,
-    "avgMovesLeft": 3.75,
+    "botRate": 0.875,
+    "avgMovesLeft": 4.47,
     "status": "ok"
   }
 }

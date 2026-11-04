@@ -47,16 +47,19 @@ describe("calibrage", () => {
     expect(rateAt([10, 12, Infinity, 20], 9)).toBe(0);
   });
 
-  it("le budget choisi donne un taux proche de la cible", () => {
+  it("le budget choisi est le plus petit qui atteint la cible (borne basse)", () => {
     const c = calibrate(spec, 0.6, { runs: 60, cap: 60, minMoves: 5 });
-    expect(Math.abs(c.rate - 0.6)).toBeLessThan(0.1);
+    expect(c.rate).toBeGreaterThanOrEqual(0.6);
+    expect(rateAt(c.movesToWin, c.moves - 1)).toBeLessThan(0.6);
     expect(c.rate).toBe(rateAt(c.movesToWin, c.moves));
   });
 
-  it("validation hors échantillon : de nouvelles parties confirment le taux visé (±12 points)", () => {
+  it("validation hors échantillon : de nouvelles parties confirment le taux calibré et la borne basse", () => {
     const c = calibrate(spec, 0.35, { runs: 200, cap: 60, minMoves: 5 });
     const fresh = calibrate({ ...spec }, 0.35, { runs: 200, cap: 60, minMoves: 5, botSalt: "audit" });
-    expect(Math.abs(rateAt(fresh.movesToWin, c.moves) - 0.35)).toBeLessThan(0.12);
+    const audit = rateAt(fresh.movesToWin, c.moves);
+    expect(Math.abs(audit - c.rate)).toBeLessThan(0.1); // parties indépendantes : écart-type ≈ 3,5 points
+    expect(audit).toBeGreaterThan(0.35 - 0.08);
   });
 });
 
