@@ -96,7 +96,11 @@ export const SHUFFLE_ATTEMPTS = 100;
  * après SHUFFLE_ATTEMPTS échecs, recolore les pièces normales. Ne consomme aucun coup.
  */
 export function ensurePlayable(st: GameState, ev: GameEvent[]): void {
-  if (hasValidMove(st)) return;
+  if (!hasValidMove(st)) forceShuffle(st, ev);
+}
+
+/** Mélange inconditionnel (booster Mélangeur, ou grille bloquée) : sans alignement, avec un coup jouable. */
+export function forceShuffle(st: GameState, ev: GameEvent[]): void {
   const positions: Pos[] = [];
   for (let i = 0; i < st.cells.length; i++) if (st.mask[i] && st.cells[i] !== null) positions.push(i);
   const original = positions.map((i) => st.cells[i] as Piece);

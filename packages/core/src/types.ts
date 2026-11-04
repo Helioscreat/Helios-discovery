@@ -78,6 +78,7 @@ export type GameEvent =
   | { type: "score"; delta: number; total: number }
   | { type: "shuffle"; mapping: [Pos, Pos][] }
   | { type: "bonusStart"; moves: number }
+  | { type: "booster"; booster: string; at: Pos }
   | { type: "won" }
   | { type: "lost" };
 

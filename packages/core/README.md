@@ -36,10 +36,10 @@ npm test             # depuis la racine du dépôt
 npm run typecheck
 ```
 
-62 tests :
+74 tests :
 - formes d'alignement et priorités ;
 - effet de chaque spéciale et réactions en chaîne ;
-- les 11 combos ;
+- les 11 combos et les 6 boosters (dont le Kit de départ) ;
 - règles d'échange ;
 - gravité avec trous, mélange automatique, indice ;
 - victoire, bonus de fin, défaite, objectifs ;
