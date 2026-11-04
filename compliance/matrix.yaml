@@ -1,0 +1,625 @@
+# Matrice de conformité — source de vérité.
+# Chaque exigence → fonctionnalité → test. Le script tools/check-matrix.mjs valide ce fichier,
+# génère docs/matrice-conformite.md et, avec --coverage, vérifie que chaque test.id apparaît
+# dans au moins un fichier de test (titre de test contenant l'identifiant, ex. "[T-AGE-01]").
+#
+# nature : obligation (texte légal) | store (politique Google/Apple) | engagement (choix produit
+#          au-delà du minimum légal, ou obligation dont l'éditeur est peut-être exempté)
+# type de test : unit | property | e2e-ui | network | server | sim | config | static | doc | manual
+#   doc    = contrôle automatisé de présence des rubriques obligatoires dans le document
+#   manual = impossible à automatiser (formulaire de store) : checklist signée, preuve archivée
+# livrable : numéro du livrable (1–8) qui implémente la fonctionnalité et le test.
+
+version: 1
+rows:
+  # ───────────────────────── 8.1 Âge et mineurs ─────────────────────────
+  - id: AGE-01
+    section: "8.1"
+    ref: "RGPD art. 8 ; lignes directrices Commission art. 28 DSA (2025)"
+    nature: obligation
+    exigence: "Écran d'âge neutre au premier lancement : date de naissance, aucune valeur pré-remplie, aucun indice sur l'âge attendu."
+    fonctionnalite: "AgeGate (DOM) avant toute CMP ; sélecteurs jour/mois/année vides ; aucun texte mentionnant un âge minimal."
+    test: { id: T-AGE-01, type: e2e-ui, verif: "Au premier lancement, les 3 champs sont vides ; le texte de l'écran ne contient aucun nombre d'âge ni les mots « minimum », « au moins », « +13 » ; aucune requête réseau tierce n'a eu lieu." }
+    livrable: 6
+  - id: AGE-02
+    section: "8.1"
+    ref: "Bonne pratique (évite le contournement par nouvel essai)"
+    nature: engagement
+    exigence: "L'âge déclaré ne peut pas être ressaisi immédiatement après validation."
+    fonctionnalite: "Âge stocké côté serveur ; modification uniquement via le support, avec justificatif."
+    test: { id: T-AGE-02, type: e2e-ui, verif: "Après validation, relancer l'app ou effacer le cache local ne réaffiche pas l'écran d'âge pour le même compte." }
+    livrable: 6
+  - id: AGE-03
+    section: "8.1"
+    ref: "RGPD art. 8(1) ; lois nationales (FR loi 78-17 art. 45 : 15 ans)"
+    nature: obligation
+    exigence: "Seuil de consentement numérique configurable par pays (13 à 16 ans)."
+    fonctionnalite: "Table consentAge par pays dans la config distante : FR 15, BE 13, DE 16, ES 14, IT 14, NL 16 ; défaut 16."
+    test: { id: T-AGE-03, type: unit, verif: "consentAge(pays) renvoie les valeurs de la table ; un pays inconnu renvoie 16 ; le validateur de config refuse une valeur hors [13,16]." }
+    livrable: 7
+  - id: AGE-04
+    section: "8.1"
+    ref: "DSA art. 28(2) ; RGPD art. 8"
+    nature: obligation
+    exigence: "Aucune publicité personnalisée ni profilage publicitaire pour les mineurs (< 18 ans)."
+    fonctionnalite: "Profil mineur : requêtes publicitaires marquées non personnalisées et âge inférieur au consentement (TFUA), aucun identifiant publicitaire lu ; finalité « pub personnalisée » absente de la CMP."
+    test: { id: T-AGE-04, type: network, verif: "Avec un profil de 15 et de 17 ans, toutes les requêtes publicitaires interceptées portent les paramètres non personnalisés et TFUA ; aucun AAID/IDFA non nul n'est transmis ; la CMP ne propose pas la finalité." }
+    livrable: 6
+  - id: AGE-05
+    section: "8.1"
+    ref: "App Store 5.1.2 ; ATT"
+    nature: store
+    exigence: "Aucune demande ATT pour un mineur."
+    fonctionnalite: "La demande ATT n'est déclenchée que pour un majeur qui consent à la pub personnalisée."
+    test: { id: T-AGE-05, type: unit, verif: "shouldRequestATT(profil) est faux si âge < 18 ou si la finalité pub personnalisée est refusée." }
+    livrable: 6
+  - id: AGE-06
+    section: "8.1"
+    ref: "Directive 2005/29/CE annexe I pt 28 ; principes CPC 2024 sur les monnaies virtuelles"
+    nature: obligation
+    exigence: "Aucun appel direct à acheter adressé à un mineur."
+    fonctionnalite: "Profil < 18 : aucune fenêtre d'offre automatique, aucun bouton payant sur l'écran d'échec, aucune bannière d'offre ; boutique accessible seulement depuis le menu."
+    test: { id: T-AGE-06, type: e2e-ui, verif: "Session simulée de 100 niveaux (avec défaites) en profil 15 ans : 0 fenêtre d'offre, 0 élément cliquable avec prix sur l'écran d'échec ; boutique atteignable seulement via le menu." }
+    livrable: 5
+  - id: AGE-07
+    section: "8.1"
+    ref: "Engagement (anticipation DFA)"
+    nature: engagement
+    exigence: "Plafond de dépense mensuel pour les mineurs, configurable (défaut 20 €)."
+    fonctionnalite: "Le serveur cumule les reçus vérifiés du mois civil ; le client demande une autorisation avant de lancer le flux de paiement du store ; le plafond vient de la config par pays."
+    test: { id: T-AGE-07, type: server, verif: "Profil 15 ans ayant 19,01 € de reçus ce mois : l'autorisation d'un article à 0,99 € est refusée ; au 1er du mois suivant, elle est acceptée ; un plafond modifié en config s'applique sans mise à jour." }
+    livrable: 6
+  - id: AGE-08
+    section: "8.1"
+    ref: "StoreKit Ask to Buy ; Google Play approbation familiale"
+    nature: store
+    exigence: "Les achats restent soumis aux contrôles parentaux du store."
+    fonctionnalite: "L'adaptateur de paiement gère l'état « en attente d'approbation » sans rien créditer ni relancer."
+    test: { id: T-AGE-08, type: unit, verif: "Une transaction à l'état PENDING ne crédite rien ; le passage à PURCHASED vérifié crédite une seule fois ; DECLINED n'affiche aucun message culpabilisant." }
+    livrable: 5
+  - id: AGE-09
+    section: "8.1 / 7"
+    ref: "DSA art. 28(1) ; engagement"
+    nature: engagement
+    exigence: "Chat désactivé par défaut pour les moins de 16 ans, avec messages prédéfinis uniquement."
+    fonctionnalite: "Paramètre chat=off par défaut si âge < 16 ; même activé, seul le sélecteur de messages prédéfinis est rendu ; le serveur rejette le texte libre."
+    test: { id: T-AGE-09, type: server, verif: "Profil 15 ans : un POST de texte libre renvoie 403 ; un message prédéfini (id) est accepté ; l'interface ne contient aucun champ de saisie libre." }
+    livrable: 6
+  - id: AGE-10
+    section: "8.1"
+    ref: "Directive 2005/29/CE annexe I pt 28"
+    nature: obligation
+    exigence: "Aucun texte ni personnage n'incite directement un enfant à acheter ou à demander à un parent."
+    fonctionnalite: "Lint du catalogue de chaînes (toutes langues) : motifs interdits ; Pépin absent des écrans d'achat."
+    test: { id: T-AGE-10, type: static, verif: "Le lint échoue si une chaîne contient « demande à tes parents », « achète », « vite » ou leurs équivalents dans les langues cibles, ou si un écran d'achat référence l'asset du personnage. Relecture humaine archivée pour chaque langue." }
+    livrable: 3
+  - id: AGE-11
+    section: "8.1 / 7"
+    ref: "Directive 2005/29/CE annexe I pt 28 ; engagement"
+    nature: obligation
+    exigence: "Aucune notification commerciale pour les mineurs."
+    fonctionnalite: "La catégorie « offres » n'existe pas pour un profil < 18 ; le planificateur filtre aussi côté serveur."
+    test: { id: T-AGE-11, type: unit, verif: "schedule(profil 17 ans, notification de catégorie offre) renvoie null ; l'écran de paramètres n'affiche pas la catégorie." }
+    livrable: 7
+
+  # ───────────────────────── 8.2 Pratiques commerciales ─────────────────────────
+  - id: COM-01
+    section: "8.2"
+    ref: "Directive 2005/29/CE annexe I pt 7"
+    nature: obligation
+    exigence: "Aucun faux compte à rebours."
+    fonctionnalite: "Un minuteur ne s'affiche que s'il est lié à un endAt réel de la config ; l'article disparaît effectivement à endAt."
+    test: { id: T-COM-01, type: config, verif: "Le validateur refuse une offre avec showTimer=true sans endAt ; test e2e : à endAt+1 s, l'article n'est plus achetable." }
+    livrable: 5
+  - id: COM-02
+    section: "8.2"
+    ref: "Directive 2005/29/CE annexe I pt 7"
+    nature: obligation
+    exigence: "Aucune fausse rareté."
+    fonctionnalite: "Le schéma d'offre n'a pas de champ de stock affiché ; aucun texte « plus que N »."
+    test: { id: T-COM-02, type: static, verif: "Le schéma zod rejette tout champ stock/remaining ; le lint des chaînes rejette « plus que », « derniers », « only », « left »." }
+    livrable: 5
+  - id: COM-03
+    section: "8.2"
+    ref: "Directive 2005/29/CE art. 6 ; principes CPC 2024"
+    nature: obligation
+    exigence: "Aucune « offre limitée » qui revient en boucle."
+    fonctionnalite: "Le libellé « limitée » n'est permis qu'une fois par SKU sur 12 mois glissants ; l'historique des offres est versionné."
+    test: { id: T-COM-03, type: config, verif: "Le validateur refuse une offre labelLimited pour un SKU déjà labelLimited dans les 365 jours précédents." }
+    livrable: 7
+  - id: COM-04
+    section: "8.2"
+    ref: "Directive 2005/29/CE art. 8-9 ; DSA art. 25 (interfaces trompeuses)"
+    nature: obligation
+    exigence: "Le bouton refuser/fermer est aussi visible que le bouton accepter/acheter."
+    fonctionnalite: "Composant DualChoice imposé à toute modale d'achat, de consentement ou d'échec : même taille, même contraste, même graisse."
+    test: { id: T-COM-04, type: e2e-ui, verif: "Pour chaque modale listée dans le registre des écrans : surface(refus) ≥ 0,95 × surface(accepter), contraste de chaque bouton ≥ 4,5:1, taille de police identique ; aucune modale n'utilise un autre composant." }
+    livrable: 3
+  - id: COM-05
+    section: "8.2"
+    ref: "RGPD art. 4(11) ; CJUE Planet49 C-673/17"
+    nature: obligation
+    exigence: "Aucune case pré-cochée."
+    fonctionnalite: "Toutes les cases et bascules des flux d'achat, de consentement et de notifications sont décochées par défaut."
+    test: { id: T-COM-05, type: e2e-ui, verif: "Le parcours DOM de chaque écran du registre ne trouve aucune input[type=checkbox|switch] cochée à l'ouverture." }
+    livrable: 6
+  - id: COM-06
+    section: "8.2"
+    ref: "Directive 2005/29/CE art. 8-9 ; DSA art. 25"
+    nature: obligation
+    exigence: "Aucune confirmation culpabilisante."
+    fonctionnalite: "Les libellés de refus proviennent d'une liste blanche : « Non merci », « Fermer », « Refuser », « Abandonner », « Plus tard »."
+    test: { id: T-COM-06, type: static, verif: "Le lint échoue si une clé i18n de type decline.* n'appartient pas à la liste blanche (toutes langues)." }
+    livrable: 3
+  - id: COM-07
+    section: "8.2"
+    ref: "Directive 2005/29/CE art. 5(3), 8-9 ; principes CPC 2024"
+    nature: obligation
+    exigence: "Aucune offre personnalisée selon la vulnérabilité supposée (frustration, série d'échecs, dépense élevée)."
+    fonctionnalite: "Le moteur d'offres a pour signature (pays, palier de progression, catalogue) → offres ; il n'importe pas les modules analytics, achats ou historique de défaites."
+    test: { id: T-COM-07, type: property, verif: "Pour 10 000 profils aléatoires ne différant que par les échecs, la dépense ou la durée de session, la sortie est identique ; une règle d'import interdit offers → analytics|purchases|attempts." }
+    livrable: 5
+  - id: COM-08
+    section: "8.2"
+    ref: "Engagement produit ; principes CPC 2024"
+    nature: engagement
+    exigence: "Tout le contenu de progression est atteignable gratuitement."
+    fonctionnalite: "Niveaux, zones, histoires et mécaniques sont gratuits ; chaque tâche a 3 variantes gratuites ; les cosmétiques premium sont étiquetés."
+    test: { id: T-COM-08, type: sim, verif: "Un joueur simulé sans achat, à 10 niveaux/jour, débloque toutes les zones et toutes les tâches de la version de contenu ; aucune tâche n'exige une variante premium." }
+    livrable: 5
+  - id: COM-09
+    section: "8.2"
+    ref: "Directive 2011/83/UE art. 6(1) et 8(2)"
+    nature: obligation
+    exigence: "Avant chaque achat : description exacte, prix TTC, quantité, durée éventuelle."
+    fonctionnalite: "Composant PurchaseSheet obligatoire pour chaque SKU, avec les champs description, quantités, prix du store, durée et renouvellement."
+    test: { id: T-COM-09, type: e2e-ui, verif: "Pour chaque SKU du catalogue, la fiche affiche des valeurs non vides pour les 4 champs, et la quantité affichée égale la quantité créditée par le serveur." }
+    livrable: 5
+  - id: COM-10
+    section: "8.2"
+    ref: "Directive 98/6/CE ; directive 2011/83/UE art. 6(1)(e)"
+    nature: obligation
+    exigence: "Prix TTC dans la devise locale du store."
+    fonctionnalite: "Les prix sont toujours lus depuis l'API du store (prix formaté) ; aucun prix codé en dur dans le client."
+    test: { id: T-COM-10, type: static, verif: "Le scan du code UI ne trouve aucun littéral monétaire (regex € ou décimal suivi d'une devise) hors fixtures de test ; en e2e, avec le store mocké en SEK, toute la boutique s'affiche en SEK." }
+    livrable: 5
+  - id: COM-11
+    section: "8.2"
+    ref: "Directive 98/6/CE art. 6 bis (Omnibus 2019/2161)"
+    nature: obligation
+    exigence: "Les réductions sont calculées par rapport à un prix réellement pratiqué (prix le plus bas des 30 jours précédents)."
+    fonctionnalite: "Le validateur de config calcule le prix de référence à partir de l'historique des prix ; un pourcentage ne peut pas être saisi à la main."
+    test: { id: T-COM-11, type: config, verif: "Une offre « −50 % » dont le prix de référence n'a pas été pratiqué dans les 30 jours précédents est rejetée ; un bundle affiche une « valeur » égale à la somme des prix unitaires réellement vendus." }
+    livrable: 7
+  - id: COM-12
+    section: "8.2"
+    ref: "Directive 2011/83/UE art. 16(m)"
+    nature: obligation
+    exigence: "Information sur le droit de rétractation du contenu numérique et renvoi vers la procédure de remboursement du store."
+    fonctionnalite: "La PurchaseSheet mentionne la perte du droit de rétractation à l'exécution immédiate, avec un lien vers les pages de remboursement Google et Apple, aussi présent dans Paramètres > Achats."
+    test: { id: T-COM-12, type: e2e-ui, verif: "Chaque fiche d'achat contient le texte de rétractation et un lien dont l'URL correspond à la plateforme courante." }
+    livrable: 5
+  - id: COM-13
+    section: "5"
+    ref: "Directive 2005/29/CE art. 8-9 ; engagement"
+    nature: obligation
+    exigence: "« +5 coups » à prix fixe, identique à chaque tentative ; message neutre sans minuteur ; Abandonner aussi visible."
+    fonctionnalite: "continuePrice(n) est constant ; l'écran d'échec utilise DualChoice et la liste neutre des objectifs restants."
+    test: { id: T-COM-13, type: unit, verif: "continuePrice(1..20) renvoie le même SKU et le même prix en pièces ; snapshot de l'écran d'échec sans minuteur ni chaîne de la liste noire d'urgence ; T-COM-04 s'applique." }
+    livrable: 5
+  - id: COM-14
+    section: "5"
+    ref: "Directive 2011/83/UE art. 6 et 8 ; Google Play subscriptions policy ; App Store 3.1.2"
+    nature: obligation
+    exigence: "Abonnement : prix, durée, renouvellement et moyen de résiliation affichés avant la souscription ; résiliation en 2 clics au plus via le store, avec un lien direct depuis le jeu."
+    fonctionnalite: "SubscriptionSheet ; Paramètres > Abonnement > « Gérer ou résilier » ouvre la page d'abonnement du store."
+    test: { id: T-COM-14, type: e2e-ui, verif: "La fiche affiche les 4 éléments ; le lien de résiliation est à 1 clic depuis Paramètres > Abonnement et pointe vers play.google.com/store/account/subscriptions?sku=…&package=… ou apps.apple.com/account/subscriptions." }
+    livrable: 5
+  - id: COM-15
+    section: "5"
+    ref: "Principes CPC 2024 sur les monnaies virtuelles"
+    nature: obligation
+    exigence: "Si une monnaie premium existe : prix en euros à côté de chaque prix en gemmes, packs sans reste inutilisable. Choix actuel : pas de monnaie premium."
+    fonctionnalite: "pricing.model = eur par défaut ; en mode gems, le composant Price affiche toujours l'équivalent en euros, et les packs sont générés pour couvrir exactement chaque prix d'article."
+    test: { id: T-COM-15, type: e2e-ui, verif: "Le parcours de tous les écrans trouve, pour chaque nœud data-price, un équivalent en devise du store ; en mode gems, pour chaque prix d'article p, une combinaison de packs atteint exactement p." }
+    livrable: 5
+  - id: COM-16
+    section: "5"
+    ref: "Principes CPC 2024 ; directive 2019/770"
+    nature: obligation
+    exigence: "Les crédits achetés n'expirent pas."
+    fonctionnalite: "Aucun champ d'expiration sur les soldes d'articles achetés (boosters, gemmes éventuelles) ; seules les durées explicites (vies illimitées, abonnement) expirent."
+    test: { id: T-COM-16, type: server, verif: "Un solde acheté vieilli artificiellement de 5 ans reste intact ; le schéma interdit expiresAt sur les entités d'inventaire acheté." }
+    livrable: 5
+  - id: COM-17
+    section: "8.2"
+    ref: "Directive 2019/770 ; directive 2011/83/UE"
+    nature: obligation
+    exigence: "Les achats ne sont crédités qu'après vérification serveur du reçu, et les remboursements sont répercutés."
+    fonctionnalite: "Vérification via Google Play Developer API et App Store Server API ; webhooks RTDN et App Store Server Notifications."
+    test: { id: T-COM-17, type: server, verif: "Un reçu falsifié est rejeté ; un reçu valide rejoué deux fois crédite une seule fois ; une notification de remboursement retire l'article non consommé." }
+    livrable: 5
+
+  # ───────────────────────── 8.3 Hasard payant ─────────────────────────
+  - id: RNG-01
+    section: "8.3"
+    ref: "Loi belge du 7 mai 1999 sur les jeux de hasard (avis de la Commission des jeux de hasard, 2018)"
+    nature: obligation
+    exigence: "Aucun élément aléatoire payant (ni loot box, ni roue, ni coffre payant)."
+    fonctionnalite: "Le schéma du catalogue interdit un contenu de type random sur tout SKU payant ; aucune conversion euros → monnaie → tirage."
+    test: { id: T-RNG-01, type: config, verif: "Le validateur rejette un SKU payant dont le contenu contient une table de tirage ; le graphe d'échanges (euros → article → tirage) ne contient aucun chemin vers un tirage." }
+    livrable: 5
+  - id: RNG-02
+    section: "8.3"
+    ref: "Engagement ; principes CPC 2024"
+    nature: engagement
+    exigence: "Les récompenses aléatoires gratuites affichent leurs probabilités."
+    fonctionnalite: "La roue et les coffres affichent la table de probabilités servie par la même config que le tirage serveur."
+    test: { id: T-RNG-02, type: server, verif: "Les probabilités affichées égalent la config et somment à 100 % ; 100 000 tirages seedés respectent la distribution (khi² p > 0,01)." }
+    livrable: 5
+  - id: RNG-03
+    section: "8.3"
+    ref: "Prudence : la qualification de la pub comme mise n'est pas tranchée en droit belge"
+    nature: engagement
+    exigence: "Aucun tirage supplémentaire obtenu contre paiement ou contre une pub."
+    fonctionnalite: "1 tour de roue par jour, non rachetable ; les pubs récompensées donnent une récompense fixe."
+    test: { id: T-RNG-03, type: config, verif: "Le validateur rejette toute récompense de pub de type random et tout SKU qui octroie un tour de roue." }
+    livrable: 5
+
+  # ───────────────────────── 8.4 RGPD + ePrivacy ─────────────────────────
+  - id: GDPR-01
+    section: "8.4"
+    ref: "RGPD art. 5(1)(c), 25"
+    nature: obligation
+    exigence: "Minimisation : identifiant pseudonyme, ni e-mail ni contacts sans nécessité."
+    fonctionnalite: "Compte = UUID aléatoire et pseudonyme ; e-mail seulement si l'utilisateur écrit au support ; aucune permission contacts ou localisation."
+    test: { id: T-GDPR-01, type: static, verif: "AndroidManifest et Info.plist ne déclarent aucune permission contacts, localisation, micro ou caméra ; le schéma de la table players ne contient ni e-mail, ni téléphone, ni nom." }
+    livrable: 6
+  - id: GDPR-02
+    section: "8.4"
+    ref: "RGPD art. 4(11), 7 ; ePrivacy art. 5(3) ; CNIL délibération 2020-091"
+    nature: obligation
+    exigence: "Bandeau de consentement au premier lancement : « Tout accepter » et « Tout refuser » au même niveau, finalités séparées."
+    fonctionnalite: "CMP Google UMP (TCF v2.2), affichée après l'écran d'âge ; finalités mesure d'audience, pub personnalisée (majeurs seulement) et pub non personnalisée."
+    test: { id: T-GDPR-02, type: e2e-ui, verif: "Les deux boutons sont sur le premier écran, à surface égale à ±5 % ; les 3 finalités sont activables séparément ; T-COM-05 s'applique." }
+    livrable: 6
+  - id: GDPR-03
+    section: "8.4"
+    ref: "ePrivacy art. 5(3) ; critère d'acceptation"
+    nature: obligation
+    exigence: "Aucun SDK analytics ou publicitaire initialisé avant le consentement ; aucune requête tierce avant le consentement."
+    fonctionnalite: "ConsentGate : les SDK tiers sont importés dynamiquement après la décision ; liste blanche d'hôtes par état de consentement."
+    test: { id: T-GDPR-03, type: network, verif: "Sous mitmproxy, du premier lancement à l'écran de consentement, toutes les requêtes visent l'API first-party (UE) ou le CDN de la CMP ; après « Tout refuser », aucune requête vers un hôte analytics ; les requêtes pub sont seulement en mode limité, sans identifiant." }
+    livrable: 6
+  - id: GDPR-04
+    section: "8.4"
+    ref: "RGPD art. 7(3)"
+    nature: obligation
+    exigence: "Consentement modifiable et retirable à tout moment, aussi facilement qu'il a été donné."
+    fonctionnalite: "Paramètres > Confidentialité > « Gérer mes choix » rouvre la CMP ; le retrait coupe les SDK concernés sans redémarrage."
+    test: { id: T-GDPR-04, type: e2e-ui, verif: "L'écran est à 2 clics au plus depuis l'accueil ; après retrait de la mesure d'audience, plus aucun événement analytics n'est émis (interception réseau)." }
+    livrable: 6
+  - id: GDPR-05
+    section: "8.4"
+    ref: "RGPD art. 7(4) (consentement libre)"
+    nature: obligation
+    exigence: "En cas de refus, le jeu reste 100 % jouable."
+    fonctionnalite: "Aucune fonctionnalité de jeu n'est conditionnée au consentement ; pubs limitées uniquement."
+    test: { id: T-GDPR-05, type: e2e-ui, verif: "Profil « Tout refuser » : jouer, acheter, rejoindre une équipe, réclamer la roue et une récompense de pub (si disponible) fonctionnent sans message d'incitation au consentement." }
+    livrable: 6
+  - id: GDPR-06
+    section: "8.4"
+    ref: "RGPD art. 15, 20"
+    nature: obligation
+    exigence: "Consultation et export des données en JSON."
+    fonctionnalite: "Paramètres > Confidentialité > « Exporter mes données » produit un fichier JSON couvrant toutes les tables liées au joueur."
+    test: { id: T-GDPR-06, type: server, verif: "L'export d'un joueur de test contient une entrée pour chaque table du registre de données marquée personnelle ; il est validé par JSON Schema ; délai < 1 min." }
+    livrable: 6
+  - id: GDPR-07
+    section: "8.4"
+    ref: "RGPD art. 17 ; C. com. L123-22 (conservation comptable)"
+    nature: obligation
+    exigence: "Suppression du compte et des données effective sous 30 jours et vérifiée en base."
+    fonctionnalite: "Verrouillage immédiat du compte ; tâche d'effacement à J+7 au plus ; transactions conservées pseudonymisées, sans lien avec le profil ; sauvegardes en rotation de 30 jours au plus."
+    test: { id: T-GDPR-07, type: server, verif: "Après exécution de la tâche, une requête sur chaque table du registre avec l'identifiant du joueur renvoie 0 ligne, sauf la table ledger dont les lignes ne contiennent plus aucune clé reliable au profil." }
+    livrable: 6
+  - id: GDPR-08
+    section: "8.4"
+    ref: "RGPD art. 28, 44-46 ; décision d'adéquation UE-USA (2023)"
+    nature: obligation
+    exigence: "Hébergement UE ; sous-traitants avec DPA ; transferts hors UE seulement avec garanties."
+    fonctionnalite: "Infrastructure en région UE ; fichier subprocessors.yaml (nom, rôle, pays, garantie, lien du DPA)."
+    test: { id: T-GDPR-08, type: static, verif: "L'IaC n'utilise que des régions UE ; chaque hôte de la liste blanche réseau correspond à une entrée de subprocessors.yaml avec garantie renseignée." }
+    livrable: 7
+  - id: GDPR-09
+    section: "8.4"
+    ref: "RGPD art. 5(1)(e)"
+    nature: obligation
+    exigence: "Durées de conservation définies et appliquées."
+    fonctionnalite: "Table de rétention par catégorie (analytics 13 mois, logs 6 mois, chat 90 jours, signalements 2 ans, ledger 10 ans) ; purge quotidienne."
+    test: { id: T-GDPR-09, type: server, verif: "Avec des données vieillies au-delà de leur durée, la purge les supprime toutes ; les durées en base égalent celles de la politique de confidentialité (même source)." }
+    livrable: 7
+  - id: GDPR-10
+    section: "8.4"
+    ref: "RGPD art. 30, 35"
+    nature: obligation
+    exigence: "Registre des traitements et AIPD (données de mineurs)."
+    fonctionnalite: "Modèles générés à partir de l'inventaire de données (une seule source)."
+    test: { id: T-GDPR-10, type: doc, verif: "Le registre contient pour chaque traitement les rubriques de l'art. 30(1) a à g ; l'AIPD contient les 4 éléments de l'art. 35(7)." }
+    livrable: 8
+  - id: GDPR-11
+    section: "8.4"
+    ref: "RGPD art. 8(1)-(2)"
+    nature: obligation
+    exigence: "Sous le seuil national, aucun traitement fondé sur le consentement sans autorisation parentale."
+    fonctionnalite: "Sous consentAge(pays), les finalités soumises au consentement ne sont pas proposées et sont traitées comme refusées (pas de recueil parental à vérifier)."
+    test: { id: T-GDPR-11, type: e2e-ui, verif: "Profil FR de 14 ans : la CMP n'est pas affichée, la mesure d'audience et la pub non personnalisée avec stockage sont inactives, et T-GDPR-03 s'applique comme en refus." }
+    livrable: 6
+
+  # ───────────────────────── 8.5 DSA ─────────────────────────
+  - id: DSA-01
+    section: "8.5"
+    ref: "DSA art. 11, 12"
+    nature: obligation
+    exigence: "Point de contact unique pour les utilisateurs et les autorités (e-mail et formulaire)."
+    fonctionnalite: "Paramètres > Aide > Contact ; page web publique avec e-mail, formulaire et langues acceptées."
+    test: { id: T-DSA-01, type: e2e-ui, verif: "Le lien est à 2 clics au plus ; la page affiche une adresse e-mail valide, le formulaire et les langues ; la soumission crée un ticket." }
+    livrable: 6
+  - id: DSA-02
+    section: "8.5"
+    ref: "DSA art. 16"
+    nature: obligation
+    exigence: "Mécanisme de signalement de contenu illicite sur chaque message et chaque profil."
+    fonctionnalite: "Bouton Signaler avec motif (liste et texte), contenu concerné et horodatage ; accusé de réception."
+    test: { id: T-DSA-02, type: e2e-ui, verif: "Chaque message et chaque profil rendu expose un bouton Signaler accessible (rôle button, libellé) ; la soumission crée un signalement et renvoie un accusé." }
+    livrable: 6
+  - id: DSA-03
+    section: "8.5"
+    ref: "DSA art. 17"
+    nature: obligation
+    exigence: "Décision de modération motivée et notifiée."
+    fonctionnalite: "Le back-office impose le fondement (CGU ou illicéité), les faits et le type de mesure ; l'utilisateur concerné est notifié en jeu."
+    test: { id: T-DSA-03, type: server, verif: "L'API de décision rejette une décision sans fondement ou sans exposé des faits ; la notification contient les champs de l'art. 17(3)." }
+    livrable: 6
+  - id: DSA-04
+    section: "8.5"
+    ref: "DSA art. 20 (plateformes) ; engagement si statut d'hébergeur"
+    nature: engagement
+    exigence: "Recours interne contre les décisions."
+    fonctionnalite: "Bouton « Contester » sur chaque décision, traité par un modérateur différent."
+    test: { id: T-DSA-04, type: server, verif: "Une contestation est assignée à un modérateur différent de l'auteur de la décision ; le statut final est notifié." }
+    livrable: 6
+  - id: DSA-05
+    section: "8.5"
+    ref: "DSA art. 14(1), 14(3)"
+    nature: obligation
+    exigence: "CGU claires sur la modération, aussi en version simplifiée lisible par un mineur."
+    fonctionnalite: "CGU complètes et version courte (« L'essentiel en 10 points »)."
+    test: { id: T-DSA-05, type: doc, verif: "Les deux versions existent dans chaque langue cible ; la version courte a un score de lisibilité adapté (Flesch FR ≥ 60) ; elles couvrent modération, outils automatisés et recours." }
+    livrable: 8
+  - id: DSA-06
+    section: "8.5"
+    ref: "DSA art. 30-31 (obligation des stores, informations fournies par l'éditeur)"
+    nature: store
+    exigence: "Statut de professionnel déclaré sur les deux stores : nom, adresse, e-mail, téléphone, immatriculation."
+    fonctionnalite: "Fiche éditeur renseignée dans Play Console et App Store Connect."
+    test: { id: T-DSA-06, type: manual, verif: "Captures des deux consoles archivées ; les informations correspondent aux mentions légales (contrôle croisé automatisé du texte)." }
+    livrable: 8
+  - id: DSA-07
+    section: "7 / 8.5"
+    ref: "DSA art. 16 ; engagement"
+    nature: engagement
+    exigence: "Filtre de grossièretés, blocage d'utilisateur, pseudonymes filtrés, aucune donnée personnelle affichée."
+    fonctionnalite: "Filtre multilingue côté serveur ; liste de blocage ; validation des pseudonymes (grossièretés, e-mail, téléphone, URL)."
+    test: { id: T-DSA-07, type: unit, verif: "Corpus de test par langue : pseudonymes et messages interdits rejetés à au moins 95 %, faux positifs sous 2 % ; un utilisateur bloqué n'apparaît plus dans le flux." }
+    livrable: 6
+
+  # ───────────────────────── 8.6 Contenu numérique ─────────────────────────
+  - id: DIG-01
+    section: "8.6"
+    ref: "Directive 2019/770 art. 8(2)"
+    nature: obligation
+    exigence: "Mises à jour de sécurité et de conformité fournies ; changelog en jeu."
+    fonctionnalite: "Paramètres > Nouveautés lit les notes de version ; les mises à jour de conformité sont marquées."
+    test: { id: T-DIG-01, type: e2e-ui, verif: "L'écran affiche l'entrée de la version courante ; la CI échoue si une version n'a pas de note." }
+    livrable: 7
+  - id: DIG-02
+    section: "8.6"
+    ref: "Directive 2019/770 ; engagement"
+    nature: engagement
+    exigence: "En cas de fermeture : préavis en jeu de 90 jours au moins ; arrêt de la vente de crédits dès l'annonce."
+    fonctionnalite: "Config sunset.announcedAt et sunset.closesAt ; dès l'annonce, les SKU consommables, passes et abonnements ne sont plus vendables et les renouvellements sont désactivés."
+    test: { id: T-DIG-02, type: config, verif: "Le validateur refuse closesAt − announcedAt < 90 jours ; après announcedAt, le catalogue servi ne contient aucun SKU payant et une bannière d'information s'affiche." }
+    livrable: 7
+
+  # ───────────────────────── 8.7 Accessibilité ─────────────────────────
+  - id: ACC-01
+    section: "8.7"
+    ref: "Directive (UE) 2019/882 (EAA) annexe I ; exemption micro-entreprise art. 4(5) à vérifier"
+    nature: engagement
+    exigence: "Parcours d'achat compatible VoiceOver et TalkBack."
+    fonctionnalite: "Boutique et fiches d'achat en DOM avec ARIA (rôles, libellés, ordre de focus) ; aucun écran d'achat en canvas."
+    test: { id: T-ACC-01, type: e2e-ui, verif: "axe-core : 0 violation sérieuse ou critique sur les écrans boutique, fiche d'achat, abonnement et passe ; parcours clavier complet jusqu'au bouton d'achat ; test manuel TalkBack et VoiceOver archivé." }
+    livrable: 5
+  - id: ACC-02
+    section: "8.7"
+    ref: "WCAG 2.1 AA (EN 301 549)"
+    nature: engagement
+    exigence: "Contrastes WCAG 2.1 AA."
+    fonctionnalite: "Jetons de couleur validés ; texte ≥ 4,5:1, grands textes et icônes ≥ 3:1."
+    test: { id: T-ACC-02, type: unit, verif: "Le script de jetons calcule les ratios de chaque paire texte/fond déclarée ; échec sous AA ; axe-core color-contrast sans violation." }
+    livrable: 3
+  - id: ACC-03
+    section: "8.7"
+    ref: "Directive (UE) 2019/882 annexe V"
+    nature: engagement
+    exigence: "Déclaration d'accessibilité."
+    fonctionnalite: "Page publique liée depuis Paramètres > Aide."
+    test: { id: T-ACC-03, type: doc, verif: "La déclaration contient l'état de conformité, les non-conformités, la date et le contact." }
+    livrable: 8
+  - id: ACC-04
+    section: "1"
+    ref: "WCAG 2.1 SC 1.4.1, 1.4.4, 2.3.1 ; engagement"
+    nature: engagement
+    exigence: "Forme distincte par couleur, taille de texte réglable, sous-titres, aucun flash de plus de 3 par seconde, jouable d'une main."
+    fonctionnalite: "Pièces avec forme ; échelle typographique 100/125/150 % ; sous-titres ; limiteur de flashs dans le moteur de particules ; zone d'interaction dans le bas de l'écran."
+    test: { id: T-ACC-04, type: unit, verif: "Les 6 pièces ont des formes uniques, distinguables en niveaux de gris (différence de silhouette) ; le limiteur bloque plus de 3 pics de luminance par seconde sur un replay de combos ; à 150 %, aucun texte n'est tronqué ; toutes les commandes de jeu sont dans les 60 % inférieurs de l'écran." }
+    livrable: 3
+
+  # ───────────────────────── 8.8 Classification et stores ─────────────────────────
+  - id: STO-01
+    section: "8.8"
+    ref: "IARC ; PEGI"
+    nature: store
+    exigence: "Questionnaire IARC rempli honnêtement, d'où la mention PEGI « Achats intégrés »."
+    fonctionnalite: "Réponses archivées dans le dépôt (docs/stores/iarc.md)."
+    test: { id: T-STO-01, type: manual, verif: "Les réponses sont cohérentes avec le catalogue (achats intégrés oui, éléments aléatoires payants non, interaction utilisateurs oui) ; contrôle croisé automatisé avec la config." }
+    livrable: 8
+  - id: STO-02
+    section: "8.8"
+    ref: "Google Play User Data policy (Data safety)"
+    nature: store
+    exigence: "Formulaire « Sécurité des données » exact."
+    fonctionnalite: "Réponses générées depuis l'inventaire de données (data-inventory.yaml)."
+    test: { id: T-STO-02, type: static, verif: "Le générateur produit les réponses ; un test échoue si un type de donnée collecté dans le code (annotation @collects) manque à l'inventaire." }
+    livrable: 8
+  - id: STO-03
+    section: "8.8"
+    ref: "Google Play Families policy"
+    nature: store
+    exigence: "Si le public cible inclut des enfants : politique Familles et SDK certifiés uniquement. Hypothèse actuelle : public 13 ans et plus, hors Familles."
+    fonctionnalite: "Drapeau targetAudience dans la config de build ; s'il vaut children, la CI refuse tout SDK absent de la liste Families."
+    test: { id: T-STO-03, type: static, verif: "Avec targetAudience=children, la CI échoue si une dépendance native n'est pas sur la liste des SDK certifiés." }
+    livrable: 8
+  - id: STO-04
+    section: "8.8"
+    ref: "App Store 3.1.1, 5.1.1, 5.1.2 ; Google Play Payments policy"
+    nature: store
+    exigence: "Achats via StoreKit et Play Billing uniquement ; étiquettes de confidentialité ; ATT."
+    fonctionnalite: "Un seul adaptateur de paiement par plateforme ; aucun lien de paiement externe ; PrivacyInfo.xcprivacy généré depuis l'inventaire."
+    test: { id: T-STO-04, type: static, verif: "Le scan du code ne trouve aucune URL de paiement externe ni SDK de paiement tiers ; le manifeste de confidentialité est cohérent avec l'inventaire." }
+    livrable: 8
+  - id: STO-05
+    section: "8.8"
+    ref: "Directive 2011/83/UE art. 6 ; lois linguistiques nationales (FR loi 94-665)"
+    nature: obligation
+    exigence: "Interface, CGU, CGV et politique de confidentialité au moins en FR et EN, puis dans la langue de chaque pays ciblé."
+    fonctionnalite: "i18n : fr, en, nl, de, es, it ; documents juridiques dans les mêmes langues."
+    test: { id: T-STO-05, type: static, verif: "Chaque clé i18n existe dans les 6 locales ; chaque document juridique existe dans les 6 locales." }
+    livrable: 7
+
+  # ───────────────────────── 8.9 DFA ─────────────────────────
+  - id: DFA-01
+    section: "8.9"
+    ref: "Anticipation du Digital Fairness Act"
+    nature: engagement
+    exigence: "Paramètres de monétisation pilotables par pays via la config distante."
+    fonctionnalite: "Surcharges par pays : plafond mineurs, pubs (activées, maximum par jour), offres, achat tardif du passe, âge de consentement."
+    test: { id: T-DFA-01, type: config, verif: "Le schéma accepte des surcharges par pays pour chaque paramètre listé ; en intégration, une surcharge BE (pubs désactivées) prend effet au rafraîchissement de la config, sans nouvelle version." }
+    livrable: 7
+
+  # ───────────────────────── Équité, économie, saison, bien-être, analytics ─────────────────────────
+  - id: FAIR-01
+    section: "4"
+    ref: "Engagement ; directive 2005/29/CE art. 5"
+    nature: engagement
+    exigence: "La difficulté ne dépend jamais du profil de dépense : le niveau N est identique pour tous."
+    fonctionnalite: "Le chargeur de niveau a pour signature (N, contentVersion) ; aucune difficulté dynamique individuelle."
+    test: { id: T-FAIR-01, type: property, verif: "Le hash du niveau N est identique pour 1 000 profils aléatoires ; une règle d'import interdit levels → player|purchases|analytics ; un recalibrage global change contentVersion pour tous." }
+    livrable: 4
+  - id: FAIR-02
+    section: "Critères"
+    ref: "Critère d'acceptation"
+    nature: engagement
+    exigence: "Un joueur gratuit à 10 niveaux par jour n'est jamais bloqué plus de 2 jours sur un niveau."
+    fonctionnalite: "Simulation de progression avec bot calibré, vies, boosters gratuits."
+    test: { id: T-FAIR-02, type: sim, verif: "1 000 joueurs simulés sur les niveaux 1–2000 : aucun n'a plus de 2 jours consécutifs sur le même niveau (P99,9)." }
+    livrable: 4
+  - id: ECO-01
+    section: "5"
+    ref: "Engagement"
+    nature: engagement
+    exigence: "Seule une défaite coûte une vie ; 5 au maximum ; +1 toutes les 30 min."
+    fonctionnalite: "Machine à états des vies côté serveur, avec horodatage."
+    test: { id: T-ECO-01, type: unit, verif: "Victoire : 0 vie consommée ; abandon avant le premier coup : 0 ; défaite : 1 ; régénération exacte à 30 min ; plafond à 5." }
+    livrable: 5
+  - id: ECO-02
+    section: "5"
+    ref: "Engagement"
+    nature: engagement
+    exigence: "Pubs récompensées facultatives, 5 par jour au maximum."
+    fonctionnalite: "Compteur serveur par jour local ; aucune pub non sollicitée."
+    test: { id: T-ECO-02, type: server, verif: "La 6e demande du jour est refusée ; aucune pub ne se lance sans action explicite." }
+    livrable: 5
+  - id: ECO-03
+    section: "3"
+    ref: "Engagement"
+    nature: engagement
+    exigence: "Tous les boosters s'obtiennent gratuitement ; débloqués aux niveaux 8, 12, 18, 25, 32, 40 avec 3 exemplaires gratuits."
+    fonctionnalite: "Tables de récompenses des quêtes, paliers et coffres."
+    test: { id: T-ECO-03, type: sim, verif: "Le joueur simulé gratuit obtient au moins une fois chaque booster par une source gratuite dans les 30 premiers jours ; 3 exemplaires sont crédités au déblocage." }
+    livrable: 5
+  - id: SEA-01
+    section: "6"
+    ref: "Directive 2011/83/UE art. 6 ; directive 2005/29/CE"
+    nature: obligation
+    exigence: "Saison de 20 jours exactement ; dates de début et de fin affichées dès l'ouverture du passe."
+    fonctionnalite: "Config season.startAt et durationDays=20 ; en-tête du passe avec les dates localisées."
+    test: { id: T-SEA-01, type: config, verif: "Le validateur refuse une durée différente de 20 jours ; l'en-tête affiche les deux dates au fuseau local." }
+    livrable: 5
+  - id: SEA-02
+    section: "6"
+    ref: "Directive 2005/29/CE art. 6-7"
+    nature: obligation
+    exigence: "Avant l'achat : liste complète des récompenses, jours restants, estimation honnête du palier atteignable."
+    fonctionnalite: "PassPurchaseSheet ; l'estimation repose sur la médiane de l'XP par jour sur 3 jours, arrondie vers le bas."
+    test: { id: T-SEA-02, type: unit, verif: "La liste rendue contient les 40 récompenses premium et les 20 gratuites ; estimateTier() sur un historique [100, 900, 300] utilise 300 et non 900 ; le résultat est arrondi vers le bas." }
+    livrable: 5
+  - id: SEA-03
+    section: "6"
+    ref: "Directive 2005/29/CE art. 6"
+    nature: obligation
+    exigence: "Achat tardif : paliers atteints débloqués ; dans les 3 derniers jours, achat non proposé ou avertissement explicite si le palier 40 est hors de portée."
+    fonctionnalite: "Règle lateBuy configurable par pays ; mineurs : pas d'offre dans les 3 derniers jours."
+    test: { id: T-SEA-03, type: unit, verif: "Achat au palier 12 : 12 récompenses premium créditées ; à J−2 avec une estimation de 31, l'écran contient l'avertissement chiffré ; profil 16 ans à J−2 : passe non proposé." }
+    livrable: 5
+  - id: SEA-04
+    section: "6"
+    ref: "Directive 2019/770"
+    nature: obligation
+    exigence: "Récompenses gagnées mais non réclamées en fin de saison créditées automatiquement ; coffre gratuit tous les 300 XP après le palier 40, probabilités affichées."
+    fonctionnalite: "Tâche serveur de clôture ; coffre gratuit relié à RNG-02."
+    test: { id: T-SEA-04, type: server, verif: "Après la clôture, inventaire = réclamé + non réclamé ; aucun coffre post-40 n'est associé à un SKU." }
+    livrable: 5
+  - id: NOT-01
+    section: "7"
+    ref: "ePrivacy art. 13 ; engagement"
+    nature: engagement
+    exigence: "Notifications opt-in, 2 par jour au maximum, aucune entre 22 h et 8 h heure locale, désactivables par catégorie."
+    fonctionnalite: "Le planificateur applique le quota, la fenêtre locale et les catégories ; demande de permission système seulement après une explication en jeu."
+    test: { id: T-NOT-01, type: unit, verif: "Sans opt-in, aucune programmation ; 3e notification du jour refusée ; une notification prévue à 23 h locale est reportée à 8 h ; une catégorie désactivée ne reçoit rien." }
+    livrable: 7
+  - id: WELL-01
+    section: "7"
+    ref: "Engagement"
+    nature: engagement
+    exigence: "Rappel facultatif du temps de jeu ; récapitulatif mensuel des dépenses consultable."
+    fonctionnalite: "Paramètres > Bien-être (30 min, 1 h, 2 h, désactivé) ; Paramètres > Achats > récapitulatif par mois issu du ledger serveur."
+    test: { id: T-WELL-01, type: e2e-ui, verif: "Le rappel se déclenche au seuil choisi ; le total du récapitulatif égale la somme des reçus vérifiés du mois." }
+    livrable: 7
+  - id: ANA-01
+    section: "9"
+    ref: "Engagement de protection"
+    nature: engagement
+    exigence: "Indicateurs de protection (part des revenus des mineurs, joueurs au plafond, sessions de plus de 3 h) avec alertes."
+    fonctionnalite: "Requêtes agrégées sur le ledger (base légale : obligation de conformité, données agrégées) ; seuils d'alerte configurables."
+    test: { id: T-ANA-01, type: server, verif: "Sur un jeu de données synthétique dépassant chaque seuil, chaque alerte se déclenche une fois ; sous les seuils, aucune ne se déclenche." }
+    livrable: 7
+  - id: ANA-02
+    section: "9"
+    ref: "Directive 2005/29/CE art. 5(3) ; principes CPC 2024"
+    nature: obligation
+    exigence: "Les tests de prix sont limités à des écarts annoncés publiquement et ne ciblent jamais des profils vulnérables."
+    fonctionnalite: "Le validateur d'expériences exige publicAnnouncementUrl pour toute variable de prix ; les segments ne peuvent référencer ni l'âge, ni la dépense, ni les échecs."
+    test: { id: T-ANA-02, type: config, verif: "Une expérience de prix sans annonce est rejetée ; un segment fondé sur spend, age ou failStreak est rejeté." }
+    livrable: 7

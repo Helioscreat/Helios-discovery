@@ -1,0 +1,14 @@
+{
+  "name": "helios-discovery",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "matrix": "node tools/check-matrix.mjs",
+    "matrix:coverage": "node tools/check-matrix.mjs --coverage",
+    "matrix:strict": "node tools/check-matrix.mjs --coverage --strict"
+  },
+  "devDependencies": {
+    "yaml": "^2.9.1"
+  }
+}
