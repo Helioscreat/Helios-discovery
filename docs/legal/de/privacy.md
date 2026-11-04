@@ -8,7 +8,7 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 
 - Dein Konto ist pseudonym: Wir fragen weder nach deinem Namen noch nach deiner Adresse oder Telefonnummer.
 - Unsere Server stehen in der Europäischen Union. Wir verkaufen keine Daten.
-- Reichweitenmessung und Werbung starten nur, wenn du einverstanden bist. Du kannst deine Meinung jederzeit ändern.
+- Die Reichweitenmessung startet nur, wenn du einverstanden bist. Für Werbung fragt Google nach deiner Wahl; lehnst du ab, bleibt nur eingeschränkte Werbung ohne Tracking möglich, wenn du selbst ein Belohnungsvideo ansiehst.
 - Du kannst deine Daten unter Einstellungen > Datenschutz herunterladen oder löschen.
 
 ## 1. Verantwortlicher
@@ -47,7 +47,8 @@ Nur die Mitglieder unseres Teams, die sie brauchen, haben Zugriff auf deine Date
 | Scaleway SAS | Hosting von Server und Datenbank (Paris) | Frankreich | Daten bleiben in der EU |
 | Google Ireland Ltd (Google Play) | Zahlung und Prüfung der Käufe unter Android | Irland | EU-US-Rahmen und Standardklauseln |
 | Apple Distribution International | Zahlung und Prüfung der Käufe unter iOS | Irland | EU-US-Rahmen und Standardklauseln |
-| Google Ireland Ltd (AdMob, UMP) | Belohnungsvideos und Einwilligungsplattform (erst nach deiner Einwilligung) | Irland | EU-US-Rahmen und Standardklauseln |
+| Google Ireland Ltd (UMP) | Einwilligungsformular für Werbung (Google UMP) | Irland | EU-US-Rahmen und Standardklauseln |
+| Google Ireland Ltd (AdMob) | Freiwillige Belohnungsvideos (erst nach deiner Einwilligung) | Irland | EU-US-Rahmen und Standardklauseln |
 | Google Ireland Ltd (Firebase Cloud Messaging) | Versand von Benachrichtigungen unter Android (erst nach deiner Einwilligung) | Irland | EU-US-Rahmen und Standardklauseln |
 | Apple Distribution International (APNs) | Versand von Benachrichtigungen unter iOS (erst nach deiner Einwilligung) | Irland | EU-US-Rahmen und Standardklauseln |
 
@@ -84,8 +85,9 @@ Das Spiel speichert auf deinem Gerät nur, was für seinen Betrieb unbedingt erf
 | helios.profile.v1 | Anzahl der Versuche pro Level (kostenlose Hilfe nach 8 Fehlversuchen) |
 | helios.compliance.v1 | Altersgruppe und Einwilligungsentscheidungen |
 | helios.account.v1 | ID und Token des Kontos |
+| IABTCF_* | Deine Werbeeinstellungen, gespeichert durch das Formular von Google |
 
-Werbe- und Benachrichtigungsdienste werden erst nach deiner Einwilligung geladen. Vor dieser Entscheidung geht keine Anfrage an Dritte.
+Werbe- und Benachrichtigungsdienste werden erst nach deiner Einwilligung geladen. Davor ist der einzige Aufruf an Dritte das Einwilligungsformular von Google (UMP), und nur, wenn dir Werbung angeboten werden kann (Alter und Land).
 
 ## 7. Wenn du unter 18 bist
 

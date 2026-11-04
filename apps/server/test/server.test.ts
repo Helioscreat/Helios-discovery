@@ -59,12 +59,13 @@ describe("comptes et âge", () => {
     expect((await call("GET", "/v1/me", undefined, a.token)).json.age.band).toBe("minor");
   });
 
-  it("consentement normalisé côté serveur : un mineur ne peut pas activer la pub personnalisée", async () => {
+  it("consentement normalisé côté serveur : mesure d'audience refusée sous l'âge du consentement ; statut UMP journalisé tel quel ou ignoré", async () => {
     const m = await player(16);
-    const r = await call("POST", "/v1/me/consent", { analytics: true, adsPersonalized: true, adsNonPersonalized: true }, m.token);
-    expect(r.json.consent).toEqual({ analytics: true, adsPersonalized: false, adsNonPersonalized: true });
+    const r = await call("POST", "/v1/me/consent", { analytics: true, adsStatus: "NOT_REQUIRED", adsPersonalized: true }, m.token);
+    expect(r.json.consent).toEqual({ analytics: true, adsStatus: "NOT_REQUIRED" });
     const u = await player(14);
-    expect((await call("POST", "/v1/me/consent", { analytics: true, adsPersonalized: true, adsNonPersonalized: true }, u.token)).json.consent).toEqual({ analytics: false, adsPersonalized: false, adsNonPersonalized: false });
+    expect((await call("POST", "/v1/me/consent", { analytics: true, adsStatus: "pirate" }, u.token)).json.consent).toEqual({ analytics: false, adsStatus: null });
+    expect((await call("GET", "/v1/me", undefined, m.token)).json.consent).toMatchObject({ analytics: true, adsStatus: "NOT_REQUIRED", version: "2026-11-v2" });
   });
 });
 

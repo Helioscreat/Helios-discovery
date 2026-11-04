@@ -19,7 +19,8 @@ import {
 } from "@helios/economy";
 import { currentSeason, endLevel, grant, saveMeta, type MetaState, type Shop } from "../game/meta";
 import { categoriesFor, CHANGELOG, DEFAULT_CONFIG, DEFAULT_PREFS, resolveConfig, type ResolvedConfig } from "@helios/config";
-import type { ConsentChoice } from "@helios/compliance";
+import { ADS_UNKNOWN, umpPlan, type ConsentChoice } from "@helios/compliance";
+import type { ConsentPlatform, TestUmp } from "../game/ump";
 import { Analytics, applyBirth, applyConsent, nextOnboardingStep, saveCompliance, type Api, type ComplianceState } from "../game/compliance";
 import { AgeGate, ConsentScreen, ContactScreen, DeleteAccountModal, ParentalModal, PrivacySettings, ReportModal, TeamScreen } from "./Compliance";
 
@@ -51,6 +52,8 @@ export interface AppProps {
   clock: () => number;
   api: Api;
   compliance: ComplianceState;
+  /** Consentement publicitaire : Google UMP (natif), aucune publicité (web) ou doublure (tests). */
+  consentPlatform: Promise<ConsentPlatform>;
   /** Crochets de test (activés par ?test=1) : exposent l'état sans passer par le canvas. */
   testHooks?: (api: TestApi) => void;
 }
@@ -71,6 +74,7 @@ export interface TestApi {
   goto: (s: Screen) => void;
   compliance: () => ComplianceState;
   analyticsSent: () => number;
+  umpCalls: () => Promise<TestUmp["calls"]>;
 }
 
 type Screen = "home" | "game" | "shop" | "pass" | "rewards" | "island" | "contact" | "team";
@@ -139,9 +143,52 @@ export function App(props: AppProps) {
   const step = nextOnboardingStep(comp);
   // Config distante du pays du joueur (appliquée sans mise à jour de l'application).
   const [rc, setRc] = useState<ResolvedConfig>(() => resolveConfig(DEFAULT_CONFIG, props.compliance.country));
+  const [rcLoaded, setRcLoaded] = useState(!api.online);
   useEffect(() => {
-    if (api.online) void api.config(compRef.current.country).then(setRc).catch(() => undefined);
+    if (api.online) void api.config(compRef.current.country).then(setRc).catch(() => undefined).finally(() => setRcLoaded(true));
   }, []);
+
+  // Google UMP : à chaque lancement, après notre écran et la config du pays ; jamais sous l'âge du consentement.
+  const adsEnabled = rc.monetization.ads.enabled;
+  const umpDone = useMemo(() => ({ key: "" }), []);
+  const logAds = (c: ComplianceState) => {
+    if (api.online && c.account) void api.setConsent(c).catch(() => undefined);
+  };
+  useEffect(() => {
+    if (step !== "done" || !rcLoaded) return;
+    const plan = umpPlan(comp.age, adsEnabled);
+    const key = `${comp.age.band}:${comp.age.underConsentAge}:${adsEnabled}`;
+    if (umpDone.key === key) return;
+    umpDone.key = key;
+    if (!plan.call) {
+      if (compRef.current.ads.status !== "UNKNOWN") setComp({ ...compRef.current, ads: ADS_UNKNOWN });
+      return;
+    }
+    void props.consentPlatform
+      .then((p) => p.gather(plan))
+      .then((ads) => {
+        const next = { ...compRef.current, ads };
+        setComp(next);
+        logAds(next);
+      })
+      .catch(() => undefined);
+  }, [step, rcLoaded, adsEnabled, comp.age.band, comp.age.underConsentAge]);
+  const openAdChoices = () => {
+    const plan = umpPlan(compRef.current.age, adsEnabled);
+    if (!plan.call) return;
+    void props.consentPlatform
+      .then((p) => p.showPrivacyOptions(plan))
+      .then((ads) => {
+        const next = { ...compRef.current, ads };
+        setComp(next);
+        logAds(next);
+      })
+      .catch(() => undefined);
+  };
+  const adsNext = (() => {
+    const plan = umpPlan(comp.age, adsEnabled);
+    return plan.call && plan.mayShowForm;
+  })();
   // Durée de session (mesure d'audience consentie) : envoyée quand le jeu passe en arrière-plan.
   useEffect(() => {
     let start = props.clock();
@@ -415,13 +462,14 @@ export function App(props: AppProps) {
     goto: (sc) => setScreen(sc),
     compliance: () => compRef.current,
     analyticsSent: () => analytics.sent,
+    umpCalls: () => props.consentPlatform.then((p) => (p.kind === "test" ? (p as TestUmp).calls : [])),
   });
 
   const st = session?.state;
   if (step !== "done") {
     return (
       <div class="app" data-screen={step === "age" ? "age-gate" : "consent"}>
-        {step === "age" ? <AgeGate nowYear={new Date(props.clock()).getUTCFullYear()} error={ageError} onSubmit={(b) => void submitAge(b)} /> : <ConsentScreen state={comp} onSave={saveConsent} />}
+        {step === "age" ? <AgeGate nowYear={new Date(props.clock()).getUTCFullYear()} error={ageError} onSubmit={(b) => void submitAge(b)} /> : <ConsentScreen state={comp} onSave={saveConsent} adsNext={adsNext} />}
       </div>
     );
   }
@@ -752,6 +800,7 @@ export function App(props: AppProps) {
             state={comp}
             api={api}
             onManageConsent={() => setOverlay({ kind: "consent-manage" })}
+            onAdChoices={openAdChoices}
             onDelete={() => setOverlay({ kind: "delete", done: "" })}
             onContact={() => { setOverlay({ kind: "none" }); setScreen("contact"); }}
             onParental={() => setOverlay({ kind: "parental" })}

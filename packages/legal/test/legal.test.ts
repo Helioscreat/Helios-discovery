@@ -110,7 +110,8 @@ describe("politique de confidentialité (RGPD art. 13)", () => {
   it("le stockage sur l'appareil déclaré correspond aux clés réellement écrites par le jeu", () => {
     const keys = new Set<string>();
     for (const f of SOURCES.filter((p) => p.startsWith("apps/game"))) for (const m of read(f).matchAll(/"(helios\.[a-z]+\.v\d+)"/g)) keys.add(m[1]);
-    expect([...keys].sort()).toEqual(DEVICE_STORAGE.map((d) => d.key).sort());
+    expect([...keys].sort()).toEqual(DEVICE_STORAGE.filter((d) => d.key.startsWith("helios.")).map((d) => d.key).sort());
+    expect(DEVICE_STORAGE.some((d) => d.key === "IABTCF_*")).toBe(true); // écrit par le SDK UMP, pas par notre code
   });
 });
 

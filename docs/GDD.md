@@ -322,7 +322,7 @@ helios-discovery/
 | Tiers | Usage | Initialisé quand | Transfert hors UE |
 |---|---|---|---|
 | Google Play Billing / StoreKit 2 | achats | au premier achat | assuré par le store |
-| Google UMP | CMP | premier lancement, **après** l'écran d'âge | Google (DPF + CCT) |
+| Google UMP | CMP publicitaire (TCF v2.2) | après l'écran d'âge et l'écran de mesure d'audience ; jamais sous l'âge du consentement ni dans un pays où la publicité est coupée ; mineur : `tagForUnderAgeOfConsent`, sans formulaire | Google (DPF + CCT) |
 | Google AdMob | pub récompensée | après le choix de consentement | Google (DPF + CCT) |
 | FCM / APNs | notifications | après l'opt-in aux notifications | Google, Apple |
 | Analytics | **first-party** (serveur UE) | après consentement « mesure » | aucun |

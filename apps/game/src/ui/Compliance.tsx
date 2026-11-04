@@ -54,48 +54,28 @@ export function AgeGate(props: { nowYear: number; error: string; onSubmit: (birt
 }
 
 /**
- * Consentement (GDPR-02) : « Tout accepter » et « Tout refuser » au même niveau, sur le premier écran ;
- * finalités séparées, toutes décochées par défaut (COM-05) ; seules les finalités autorisées pour l'âge sont proposées.
+ * Mesure d'audience (GDPR-02) : notre seule finalité propre. « Accepter » et « Refuser » au même niveau, rien de
+ * présélectionné (COM-05). La publicité est gérée ensuite, sur un écran séparé, par Google UMP.
  */
-export function ConsentScreen(props: { state: ComplianceState; onSave: (c: Partial<ConsentChoice>) => void; asModal?: boolean; onClose?: () => void }) {
+export function ConsentScreen(props: { state: ComplianceState; onSave: (c: Partial<ConsentChoice>) => void; asModal?: boolean; onClose?: () => void; adsNext?: boolean }) {
   const offered = offeredPurposes(props.state.age);
-  const [custom, setCustom] = useState(false);
-  const [choice, setChoice] = useState<Partial<ConsentChoice>>(props.asModal ? { ...props.state.consent } : {});
-  const all = Object.fromEntries(offered.map((p) => [p, true])) as Partial<ConsentChoice>;
-  const body = (
-    <>
-      <p>{t("consent.body")}</p>
-      <ul class="small">
-        {offered.map((p) => <li key={p}><strong>{t(`consent.purpose.${p}` as never)}</strong> — {t(`consent.purpose.${p}.desc` as never)}</li>)}
-      </ul>
-      <p class="small muted">{t("consent.refuseOk")}</p>
-      <p class="small"><a href={`legal/${getLocale()}/privacy.html`} target="_blank" rel="noopener" data-testid="consent-policy">{t("consent.policy")}</a></p>
-      {custom ? (
-        <fieldset data-testid="consent-custom">
-          <legend>{t("consent.customize")}</legend>
-          {offered.map((p: Purpose) => (
-            <label class="toggle" key={p}>
-              <span>{t(`consent.purpose.${p}` as never)}</span>
-              <input type="checkbox" role="switch" name={p} checked={!!choice[p]} onChange={(e) => setChoice({ ...choice, [p]: (e.target as HTMLInputElement).checked })} />
-            </label>
-          ))}
-          <div class="single-choice"><button type="button" class="btn" onClick={() => props.onSave(choice)}>{t("consent.save")}</button></div>
-        </fieldset>
-      ) : (
-        <button type="button" class="btn small" onClick={() => setCustom(true)}>{t("consent.customize")}</button>
-      )}
-      <DualChoice accept={t("consent.acceptAll")} decline={t("decline.refuseAll")} onAccept={() => props.onSave(all)} onDecline={() => props.onSave({})} />
-    </>
-  );
   return (
     <Modal name="consent" title={t("consent.title")} onEscape={props.asModal ? props.onClose : undefined}>
-      {body}
+      <p>{t("consent.body")}</p>
+      <ul class="small">
+        {offered.map((p: Purpose) => <li key={p}><strong>{t(`consent.purpose.${p}` as never)}</strong> — {t(`consent.purpose.${p}.desc` as never)}</li>)}
+      </ul>
+      <p class="small muted">{t("consent.refuseOk")}</p>
+      {props.adsNext ? <p class="small muted" data-testid="consent-ads-next">{t("consent.adsNext")}</p> : null}
+      {props.asModal ? <p class="small" role="status" data-testid="consent-current">{t(props.state.consent.analytics ? "consent.current.on" : "consent.current.off")}</p> : null}
+      <p class="small"><a href={`legal/${getLocale()}/privacy.html`} target="_blank" rel="noopener" data-testid="consent-policy">{t("consent.policy")}</a></p>
+      <DualChoice accept={t("consent.accept")} decline={t("decline.refuse")} onAccept={() => props.onSave({ analytics: true })} onDecline={() => props.onSave({ analytics: false })} />
     </Modal>
   );
 }
 
 /** Paramètres > Confidentialité : consentement, export, effacement, contact, contrôle parental. */
-export function PrivacySettings(props: { state: ComplianceState; api: Api; onManageConsent: () => void; onDelete: () => void; onContact: () => void; onParental: () => void }) {
+export function PrivacySettings(props: { state: ComplianceState; api: Api; onManageConsent: () => void; onAdChoices: () => void; onDelete: () => void; onContact: () => void; onParental: () => void }) {
   const [status, setStatus] = useState("");
   const exportData = async () => {
     try {
@@ -114,6 +94,8 @@ export function PrivacySettings(props: { state: ComplianceState; api: Api; onMan
     <fieldset data-testid="privacy-settings">
       <legend>{t("privacy.title")}</legend>
       <button type="button" class="btn small" onClick={props.onManageConsent}>{t("privacy.manageConsent")}</button>
+      {/* Point d'entrée exigé par UMP : rouvre le formulaire Google (choix publicitaires). */}
+      {props.state.ads.privacyOptionsRequired ? <button type="button" class="btn small" data-testid="ad-choices" onClick={props.onAdChoices}>{t("privacy.adChoices")}</button> : null}
       <button type="button" class="btn small" onClick={() => void exportData()}>{t("privacy.export")}</button>
       <button type="button" class="btn small" onClick={props.onContact}>{t("privacy.contact")}</button>
       {props.state.age.band !== "adult" ? <button type="button" class="btn small" onClick={props.onParental}>{t("privacy.parental")}</button> : null}

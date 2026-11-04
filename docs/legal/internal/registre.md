@@ -50,7 +50,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 | (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
 | (b) Finalité | Recueillir et prouver le consentement. Base : Art. 6(1)(c) obligation légale — RGPD art. 7(1) ; directive 2002/58 art. 5(3) |
 | (c) Personnes concernées | Joueurs |
-| (c) Catégories de données | Choix de consentement, date et version de la notice |
+| (c) Catégories de données | Choix de mesure d'audience, statut renvoyé par Google UMP, date et version de la notice |
 | (d) Destinataires | Scaleway SAS |
 | (e) Transferts hors UE et garanties | Aucun transfert hors UE |
 | (f) Délais d'effacement | consents : 5 ans |
@@ -168,11 +168,11 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
 | (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
-| (b) Finalité | Vidéos récompensées facultatives (Google AdMob) et plateforme de consentement (Google UMP). Base : Art. 6(1)(a) consentement — Consentement (RGPD art. 6(1)(a) ; directive 2002/58 art. 5(3)) |
-| (c) Personnes concernées | Joueurs ayant consenti |
+| (b) Finalité | Vidéos récompensées facultatives (Google AdMob) ; consentement recueilli par Google UMP. Base : Art. 6(1)(a) consentement — Consentement recueilli par Google UMP (TCF v2.2 ; RGPD art. 6(1)(a) ; directive 2002/58 art. 5(3)). Sans consentement : publicité limitée, sans traceur ni personnalisation, seulement sur une vidéo choisie par le joueur |
+| (c) Personnes concernées | Joueurs majeurs ou au-dessus de l'âge du consentement, dans les pays où la publicité est active |
 | (c) Catégories de données | Identifiant publicitaire et données techniques de l'appareil (SDK Google Mobile Ads) |
-| (d) Destinataires | Google Ireland Ltd (AdMob, UMP) |
-| (e) Transferts hors UE et garanties | Google Ireland Ltd (AdMob, UMP) : groupe établi aux États-Unis, cadre UE–États-Unis (décision du 10/07/2023) et clauses contractuelles types |
+| (d) Destinataires | Google Ireland Ltd (UMP) ; Google Ireland Ltd (AdMob) |
+| (e) Transferts hors UE et garanties | Google Ireland Ltd (UMP) : groupe établi aux États-Unis, cadre UE–États-Unis (décision du 10/07/2023) et clauses contractuelles types ; Google Ireland Ltd (AdMob) : groupe établi aux États-Unis, cadre UE–États-Unis (décision du 10/07/2023) et clauses contractuelles types |
 | (f) Délais d'effacement | aucune donnée conservée sur nos serveurs (SDK du prestataire) |
 | (g) Mesures de sécurité | Voir la section « Mesures de sécurité » |
 | Mineurs | Mineurs : jamais de publicité personnalisée (DSA art. 28(2)) ; sous l'âge du consentement : aucune publicité. |
@@ -210,6 +210,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 | Scaleway SAS | Hébergement du serveur et de la base de données (région fr-par) | FR | UE | https://www.scaleway.com/en/contracts/ |
 | Google Ireland Ltd (Google Play) | Paiement et vérification des achats (Android) | IE | DPF + CCT | https://business.safety.google/processorterms/ |
 | Apple Distribution International | Paiement et vérification des achats (iOS) | IE | DPF + CCT | https://www.apple.com/legal/internet-services/ |
-| Google Ireland Ltd (AdMob, UMP) | Publicité récompensée et plateforme de consentement certifiée | IE | DPF + CCT | https://business.safety.google/adsprocessorterms/ |
+| Google Ireland Ltd (UMP) | Plateforme de consentement certifiée (TCF v2.2) pour la publicité | IE | DPF + CCT | https://business.safety.google/adsprocessorterms/ |
+| Google Ireland Ltd (AdMob) | Publicité récompensée (vidéos facultatives) | IE | DPF + CCT | https://business.safety.google/adsprocessorterms/ |
 | Google Ireland Ltd (Firebase Cloud Messaging) | Envoi des notifications (Android), après opt-in | IE | DPF + CCT | https://firebase.google.com/terms/data-processing-terms |
 | Apple Distribution International (APNs) | Envoi des notifications (iOS), après opt-in | IE | DPF + CCT | https://www.apple.com/legal/internet-services/ |

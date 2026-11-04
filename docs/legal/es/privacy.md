@@ -8,7 +8,7 @@ Traducción del original francés; todavía no la ha revisado un traductor jurí
 
 - Tu cuenta es seudónima: no te pedimos ni tu nombre, ni tu dirección, ni tu número.
 - Nuestros servidores están en la Unión Europea. No vendemos ningún dato.
-- La medición de audiencia y la publicidad solo empiezan si estás de acuerdo. Puedes cambiar de opinión en cualquier momento.
+- La medición de audiencia solo empieza si estás de acuerdo. Para la publicidad, Google te pide tu elección; si rechazas, solo siguen siendo posibles anuncios limitados, sin seguimiento, cuando eliges ver un vídeo con recompensa.
 - Puedes descargar o eliminar tus datos desde Ajustes > Privacidad.
 
 ## 1. Responsable del tratamiento
@@ -47,7 +47,8 @@ Solo las personas de nuestro equipo que lo necesitan acceden a tus datos. Nuestr
 | Scaleway SAS | Alojamiento del servidor y de la base de datos (París) | Francia | Datos en la UE |
 | Google Ireland Ltd (Google Play) | Pago y verificación de compras en Android | Irlanda | Marco UE-EE. UU. y cláusulas tipo |
 | Apple Distribution International | Pago y verificación de compras en iOS | Irlanda | Marco UE-EE. UU. y cláusulas tipo |
-| Google Ireland Ltd (AdMob, UMP) | Vídeos con recompensa y plataforma de consentimiento (solo tras tu consentimiento) | Irlanda | Marco UE-EE. UU. y cláusulas tipo |
+| Google Ireland Ltd (UMP) | Formulario de consentimiento para la publicidad (Google UMP) | Irlanda | Marco UE-EE. UU. y cláusulas tipo |
+| Google Ireland Ltd (AdMob) | Vídeos con recompensa opcionales (solo tras tu consentimiento) | Irlanda | Marco UE-EE. UU. y cláusulas tipo |
 | Google Ireland Ltd (Firebase Cloud Messaging) | Envío de notificaciones en Android (solo tras tu consentimiento) | Irlanda | Marco UE-EE. UU. y cláusulas tipo |
 | Apple Distribution International (APNs) | Envío de notificaciones en iOS (solo tras tu consentimiento) | Irlanda | Marco UE-EE. UU. y cláusulas tipo |
 
@@ -84,8 +85,9 @@ El juego guarda en tu dispositivo solo lo estrictamente necesario para funcionar
 | helios.profile.v1 | Número de intentos por nivel (ayuda gratuita tras 8 fallos) |
 | helios.compliance.v1 | Tramo de edad y opciones de consentimiento |
 | helios.account.v1 | Identificador y token de la cuenta |
+| IABTCF_* | Tus opciones publicitarias, guardadas por el formulario de Google |
 
-Las herramientas de publicidad y de notificaciones solo se cargan tras tu consentimiento. Antes de esa elección, no se envía ninguna solicitud a terceros.
+Las herramientas de publicidad y de notificaciones solo se cargan tras tu consentimiento. Antes, la única llamada a un tercero es el formulario de consentimiento de Google (UMP), y solo si se te puede ofrecer publicidad (edad y país).
 
 ## 7. Si tienes menos de 18 años
 

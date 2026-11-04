@@ -130,7 +130,7 @@ describe("conservation", () => {
       if (r.table === "messages") ins("messages", "(id, team_id, player_id, kind, body, at) VALUES (?, 'old', ?, 'text', 'vieux', ?)", `old-${r.table}`, a.id, old);
       if (r.table === "notifications") ins("notifications", "VALUES (?, ?, 'x', '{}', ?)", `old-${r.table}`, a.id, old);
       if (r.table === "tickets") ins("tickets", "VALUES (?, NULL, NULL, 'x', 'vieux message', 'fr', ?)", `old-${r.table}`, old);
-      if (r.table === "consents") ins("consents", "VALUES (?, ?, 'v0', 1, 0, 0)", a.id, old);
+      if (r.table === "consents") ins("consents", "VALUES (?, ?, 'v0', 1, NULL)", a.id, old);
       if (r.table === "ledger") ins("ledger", "VALUES (?, ?, 'lives_1h', 99, ?, 'credited')", `old-${r.table}`, a.id, old);
     }
     const counts = svc.runRetentionJob();

@@ -1,6 +1,6 @@
 import { createHash, randomBytes, randomUUID } from "node:crypto";
 import {
-  ageFromBirth, ageFromBirthMonth, ageProfile, checkMessage, checkNickname, CONSENT_NOTICE_VERSION, normalizeConsent, PRESET_MESSAGES,
+  ageFromBirth, ageFromBirthMonth, ageProfile, checkMessage, checkNickname, CONSENT_NOTICE_VERSION, normalizeConsent, PRESET_MESSAGES, UMP_STATUSES, type UmpStatus,
   REPORT_REASONS, statementOfReasons, UNKNOWN_AGE, validateDecision, type AgeProfile, type ConsentChoice, type DecisionInput, type ReportReason,
 } from "@helios/compliance";
 import { applyVerified, CATALOG, MockVerifier, newWallet, purchaseGate, skuById, type Receipt } from "@helios/economy";
@@ -89,18 +89,20 @@ export class Service {
   }
 
   // ───────────── consentement (journalisé, preuve art. 7(1)) ─────────────
-  latestConsent(id: string): (ConsentChoice & { version: string; at: number }) | null {
+  latestConsent(id: string): (ConsentChoice & { adsStatus: UmpStatus | null; version: string; at: number }) | null {
     const r = this.db.prepare("SELECT * FROM consents WHERE player_id = ? ORDER BY at DESC, rowid DESC LIMIT 1").get(id) as
-      | { analytics: number; ads_personalized: number; ads_non_personalized: number; version: string; at: number }
+      | { analytics: number; ads_status: string | null; version: string; at: number }
       | undefined;
-    return r ? { analytics: !!r.analytics, adsPersonalized: !!r.ads_personalized, adsNonPersonalized: !!r.ads_non_personalized, version: r.version, at: r.at } : null;
+    return r ? { analytics: !!r.analytics, adsStatus: (r.ads_status as UmpStatus | null) ?? null, version: r.version, at: r.at } : null;
   }
 
-  setConsent(p: PlayerRow, choice: Partial<ConsentChoice>): ConsentChoice {
+  /** Mesure d'audience (notre écran) et statut publicitaire renvoyé par Google UMP. */
+  setConsent(p: PlayerRow, choice: Partial<ConsentChoice> & { adsStatus?: string }): ConsentChoice & { adsStatus: UmpStatus | null } {
     const c = normalizeConsent(this.ageOf(p), choice);
+    const adsStatus = UMP_STATUSES.includes(choice.adsStatus as UmpStatus) ? (choice.adsStatus as UmpStatus) : null;
     // @collects consent.record
-    this.db.prepare("INSERT INTO consents VALUES (?, ?, ?, ?, ?, ?)").run(p.id, this.cfg.clock(), CONSENT_NOTICE_VERSION, +c.analytics, +c.adsPersonalized, +c.adsNonPersonalized);
-    return c;
+    this.db.prepare("INSERT INTO consents VALUES (?, ?, ?, ?, ?)").run(p.id, this.cfg.clock(), CONSENT_NOTICE_VERSION, +c.analytics, adsStatus);
+    return { ...c, adsStatus };
   }
 
   setNickname(p: PlayerRow, nickname: string): string {

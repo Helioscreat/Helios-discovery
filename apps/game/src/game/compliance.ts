@@ -1,18 +1,21 @@
 import type { ResolvedConfig } from "@helios/config";
 import {
-  ageFromBirth, ageProfile, allowedSdks, normalizeConsent, REFUSE_ALL, showConsentScreen, UNKNOWN_AGE, type AgeProfile, type ConsentChoice,
+  ADS_UNKNOWN, ageFromBirth, ageProfile, allowedSdks, normalizeConsent, REFUSE_ALL, showConsentScreen, UNKNOWN_AGE,
+  type AdsConsentState, type AgeProfile, type ConsentChoice,
 } from "@helios/compliance";
 
 /**
  * État de conformité du joueur sur l'appareil : âge (tranche seulement), consentement, compte serveur.
- * Ordre au premier lancement : écran d'âge → consentement (si au moins une finalité est proposable) → jeu.
- * Aucun SDK tiers n'est initialisé avant la décision de consentement (GDPR-03).
+ * Ordre au premier lancement : écran d'âge → mesure d'audience (notre écran, si proposable) → jeu, puis Google UMP
+ * pour la publicité quand le plan d'âge l'autorise. Aucun SDK tiers avant la fin de notre écran (GDPR-03).
  */
 export interface ComplianceState {
   ageSet: boolean;
   age: AgeProfile;
   consent: ConsentChoice;
   consentDecided: boolean;
+  /** Dernier résultat de Google UMP (redemandé à chaque lancement). */
+  ads: AdsConsentState;
   country: string;
   account: { id: string; token: string } | null;
 }
@@ -34,11 +37,15 @@ export function loadCompliance(country: string): ComplianceState {
     const t = localStorage.getItem(TOKEN_KEY);
     if (t) account = JSON.parse(t);
     const raw = localStorage.getItem(KEY);
-    if (raw) return { ...(JSON.parse(raw) as ComplianceState), account };
+    if (raw) {
+      const c = JSON.parse(raw) as Partial<ComplianceState>;
+      // Anciennes versions : finalités publicitaires gérées par notre écran, désormais par UMP.
+      return { ...(c as ComplianceState), consent: { analytics: !!c.consent?.analytics }, ads: c.ads ?? ADS_UNKNOWN, account };
+    }
   } catch {
     /* stockage indisponible */
   }
-  return { ageSet: false, age: UNKNOWN_AGE, consent: REFUSE_ALL, consentDecided: false, country, account };
+  return { ageSet: false, age: UNKNOWN_AGE, consent: REFUSE_ALL, consentDecided: false, ads: ADS_UNKNOWN, country, account };
 }
 
 export function saveCompliance(c: ComplianceState): void {
@@ -71,7 +78,7 @@ export function applyConsent(c: ComplianceState, choice: Partial<ConsentChoice>)
   return { ...c, consent: normalizeConsent(c.age, choice), consentDecided: true };
 }
 
-export const sdksFor = (c: ComplianceState) => allowedSdks(c.consentDecided, c.age, c.consent);
+export const sdksFor = (c: ComplianceState, adsEnabled = true) => allowedSdks(c.consentDecided, c.age, c.ads, adsEnabled);
 
 // ───────────────────────── client de l'API (serveur hébergé dans l'UE) ─────────────────────────
 export class Api {
@@ -105,11 +112,12 @@ export class Api {
     if (!this.online || !c.account || c.ageSet) return c;
     const me = await this.call<{ age: AgeProfile; consent: (ConsentChoice & { version: string }) | null }>("GET", "/v1/me", c.account.token);
     if (me.age.band === "unknown") return c;
-    return { ...c, ageSet: true, age: me.age, consent: me.consent ?? REFUSE_ALL, consentDecided: !!me.consent || !showConsentScreen(me.age) };
+    const consent = { analytics: !!me.consent?.analytics };
+    return { ...c, ageSet: true, age: me.age, consent, consentDecided: !!me.consent || !showConsentScreen(me.age) };
   }
 
   setAge = (c: ComplianceState, birth: string) => this.call<{ age: AgeProfile }>("POST", "/v1/me/age", c.account!.token, { birth });
-  setConsent = (c: ComplianceState) => this.call("POST", "/v1/me/consent", c.account!.token, c.consent);
+  setConsent = (c: ComplianceState) => this.call("POST", "/v1/me/consent", c.account!.token, { ...c.consent, adsStatus: c.ads.status });
   exportData = (c: ComplianceState) => this.call<Record<string, unknown[]>>("GET", "/v1/me/export", c.account!.token);
   deleteAccount = (c: ComplianceState) => this.call<{ dueAt: number }>("POST", "/v1/me/delete", c.account!.token, {});
   contactPoint = () => this.call<{ email: string; form: string; languages: string[] }>("GET", "/v1/contact", null);

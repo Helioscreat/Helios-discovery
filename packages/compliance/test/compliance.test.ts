@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  adRequestParams, ageFromBirth, ageProfile, allowedSdks, checkMessage, checkNickname, CONSENT_AGE, consentAge, normalizeConsent,
-  offeredPurposes, REFUSE_ALL, shouldRequestATT, showConsentScreen, statementOfReasons, validateConsentAgeTable, validateDecision,
+  ADS_UNKNOWN, adRequestParams, ageFromBirth, ageProfile, allowedSdks, checkMessage, checkNickname, CONSENT_AGE, consentAge, normalizeConsent,
+  offeredPurposes, REFUSE_ALL, shouldRequestATT, showConsentScreen, umpPlan, UMP_STATUSES, statementOfReasons, validateConsentAgeTable, validateDecision,
 } from "../src";
 
 const NOW = Date.UTC(2026, 10, 4);
@@ -34,34 +34,51 @@ describe("âge", () => {
   });
 });
 
-describe("consentement et publicité", () => {
-  const all = { analytics: true, adsPersonalized: true, adsNonPersonalized: true };
+describe("consentement et publicité (notre écran : mesure d'audience ; Google UMP : publicité)", () => {
+  const obtained = { status: "OBTAINED" as const, canRequestAds: true, privacyOptionsRequired: true };
+  const refused = { status: "OBTAINED" as const, canRequestAds: false, privacyOptionsRequired: true };
 
-  it("[T-AGE-04] mineur : jamais de pub personnalisée ni d'identifiant publicitaire, même s'il « accepte tout »", () => {
+  it("[T-AGE-04] mineur : UMP marqué « sous l'âge du consentement », sans formulaire ; jamais de pub personnalisée", () => {
     for (const age of [15, 16, 17]) {
       const p = ageProfile(age, "FR");
-      expect(offeredPurposes(p)).not.toContain("adsPersonalized");
-      const c = normalizeConsent(p, all);
-      expect(c.adsPersonalized).toBe(false);
-      expect(adRequestParams(p, c)).toMatchObject({ npa: 1, tfua: 1, useAdId: false });
+      expect(umpPlan(p)).toEqual({ call: true, tagForUnderAgeOfConsent: true, mayShowForm: false });
+      expect(adRequestParams(p, obtained)).toEqual({ allowed: true, tfua: 1, npa: 1 });
     }
     const adult = ageProfile(30, "FR");
-    expect(adRequestParams(adult, normalizeConsent(adult, all))).toMatchObject({ npa: 0, tfua: 0, useAdId: true });
+    expect(umpPlan(adult)).toEqual({ call: true, tagForUnderAgeOfConsent: false, mayShowForm: true });
+    expect(adRequestParams(adult, obtained)).toEqual({ allowed: true, tfua: 0, npa: 0 });
   });
 
-  it("[T-AGE-05] ATT seulement pour un majeur qui consent à la pub personnalisée", () => {
-    expect(shouldRequestATT(ageProfile(17, "FR"), normalizeConsent(ageProfile(17, "FR"), all))).toBe(false);
-    expect(shouldRequestATT(ageProfile(30, "FR"), REFUSE_ALL)).toBe(false);
-    expect(shouldRequestATT(ageProfile(30, "FR"), normalizeConsent(ageProfile(30, "FR"), all))).toBe(true);
+  it("[T-AGE-05] ATT seulement pour un majeur dont UMP a recueilli le consentement", () => {
+    expect(shouldRequestATT(ageProfile(17, "FR"), obtained)).toBe(false);
+    expect(shouldRequestATT(ageProfile(30, "FR"), refused)).toBe(false);
+    expect(shouldRequestATT(ageProfile(30, "FR"), ADS_UNKNOWN)).toBe(false);
+    expect(shouldRequestATT(ageProfile(30, "FR"), obtained)).toBe(true);
   });
 
-  it("sous le seuil national : aucune CMP, tout refusé ; refus total → pubs limitées sans identifiant ; aucun SDK avant décision", () => {
+  it("sous le seuil national ou âge inconnu : ni écran, ni appel à UMP, ni publicité ; aucun SDK avant décision", () => {
     const p = ageProfile(14, "FR");
     expect(showConsentScreen(p)).toBe(false);
-    expect(normalizeConsent(p, all)).toEqual(REFUSE_ALL);
+    expect(normalizeConsent(p, { analytics: true })).toEqual(REFUSE_ALL);
+    expect(umpPlan(p)).toEqual({ call: false, reason: "underConsentAge" });
+    expect(adRequestParams(p, obtained).allowed).toBe(false);
+    expect(allowedSdks(true, p, obtained)).toEqual([]);
     const adult = ageProfile(30, "FR");
-    expect(adRequestParams(adult, REFUSE_ALL)).toMatchObject({ limited: true, useAdId: false, npa: 1 });
-    expect(allowedSdks(false, adult, all)).toEqual([]);
+    expect(allowedSdks(false, adult, obtained)).toEqual([]);
+    expect(allowedSdks(true, adult, ADS_UNKNOWN)).toEqual(["ump"]);
+    expect(allowedSdks(true, adult, refused)).toEqual(["ump"]);
+    expect(allowedSdks(true, adult, obtained)).toEqual(["ump", "ads"]);
+  });
+
+  it("publicité coupée dans le pays (config distante) : aucun appel à UMP", () => {
+    expect(umpPlan(ageProfile(30, "BE"), false)).toEqual({ call: false, reason: "adsDisabled" });
+    expect(allowedSdks(true, ageProfile(30, "BE"), obtained, false)).toEqual([]);
+  });
+
+  it("notre écran ne propose que la mesure d'audience ; refusée par défaut", () => {
+    expect(offeredPurposes(ageProfile(30, "FR"))).toEqual(["analytics"]);
+    expect(normalizeConsent(ageProfile(30, "FR"), {})).toEqual({ analytics: false });
+    expect(UMP_STATUSES).toContain("NOT_REQUIRED");
   });
 });
 

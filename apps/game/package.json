@@ -1,6 +1,6 @@
 {
   "name": "@helios/game",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,12 +12,14 @@
     "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
-    "@helios/core": "0.1.0",
-    "phaser": "3.90.0",
-    "preact": "10.29.8",
-    "@helios/levels": "0.1.0",
-    "@helios/economy": "0.1.0",
+    "@capacitor-community/admob": "8.2.1",
+    "@capacitor/core": "8.5.3",
+    "@helios/compliance": "0.1.0",
     "@helios/config": "0.1.0",
-    "@helios/compliance": "0.1.0"
+    "@helios/core": "0.1.0",
+    "@helios/economy": "0.1.0",
+    "@helios/levels": "0.1.0",
+    "phaser": "3.90.0",
+    "preact": "10.29.8"
   }
 }
