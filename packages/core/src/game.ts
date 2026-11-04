@@ -291,3 +291,16 @@ export function stabilize(st: GameState): GameEvent[] {
   cascadeLoop(st, ev, 0);
   return ev;
 }
+
+/**
+ * Continuer après un échec (« +5 coups », payé ou en pièces) : la partie reprend avec `moves` coups,
+ * sur la même grille. Refusé si la partie n'est pas perdue.
+ */
+export function continueGame(state: GameState, moves: number): GameState | null {
+  if (state.status !== "lost" || moves <= 0) return null;
+  const st = cloneState(state);
+  st.status = "playing";
+  st.movesLeft = moves;
+  ensurePlayable(st, []);
+  return st;
+}

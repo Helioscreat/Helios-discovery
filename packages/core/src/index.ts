@@ -9,7 +9,7 @@ export * from "./effects";
 export { isValidSwap, listValidMoves, hasValidMove, getHint, moveValue, localMatch, goalContext, ensurePlayable, forceShuffle } from "./moves";
 export type { LocalMatch, GoalContext } from "./moves";
 export { Phase, settle, collectDrops, openChests, isSpawner, isExit, cascadeLoop, SCORE_PER_PIECE, SCORE_PER_OBSTACLE, SPECIAL_BONUS } from "./resolve";
-export { createGame, applyMove, applyMoveInPlace, goalsDone, runBonus, stabilize, countIvy, spreadIvy, endOfTurn } from "./game";
+export { createGame, applyMove, applyMoveInPlace, goalsDone, runBonus, stabilize, countIvy, spreadIvy, endOfTurn, continueGame } from "./game";
 export type { LevelSpec } from "./game";
 export * from "./boosters";
 export * from "./elements";

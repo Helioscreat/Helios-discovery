@@ -11,6 +11,13 @@ import type { BoardScene } from "../render/BoardScene";
 import { TEXT_SCALES, type Settings, type SettingsStore } from "../settings";
 import { BoardHost } from "./BoardHost";
 import { BoosterGlyph, DualChoice, Modal, ObstacleIcon, PieceIcon } from "./components";
+import { IslandScreen, LivesModal, PassScreen, PassSheet, Price, PurchaseSheet, PurchasesSettings, RewardsScreen, ShopScreen, SubscriptionSheet, TopBar } from "./Meta";
+import { continueGame } from "@helios/core";
+import {
+  addXp, buyPass, canPlay, claim, claimQuest, doTask, claimSubscriptionPerks, COIN_PRICES, COIN_REWARDS, continueOffer, dailyQuests, login,
+  progressQuests, refillLivesWithCoins, skuById, spendCoins, spinWheel, WHEEL, winXp, type AgeBand, type Sku,
+} from "@helios/economy";
+import { currentSeason, endLevel, grant, saveMeta, type MetaState, type Shop } from "../game/meta";
 
 type Overlay =
   | { kind: "none" }
@@ -19,12 +26,20 @@ type Overlay =
   | { kind: "settings" }
   | { kind: "quit" }
   | { kind: "end-win" }
-  | { kind: "end-fail"; gift: Booster | null };
+  | { kind: "end-fail"; gift: Booster | null }
+  | { kind: "purchase"; skuId: string }
+  | { kind: "subscription"; skuId: string }
+  | { kind: "pass-sheet"; tier: "premium" | "premiumPlus" }
+  | { kind: "lives"; level: number }
+  | { kind: "toast"; text: string };
 
 export interface AppProps {
   settings: SettingsStore;
   feedback: Feedback;
   profile: Profile;
+  meta: MetaState;
+  shop: Shop;
+  clock: () => number;
   /** Crochets de test (activés par ?test=1) : exposent l'état sans passer par le canvas. */
   testHooks?: (api: TestApi) => void;
 }
@@ -40,7 +55,12 @@ export interface TestApi {
   hint: () => { from: number; to: number } | null;
   mutate: (fn: (st: GameState) => void) => void;
   booster: (b: InGameBooster, at?: number) => Promise<boolean>;
+  setAge: (a: AgeBand) => void;
+  meta: () => MetaState;
+  goto: (s: Screen) => void;
 }
+
+type Screen = "home" | "game" | "shop" | "pass" | "rewards" | "island";
 
 function useSettings(store: SettingsStore): Settings {
   const [s, set] = useState(store.value);
@@ -77,7 +97,13 @@ const PAGE = 30;
 
 export function App(props: AppProps) {
   const settings = useSettings(props.settings);
-  const [screen, setScreen] = useState<"home" | "game">("home");
+  const [screen, setScreen] = useState<Screen>("home");
+  const meta = props.meta;
+  const shop = props.shop;
+  const [now, setNow] = useState(props.clock());
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [wheelResult, setWheelResult] = useState("");
   const [overlay, setOverlay] = useState<Overlay>({ kind: "none" });
   const [session, setSession] = useState<GameSession | null>(null);
   const [scene, setScene] = useState<BoardScene | null>(null);
@@ -106,8 +132,38 @@ export function App(props: AppProps) {
     return () => clearTimeout(id);
   }, [caption]);
 
-  /** Choix d'un niveau : boosters débloqués (3 offerts + tutoriel), puis écran de début de niveau. */
+  // Horloge, prix du store, connexion du jour, quêtes, avantages d'abonnement.
+  useEffect(() => {
+    const id = setInterval(() => setNow(props.clock()), 30_000);
+    void shop.loadPrices().then(refresh);
+    const t0 = props.clock();
+    const l = login(meta.free, t0);
+    meta.free = dailyQuests(l.state, t0, meta.playerSeed);
+    if (l.reward) grant(meta, profile, l.reward, t0);
+    const sub = meta.account.wallet.subscription;
+    if (sub) {
+      const before = meta.account.wallet;
+      const after = claimSubscriptionPerks(before, skuById(sub.skuId), t0);
+      if (after !== before) {
+        meta.account = { ...meta.account, wallet: { ...after, boosters: before.boosters } };
+        grant(meta, profile, { boosters: skuById(sub.skuId).dailyPerks?.boosters }, t0);
+      }
+    }
+    persist();
+    return () => clearInterval(id);
+  }, []);
+
+  const persist = () => {
+    saveMeta(meta);
+    saveProfile(profile);
+  };
+
+  /** Choix d'un niveau : une vie est nécessaire ; boosters débloqués (3 offerts + tutoriel), puis écran de début. */
   const chooseLevel = (n: number) => {
+    if (!canPlay(meta.account.wallet, props.clock())) {
+      setOverlay({ kind: "lives", level: n });
+      return;
+    }
     const fresh = grantUnlocks(profile, n);
     saveProfile(profile);
     setKit(false); // case jamais pré-cochée
@@ -127,14 +183,23 @@ export function App(props: AppProps) {
     if (!session) return;
     if (session.state.status === "won") {
       const n = session.level;
+      const t0 = props.clock();
+      const stars = session.stars();
       profile.levelReached = Math.max(profile.levelReached, Math.min(levelCount(), n + 1));
-      profile.stars[n] = Math.max(profile.stars[n] ?? 0, session.stars());
+      // Étoiles de l'île : seulement le gain par rapport au meilleur résultat déjà obtenu sur ce niveau.
+      const gainedStars = Math.max(0, stars - (profile.stars[n] ?? 0));
+      profile.stars[n] = Math.max(profile.stars[n] ?? 0, stars);
+      meta.island = { ...meta.island, stars: meta.island.stars + gainedStars };
       recordWin(profile, n);
-      saveProfile(profile);
+      endLevel(meta, "won", t0);
+      grant(meta, profile, { coins: COIN_REWARDS.winBase + COIN_REWARDS.perStar * stars }, t0);
+      meta.season = addXp(currentSeason(t0), meta.season, winXp(difficultyOf(n), stars, meta.season.pass), t0);
+      meta.free = progressQuests(progressQuests(meta.free, "wins", 1), "collect", session.state.progress.reduce((a, x, k) => a + (session.state.goals[k].type === "collect" ? x : 0), 0));
+      persist();
       setOverlay({ kind: "end-win" });
     } else if (session.state.status === "lost") {
       const gift = recordFailure(profile, session.level);
-      saveProfile(profile);
+      persist();
       setOverlay({ kind: "end-fail", gift });
     }
   };
@@ -143,6 +208,70 @@ export function App(props: AppProps) {
     setOverlay({ kind: "none" });
     setSession(null);
     setScreen("home");
+    setNow(props.clock());
+  };
+
+  /** Fin d'une partie perdue sans continuer : la vie est consommée à ce moment (ECO-01). */
+  const concede = (then: () => void) => {
+    endLevel(meta, "lost", props.clock());
+    persist();
+    then();
+  };
+
+  /** Quitter en cours de partie : gratuit avant le premier coup, sinon compte comme une défaite. */
+  const quitLevel = () => {
+    if (session && session.state.status === "playing") endLevel(meta, session.state.moveCount > 0 ? "quitAfterMoves" : "quitBeforeFirstMove", props.clock());
+    persist();
+    leaveGame();
+  };
+
+  /** +5 coups (pièces ou achat) : même grille, la partie reprend. */
+  const continueLevel = async (how: "coins" | "paid") => {
+    if (!session) return;
+    if (how === "coins") {
+      const w = spendCoins(meta.account.wallet, COIN_PRICES.extraMoves);
+      if (!w) return;
+      meta.account = { ...meta.account, wallet: w };
+    } else {
+      setBusy(true);
+      const r = await shop.buy(meta, profile, skuById("extra_moves"));
+      setBusy(false);
+      if (!r.ok) {
+        setMsg(t(`purchase.result.${r.reason}` as never));
+        return;
+      }
+    }
+    const resumed = continueGame(session.state, 5);
+    if (!resumed) return;
+    session.state = resumed;
+    persist();
+    setMsg("");
+    setOverlay({ kind: "none" });
+    scene?.resync();
+    refresh();
+  };
+
+  /** Achat depuis une fiche : passe et abonnement mettent à jour l'état correspondant. */
+  const pay = async (skuId: string) => {
+    const sku = skuById(skuId);
+    setBusy(true);
+    setMsg("");
+    const r = await shop.buy(meta, profile, sku);
+    setBusy(false);
+    if (!r.ok) {
+      setMsg(t(`purchase.result.${r.reason}` as never));
+      return;
+    }
+    if (sku.kind === "seasonPass") meta.season = buyPass(meta.season, sku.passTier!);
+    persist();
+    setOverlay({ kind: "toast", text: t("purchase.result.ok") });
+    refresh();
+  };
+
+  const openSku = (s: Sku) => {
+    setMsg("");
+    if (s.kind === "subscription") setOverlay({ kind: "subscription", skuId: s.id });
+    else setOverlay({ kind: "purchase", skuId: s.id });
   };
 
   const pickBooster = (b: InGameBooster) => {
@@ -178,11 +307,69 @@ export function App(props: AppProps) {
       await scene.animate(out.events);
       return true;
     },
+    setAge: (a) => {
+      meta.age = a;
+      persist();
+      refresh();
+    },
+    meta: () => meta,
+    goto: (sc) => setScreen(sc),
   });
 
   const st = session?.state;
   return (
     <div class="app" data-screen={screen}>
+      {screen !== "game" ? <TopBar meta={meta} now={now} /> : null}
+      {screen === "shop" && <ShopScreen meta={meta} shop={shop} onOpen={openSku} onBack={() => setScreen("home")} />}
+      {screen === "pass" && (
+        <PassScreen
+          meta={meta}
+          now={now}
+          shop={shop}
+          onClaim={(r) => { meta.season = claim(meta.season, r); grant(meta, profile, r.contents, props.clock()); persist(); refresh(); }}
+          onOpenSheet={(tier) => { setMsg(""); setOverlay({ kind: "pass-sheet", tier }); }}
+          onBack={() => setScreen("home")}
+        />
+      )}
+      {screen === "rewards" && (
+        <RewardsScreen
+          meta={meta}
+          now={now}
+          result={wheelResult}
+          onSpin={() => {
+            const r = spinWheel(meta.free, props.clock(), meta.playerSeed);
+            if (!r) return;
+            meta.free = r.state;
+            grant(meta, profile, r.contents, props.clock());
+            setWheelResult(t("rewards.won", { x: t(WHEEL[r.index].labelKey as never) }));
+            persist();
+            refresh();
+          }}
+          onClaimQuest={(id) => {
+            const r = claimQuest(meta.free, id);
+            if (!r) return;
+            meta.free = r.state;
+            grant(meta, profile, r.contents, props.clock());
+            persist();
+            refresh();
+          }}
+          onBack={() => setScreen("home")}
+        />
+      )}
+      {screen === "island" && (
+        <IslandScreen
+          meta={meta}
+          hasPremium={meta.season.pass !== "none"}
+          onDo={(taskId, v) => {
+            const next = doTask(meta.island, taskId, v, meta.season.pass !== "none");
+            if (!next) return;
+            meta.island = next;
+            persist();
+            refresh();
+          }}
+          onBack={() => setScreen("home")}
+        />
+      )}
       {screen === "home" && (
         <main class="home">
           <header class="home-header">
@@ -214,6 +401,12 @@ export function App(props: AppProps) {
               );
             })}
           </section>
+          <nav class="meta-nav" aria-label={t("home.menu")}>
+            <button type="button" class="btn small" onClick={() => setScreen("island")}>{t("home.island")}</button>
+            <button type="button" class="btn small" onClick={() => setScreen("rewards")}>{t("home.rewards")}</button>
+            <button type="button" class="btn small" onClick={() => setScreen("pass")}>{t("home.pass")}</button>
+            <button type="button" class="btn small" onClick={() => setScreen("shop")}>{t("home.shop")}</button>
+          </nav>
           <nav class="bottom-bar">
             <button type="button" class="btn" onClick={() => setOverlay({ kind: "settings" })}>{t("home.settings")}</button>
             <button type="button" class="btn" onClick={() => chooseLevel(profile.levelReached)}>{t("home.play", { n: profile.levelReached })}</button>
@@ -341,7 +534,7 @@ export function App(props: AppProps) {
       {overlay.kind === "quit" && (
         <Modal name="quit" title={t("quit.title")} onEscape={() => setOverlay({ kind: "none" })}>
           <p>{t("quit.body")}</p>
-          <DualChoice accept={t("quit.confirm")} decline={t("decline.cancel")} onAccept={leaveGame} onDecline={() => setOverlay({ kind: "none" })} />
+          <DualChoice accept={t("quit.confirm")} decline={t("decline.cancel")} onAccept={quitLevel} onDecline={() => setOverlay({ kind: "none" })} />
         </Modal>
       )}
 
@@ -360,13 +553,71 @@ export function App(props: AppProps) {
           {overlay.gift ? (
             <p class="tutorial-text" data-testid="help-gift">{t("help.gift", { name: t(`booster.${overlay.gift}` as never) })}</p>
           ) : null}
-          <DualChoice accept={t("end.fail.retry")} decline={t("decline.giveUp")} onAccept={() => chooseLevel(session.level)} onDecline={leaveGame} />
+          {(() => {
+            // « +5 coups » : prix fixe, identique à chaque tentative ; option payante jamais proposée à un joueur protégé (AGE-06).
+            const offer = continueOffer(meta.age, meta.account.wallet.coins);
+            return (
+              <div class="continue-options" data-testid="continue-options">
+                {offer.coins !== null ? (
+                  <button type="button" class="btn" data-testid="continue-coins" onClick={() => void continueLevel("coins")}>{t("continue.coins", { n: offer.coins })}</button>
+                ) : null}
+                {offer.skuId ? (
+                  <button type="button" class="btn" data-testid="continue-paid" disabled={busy} onClick={() => void continueLevel("paid")}>
+                    {t("continue.paid")} · <Price value={shop.price(offer.skuId)} />
+                  </button>
+                ) : null}
+              </div>
+            );
+          })()}
+          {msg ? <p class="notice" role="status">{msg}</p> : null}
+          <DualChoice accept={t("end.fail.retry")} decline={t("decline.giveUp")} onAccept={() => concede(() => chooseLevel(session.level))} onDecline={() => concede(leaveGame)} />
+        </Modal>
+      )}
+
+      {overlay.kind === "purchase" && (
+        <PurchaseSheet sku={skuById(overlay.skuId)} price={shop.price(overlay.skuId)} platform={shop.store.platform} busy={busy} message={msg} onPay={() => void pay(overlay.skuId)} onCancel={() => setOverlay({ kind: "none" })} />
+      )}
+      {overlay.kind === "subscription" && (
+        <SubscriptionSheet sku={skuById(overlay.skuId)} price={shop.price(overlay.skuId)} platform={shop.store.platform} busy={busy} message={msg} onPay={() => void pay(overlay.skuId)} onCancel={() => setOverlay({ kind: "none" })} />
+      )}
+      {overlay.kind === "pass-sheet" && (
+        <PassSheet
+          meta={meta}
+          now={now}
+          tier={overlay.tier}
+          price={shop.price(overlay.tier === "premium" ? "pass_premium" : "pass_premium_plus")}
+          platform={shop.store.platform}
+          busy={busy}
+          message={msg}
+          onPay={() => void pay(overlay.tier === "premium" ? "pass_premium" : "pass_premium_plus")}
+          onCancel={() => setOverlay({ kind: "none" })}
+        />
+      )}
+      {overlay.kind === "lives" && (
+        <LivesModal
+          meta={meta}
+          now={now}
+          onRefill={() => {
+            const w = refillLivesWithCoins(meta.account.wallet, props.clock());
+            if (!w) return;
+            meta.account = { ...meta.account, wallet: w };
+            persist();
+            chooseLevel(overlay.level);
+          }}
+          onShop={() => { setOverlay({ kind: "none" }); setScreen("shop"); }}
+          onClose={() => setOverlay({ kind: "none" })}
+        />
+      )}
+      {overlay.kind === "toast" && (
+        <Modal name="toast" title={overlay.text} onEscape={() => setOverlay({ kind: "none" })}>
+          <div class="single-choice"><button type="button" class="btn" onClick={() => setOverlay({ kind: "none" })}>{t("decline.close")}</button></div>
         </Modal>
       )}
 
       {overlay.kind === "settings" && (
         <Modal name="settings" title={t("settings.title")} onEscape={() => setOverlay({ kind: "none" })}>
           <SettingsForm store={props.settings} value={settings} />
+          <PurchasesSettings meta={meta} platform={shop.store.platform} />
           <div class="single-choice"><button type="button" class="btn" onClick={() => setOverlay({ kind: "none" })}>{t("decline.close")}</button></div>
         </Modal>
       )}

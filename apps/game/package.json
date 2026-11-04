@@ -15,6 +15,7 @@
     "@helios/core": "0.1.0",
     "phaser": "3.90.0",
     "preact": "10.29.8",
-    "@helios/levels": "0.1.0"
+    "@helios/levels": "0.1.0",
+    "@helios/economy": "0.1.0"
   }
 }

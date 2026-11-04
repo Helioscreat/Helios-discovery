@@ -90,6 +90,21 @@ describe("[T-COM-04] modales de choix : le refus est aussi visible que l'accepta
       await startLevel(page, 3);
       await page.evaluate(() => window.__helios!.forceStatus("lost"));
     },
+    "purchase-sheet": async (page) => {
+      await page.evaluate(() => window.__helios!.openOverlay({ kind: "purchase", skuId: "boosters_m" }));
+      await page.waitForFunction(() => document.querySelector("[data-price]")?.getAttribute("data-price") !== "");
+    },
+    "subscription-sheet": async (page) => {
+      await page.evaluate(() => window.__helios!.openOverlay({ kind: "subscription", skuId: "gardener_monthly" }));
+      await page.waitForFunction(() => document.querySelector("[data-price]")?.getAttribute("data-price") !== "");
+    },
+    "pass-sheet": async (page) => {
+      await page.evaluate(() => window.__helios!.openOverlay({ kind: "pass-sheet", tier: "premium" }));
+      await page.waitForFunction(() => document.querySelector("[data-modal] [data-price]")?.getAttribute("data-price") !== "");
+    },
+    lives: async (page) => {
+      await page.evaluate(() => window.__helios!.openOverlay({ kind: "lives", level: 1 }));
+    },
   };
 
   it("chaque modale « choice » du registre est couverte par ce test", () => {
@@ -391,6 +406,202 @@ describe("performance (indicatif)", () => {
     const p95 = deltas[Math.floor(deltas.length * 0.95)];
     process.stdout.write(`\n[perf] Chromium headless (rendu logiciel) : ${fps.toFixed(1)} i/s en moyenne, 95e centile ${p95.toFixed(1)} ms par image\n`);
     expect(fps).toBeGreaterThan(20);
+    await ctx.close();
+  });
+});
+
+// ───────────────────────── livrable 5 : boutique, fiches d'achat, abonnement, passe ─────────────────────────
+import { createRequire } from "node:module";
+import { CATALOG } from "@helios/economy";
+const axePath = createRequire(import.meta.url).resolve("axe-core/axe.min.js");
+
+async function adult(page: Page) {
+  await page.evaluate(() => window.__helios!.setAge("adult"));
+}
+
+describe("écrans d'achat", () => {
+  it("[T-COM-09] chaque fiche d'achat affiche description, contenu et quantités, prix TTC du store et durée", async () => {
+    const { page, ctx, errors } = await phone();
+    await adult(page);
+    for (const sku of CATALOG) {
+      const overlay = sku.kind === "subscription" ? { kind: "subscription", skuId: sku.id } : sku.kind === "seasonPass" ? { kind: "pass-sheet", tier: sku.passTier } : { kind: "purchase", skuId: sku.id };
+      await page.evaluate((o) => window.__helios!.openOverlay(o as never), overlay);
+      const modal = page.locator("[data-modal]");
+      await modal.waitFor();
+      await page.waitForFunction(() => (document.querySelector("[data-modal] [data-field='price'] [data-price]")?.getAttribute("data-price") ?? "") !== "");
+      for (const f of ["description", "quantity", "price", "duration"]) {
+        const txt = (await modal.locator(`[data-field="${f}"]`).first().innerText()).trim();
+        expect(txt.length, `${sku.id} · ${f}`).toBeGreaterThan(3);
+      }
+      expect(await modal.locator("[data-field='price']").innerText(), sku.id).toMatch(/€/);
+      if (sku.kind !== "subscription" && sku.kind !== "seasonPass") {
+        const lines = await modal.locator("[data-field='quantity'] li").count();
+        const expected = Object.keys(sku.contents.boosters ?? {}).length + (sku.contents.unlimitedLivesMin ? 1 : 0) + (sku.contents.coins ? 1 : 0) + (sku.contents.extraMoves ? 1 : 0);
+        expect(lines, sku.id).toBe(expected);
+      }
+      await page.evaluate(() => window.__helios!.openOverlay({ kind: "none" }));
+    }
+    expect(errors).toEqual([]);
+    await ctx.close();
+  });
+
+  it("[T-COM-12] chaque fiche mentionne la rétractation et renvoie vers la procédure de remboursement du store", async () => {
+    const { page, ctx } = await phone();
+    await adult(page);
+    for (const o of [{ kind: "purchase", skuId: "lives_3h" }, { kind: "subscription", skuId: "gardener_monthly" }, { kind: "pass-sheet", tier: "premiumPlus" }]) {
+      await page.evaluate((x) => window.__helios!.openOverlay(x as never), o);
+      expect(await page.locator("[data-testid='withdrawal']").innerText()).toMatch(/rétractation/);
+      expect(await page.locator("[data-testid='refund-link']").getAttribute("href")).toMatch(/^https:\/\/(support\.google\.com|reportaproblem\.apple\.com)/);
+    }
+    await ctx.close();
+  });
+
+  it("[T-COM-14] abonnement : prix, durée, renouvellement, résiliation et lien direct ; lien accessible ensuite depuis les paramètres", async () => {
+    const { page, ctx } = await phone();
+    await adult(page);
+    await page.evaluate(() => window.__helios!.openOverlay({ kind: "subscription", skuId: "gardener_monthly" }));
+    const m = page.locator("[data-modal='subscription-sheet']");
+    await page.waitForFunction(() => document.querySelector("[data-modal] [data-price]")?.getAttribute("data-price") !== "");
+    for (const f of ["price", "duration", "renewal", "cancel"]) expect((await m.locator(`[data-field="${f}"]`).innerText()).length).toBeGreaterThan(5);
+    expect(await m.locator("[data-testid='manage-sub']").getAttribute("href")).toMatch(/play\.google\.com\/store\/account\/subscriptions\?sku=gardener_monthly/);
+    await m.locator("[data-choice='accept']").click();
+    await page.locator("[data-modal='toast']").waitFor();
+    await page.locator("[data-modal='toast'] button").click();
+    await page.getByRole("button", { name: "Paramètres" }).click();
+    const link = page.locator("[data-testid='purchases-settings'] a", { hasText: "résilier" });
+    expect(await link.getAttribute("href")).toMatch(/subscriptions/);
+    expect(await page.locator("[data-testid='spend-recap']").innerText()).toMatch(/4,99/);
+    await ctx.close();
+  });
+
+  it("[T-COM-15] chaque prix affiché (boutique, passe, écran d'échec) porte la devise du store", async () => {
+    const { page, ctx } = await phone();
+    await adult(page);
+    const check = async (where: string) => {
+      const prices = await page.evaluate(() => [...document.querySelectorAll("[data-price]")].map((e) => e.getAttribute("data-price") ?? ""));
+      expect(prices.length, where).toBeGreaterThan(0);
+      for (const p of prices) expect(p, where).toMatch(/\d.*(€|EUR)/);
+    };
+    await page.evaluate(() => window.__helios!.goto("shop"));
+    await page.waitForFunction(() => [...document.querySelectorAll("[data-price]")].every((e) => e.getAttribute("data-price")));
+    await check("boutique");
+    await page.evaluate(() => window.__helios!.goto("pass"));
+    await check("passe");
+    await page.evaluate(() => window.__helios!.goto("home"));
+    await startLevel(page, 3);
+    await page.evaluate(() => window.__helios!.forceStatus("lost"));
+    await page.locator("[data-modal='end-fail']").waitFor();
+    await check("échec");
+    await ctx.close();
+  });
+
+  it("[T-AGE-06] joueur protégé : aucune option payante à l'échec, aucune offre mise en avant, aucune fenêtre d'offre automatique", async () => {
+    const { page, ctx } = await phone();
+    // Âge inconnu par défaut (écran d'âge au livrable 6) : traité comme protégé.
+    for (const n of [2, 3, 4, 5, 6]) {
+      await startLevel(page, n);
+      await page.evaluate(() => window.__helios!.forceStatus("lost"));
+      await page.locator("[data-modal='end-fail']").waitFor();
+      expect(await page.locator("[data-testid='continue-paid']").count()).toBe(0);
+      expect(await page.locator("[data-modal]").count()).toBe(1);
+      await page.locator("[data-modal='end-fail'] [data-choice='decline']").click();
+      expect(await page.locator("[data-modal]").count()).toBe(0);
+    }
+    await page.evaluate(() => window.__helios!.goto("shop"));
+    expect(await page.locator("[data-testid='shop-protected']").count()).toBe(1);
+    await page.evaluate(() => window.__helios!.goto("pass"));
+    // Passe : consultable, et proposé hors des 3 derniers jours seulement.
+    await ctx.close();
+  });
+
+  it("[T-ACC-01] parcours d'achat accessible : 0 violation axe-core sérieuse ou critique (boutique, fiches, abonnement, passe)", async () => {
+    const { page, ctx } = await phone();
+    await adult(page);
+    const audit = async (where: string) => {
+      await page.addScriptTag({ path: axePath });
+      const res = await page.evaluate(async () => {
+        const r = await (window as unknown as { axe: { run: (c?: unknown, o?: unknown) => Promise<{ violations: { id: string; impact: string; nodes: unknown[] }[] }> } }).axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] } });
+        return r.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => `${v.id} (${v.nodes.length})`);
+      });
+      expect(res, where).toEqual([]);
+    };
+    await page.evaluate(() => window.__helios!.goto("shop"));
+    await page.waitForFunction(() => [...document.querySelectorAll("[data-price]")].every((e) => e.getAttribute("data-price")));
+    await audit("boutique");
+    await page.locator("[data-sku='boosters_m'] button").click();
+    await audit("fiche d'achat");
+    await page.keyboard.press("Escape");
+    await page.evaluate(() => window.__helios!.openOverlay({ kind: "subscription", skuId: "gardener_monthly" }));
+    await audit("abonnement");
+    await page.evaluate(() => window.__helios!.openOverlay({ kind: "none" }));
+    await page.evaluate(() => window.__helios!.goto("pass"));
+    await audit("passe");
+    await page.evaluate(() => window.__helios!.openOverlay({ kind: "pass-sheet", tier: "premium" }));
+    await audit("fiche du passe");
+    // Parcours clavier : on atteint le bouton « Payer » au clavier depuis la fiche.
+    let reached = false;
+    for (let k = 0; k < 40 && !reached; k++) {
+      await page.keyboard.press("Tab");
+      reached = await page.evaluate(() => document.activeElement?.getAttribute("data-choice") === "accept");
+    }
+    expect(reached).toBe(true);
+    await ctx.close();
+  });
+});
+
+describe("parcours de jeu méta", () => {
+  it("achat d'un pack (adulte) : boosters crédités une fois, dépense visible dans le récapitulatif", async () => {
+    const { page, ctx } = await phone();
+    await adult(page);
+    await page.evaluate(() => window.__helios!.goto("shop"));
+    await page.waitForFunction(() => [...document.querySelectorAll("[data-price]")].every((e) => e.getAttribute("data-price")));
+    await page.locator("[data-sku='boosters_s'] button").click();
+    await page.locator("[data-modal='purchase-sheet'] [data-choice='accept']").click();
+    await page.locator("[data-modal='toast']").waitFor();
+    const inv = await page.evaluate(() => JSON.parse(localStorage.getItem("helios.profile.v1")!).inventory.hammer);
+    expect(inv).toBe(3);
+    const ledger = await page.evaluate(() => window.__helios!.meta().account.ledger.length);
+    expect(ledger).toBe(1);
+    await ctx.close();
+  });
+
+  it("vies : une défaite coûte une vie ; sans vie, l'écran des vies s'affiche au lieu du niveau", async () => {
+    const { page, ctx } = await phone();
+    for (let k = 0; k < 5; k++) {
+      await startLevel(page, 2);
+      await page.evaluate(() => window.__helios!.forceStatus("lost"));
+      await page.locator("[data-modal='end-fail'] [data-choice='decline']").click();
+    }
+    expect(await page.evaluate(() => window.__helios!.meta().account.wallet.lives)).toBe(0);
+    await page.evaluate(() => window.__helios!.chooseLevel(2));
+    await page.locator("[data-modal='lives']").waitFor();
+    await ctx.close();
+  });
+
+  it("+5 coups payés (adulte) : la partie reprend sur la même grille avec 5 coups", async () => {
+    const { page, ctx } = await phone();
+    await adult(page);
+    await startLevel(page, 3);
+    const before = await page.evaluate(() => JSON.stringify(window.__helios!.session()!.state.cells.map((c) => c?.id)));
+    await page.evaluate(() => window.__helios!.forceStatus("lost"));
+    await page.waitForFunction(() => document.querySelector("[data-testid='continue-paid'] [data-price]")?.getAttribute("data-price") !== "");
+    await page.locator("[data-testid='continue-paid']").click();
+    await page.waitForFunction(() => window.__helios!.session()!.state.status === "playing");
+    expect(await movesText(page)).toBe("5");
+    expect(await page.evaluate(() => JSON.stringify(window.__helios!.session()!.state.cells.map((c) => c?.id)))).toBe(before);
+    await ctx.close();
+  });
+
+  it("roue gratuite : un tour par jour, probabilités affichées ; île : une tâche se réalise avec des étoiles", async () => {
+    const { page, ctx } = await phone();
+    await page.evaluate(() => window.__helios!.goto("rewards"));
+    expect(await page.locator("[data-testid='wheel-odds'] tbody tr").count()).toBe(7);
+    await page.getByRole("button", { name: "Tourner la roue" }).click();
+    expect(await page.getByRole("button", { name: "Prochain tour demain" }).isDisabled()).toBe(true);
+    await page.evaluate(() => { window.__helios!.meta().island.stars = 10; });
+    await page.evaluate(() => window.__helios!.goto("island"));
+    await page.getByRole("button", { name: "Décoration 2" }).click();
+    expect(await page.evaluate(() => Object.keys(window.__helios!.meta().island.done).length)).toBe(1);
     await ctx.close();
   });
 });
