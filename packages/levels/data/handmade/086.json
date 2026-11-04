@@ -1,6 +1,6 @@
 {
   "n": 86,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "medium",
   "targetRate": 0.6,
@@ -18,7 +18,7 @@
     "i3. i3. i3. i3. i3. i3. i3. i3. i3."
   ],
   "colors": 6,
-  "moves": 43,
+  "moves": 42,
   "goals": [
     {
       "type": "clear",
@@ -26,13 +26,13 @@
       "count": 36
     }
   ],
-  "seed": "L86v1a0:e8181223",
+  "seed": "L86v2a0:ab3c1f52",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.6,
-    "avgMovesLeft": 8.48,
+    "botRate": 0.61,
+    "avgMovesLeft": 8.44,
     "status": "ok"
   }
 }

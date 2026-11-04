@@ -1,6 +1,6 @@
 {
   "n": 4,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "La Bombe",
   "tutorial": "bomb",
@@ -26,13 +26,13 @@
       "count": 32
     }
   ],
-  "seed": "L4v1a0:d4099fbd",
+  "seed": "L4v2a0:b3b62f18",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.985,
-    "avgMovesLeft": 4.79,
+    "botRate": 1,
+    "avgMovesLeft": 6.63,
     "status": "ok"
   }
 }

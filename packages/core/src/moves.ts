@@ -150,6 +150,7 @@ export interface GoalContext {
   drops: boolean;
 }
 
+
 export function goalContext(st: Board & { goals?: Goal[]; progress?: number[] }): GoalContext {
   const ctx: GoalContext = { colors: new Set(), obstacles: new Set(), drops: false };
   st.goals?.forEach((g, k) => {
@@ -189,10 +190,11 @@ export function moveValue(b: Board, m: Move, ctx: GoalContext = { colors: new Se
       if (ctx.colors.has(piece.color)) v += 25;
       if (ctx.obstacles.has("ice") && b.ice && b.ice[c] > 0) v += 35;
       if (piece.lock === "chain" && ctx.obstacles.has("chain")) v += 35;
+      if (piece.key && ctx.obstacles.has("chest")) v += 45;
       for (const n of neighbors4(b, c)) {
         const nb = b.cells[n];
         if (!nb || seen.has(n)) continue;
-        if ((nb.kind === "crate" && ctx.obstacles.has("crate")) || (nb.kind === "ivy" && ctx.obstacles.has("ivy")) || (nb.lock === "cage" && ctx.obstacles.has("cage"))) v += 35;
+        if ((nb.kind === "crate" && ctx.obstacles.has("crate")) || (nb.kind === "ivy" && ctx.obstacles.has("ivy")) || (nb.kind === "bubble" && ctx.obstacles.has("bubble")) || (nb.lock === "cage" && ctx.obstacles.has("cage"))) v += 35;
       }
       if (ctx.drops && !dropCols.has(c % w)) {
         for (let k = c - w; k >= 0; k -= w) if (b.cells[k]?.kind === "drop") { v += 20; dropCols.add(c % w); break; }

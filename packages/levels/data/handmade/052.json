@@ -1,6 +1,6 @@
 {
   "n": 52,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Les Chaînes",
   "tutorial": "chain",
@@ -26,13 +26,13 @@
       "count": 9
     }
   ],
-  "seed": "L52v1a0:09093d1a",
+  "seed": "L52v2a0:c4a731eb",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
     "botRate": 0.995,
-    "avgMovesLeft": 7.27,
+    "avgMovesLeft": 6.83,
     "status": "ok"
   }
 }

@@ -1,42 +1,43 @@
 {
   "n": 137,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "hard",
   "targetRate": 0.35,
   "width": 9,
   "height": 9,
   "layout": [
-    "# # # i1. i1. i1. # # #",
-    "# # i1. i2. i2. i2. i1. # #",
-    "# i1. i2. i2. i3. i2. i2. i1. #",
-    "i1. i1. i2. i3. i3. i3. i2. i1. i1.",
-    "i1. i2. i3. i3. i3. i3. i3. i2. i1.",
-    "i1. i1. i2. i3. i3. i3. i2. i1. i1.",
-    "# i1. i2. i2. i3. i2. i2. i1. #",
-    "# # i1. i2. i2. i2. i1. # #",
-    "# # # i1. i1. i1. # # #"
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    "i1. i1. i1. i1. i1. i1. i1. i1. i1.",
+    "i1. i1. i1. i1. i1. i1. i1. i1. i1.",
+    ". . . . . . . . .",
+    ". B . . B . . B .",
+    ". . . . . . . . .",
+    ". B . . B . . B .",
+    ". . . . . . . . ."
   ],
   "colors": 6,
-  "moves": 45,
+  "moves": 13,
   "goals": [
     {
       "type": "clear",
-      "target": "ice",
-      "count": 57
+      "target": "bubble",
+      "count": 6
     },
     {
-      "type": "score",
-      "target": 9000
+      "type": "clear",
+      "target": "ice",
+      "count": 18
     }
   ],
-  "seed": "L137v1a0:e2c57330",
+  "seed": "L137v2a0:04561855",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.385,
-    "avgMovesLeft": 6.88,
+    "botRate": 0.425,
+    "avgMovesLeft": 2.35,
     "status": "ok"
   }
 }

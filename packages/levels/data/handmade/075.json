@@ -1,6 +1,6 @@
 {
   "n": 75,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "medium",
   "targetRate": 0.6,
@@ -29,13 +29,13 @@
     "total": 4,
     "maxOnBoard": 2
   },
-  "seed": "L75v1a0:c522c589",
+  "seed": "L75v2a0:43ba2bb4",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.605,
-    "avgMovesLeft": 9.66,
+    "botRate": 0.61,
+    "avgMovesLeft": 9.53,
     "status": "ok"
   }
 }

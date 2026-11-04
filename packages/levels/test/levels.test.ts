@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { createGame, findMatches, hasValidMove, hashState } from "@helios/core";
 import {
-  buildCandidate, CONTENT_VERSION, DEFAULT_SIM, difficultyOf, ELEMENT_UNLOCK, levelHash, levelSeed, ratesFromCsv,
+  buildCandidate, CONTENT_VERSION, DEFAULT_SIM, difficultyOf, ELEMENT_UNLOCK, introAt, levelHash, levelSeed, ratesFromCsv, VARIANT_UNLOCK,
   simulateFreePlayers, TARGET_RATE, toSpec, TOLERANCE, type LevelFile,
 } from "../src";
 import { DESIGNS, HANDMADE_COUNT } from "../src/handmade";
@@ -36,22 +36,41 @@ describe("niveaux 1–150 faits main", () => {
     for (const l of handmade) expect(l.validation.botRate, `niveau ${l.n}`).toBeGreaterThanOrEqual(l.targetRate - TOLERANCE);
   });
 
-  it("chaque élément est introduit par un niveau tutoriel facile, au niveau prévu, tous les 15 à 25 niveaux", () => {
-    const tutos: Record<string, string> = { ice: "ice", crate: "crate", chain: "chain", drop: "drop", cage: "cage", ivy: "ivy" };
-    const at = Object.entries(ELEMENT_UNLOCK).map(([k, n]) => [k, n] as const).sort((a, b) => a[1] - b[1]);
+  it("chaque élément est introduit par un niveau tutoriel facile, au niveau prévu, tous les 15 à 25 niveaux jusqu'au niveau 300", () => {
+    const at = [...Object.entries(ELEMENT_UNLOCK), ...Object.entries(VARIANT_UNLOCK)].sort((a, b) => a[1] - b[1]);
     for (const [k, n] of at) {
-      expect(handmade[n - 1].tutorial, `élément ${k}`).toBe(tutos[k]);
-      expect(handmade[n - 1].targetRate).toBeGreaterThanOrEqual(0.85);
+      expect(introAt(n)).toBe(k);
+      if (n <= 150) {
+        expect(handmade[n - 1].tutorial, `élément ${k}`).toBe(k);
+        expect(handmade[n - 1].targetRate).toBeGreaterThanOrEqual(0.85);
+      } else {
+        const c = buildCandidate(n, 0, 1);
+        expect(c.tutorial, `élément ${k}`).toBe(k);
+        expect(c.difficulty).toBe("relax");
+      }
     }
     for (let i = 1; i < at.length; i++) {
       const gap = at[i][1] - at[i - 1][1];
-      expect(gap).toBeGreaterThanOrEqual(15);
-      expect(gap).toBeLessThanOrEqual(25);
+      expect(gap, `${at[i - 1][0]} → ${at[i][0]}`).toBeGreaterThanOrEqual(15);
+      expect(gap, `${at[i - 1][0]} → ${at[i][0]}`).toBeLessThanOrEqual(25);
     }
+    expect(300 - at[at.length - 1][1]).toBeLessThanOrEqual(25);
+  });
+
+  it("les tutoriels générés contiennent bien leur élément", () => {
+    const has = (n: number, re: RegExp) => buildCandidate(n, 0, 1).spec.layout!.join(" ").match(re) !== null;
+    expect(buildCandidate(ELEMENT_UNLOCK.portal, 0, 1).spec.portals?.length).toBeGreaterThan(0);
+    expect(buildCandidate(ELEMENT_UNLOCK.conveyor, 0, 1).spec.conveyors?.length).toBe(1);
+    expect(has(ELEMENT_UNLOCK.generator, /\bG\b/)).toBe(true);
+    expect(has(ELEMENT_UNLOCK.chest, /\bC2?\b/)).toBe(true);
+    expect(has(VARIANT_UNLOCK.chest2, /\bC2\b/)).toBe(true);
+    expect(has(VARIANT_UNLOCK.crateGenerator, /\bH\b/)).toBe(true);
+    const pc = buildCandidate(VARIANT_UNLOCK.portalConveyor, 0, 1).spec;
+    expect(pc.portals?.length).toBeGreaterThan(0);
   });
 
   it("aucun obstacle n'apparaît avant son niveau d'introduction", () => {
-    const re: Record<string, RegExp> = { ice: /i\d/, crate: /X\d/, chain: /k\./, cage: /g\./, ivy: /^V$/, drop: /^D$/ };
+    const re: Record<string, RegExp> = { ice: /i\d/, crate: /X\d/, chain: /k\./, cage: /g\./, ivy: /^V$/, drop: /^D$/, bubble: /^B$/, generator: /^[GH]$/, chest: /^C2?$/, portal: /^$/, conveyor: /^$/ };
     for (const l of handmade)
       for (const [k, n] of Object.entries(ELEMENT_UNLOCK)) {
         const used = l.layout.flatMap((r) => r.split(" ")).some((t) => re[k].test(t));

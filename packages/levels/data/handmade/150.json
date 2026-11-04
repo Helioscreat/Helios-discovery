@@ -1,6 +1,6 @@
 {
   "n": 150,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Le grand jardin",
   "difficulty": "veryHard",
@@ -19,7 +19,7 @@
     "# # . . . . . # #"
   ],
   "colors": 6,
-  "moves": 36,
+  "moves": 30,
   "goals": [
     {
       "type": "clear",
@@ -41,13 +41,13 @@
       "target": 8000
     }
   ],
-  "seed": "L150v1a0:cfd1bdff",
+  "seed": "L150v2a0:92f5cb2e",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.225,
-    "avgMovesLeft": 5.11,
+    "botRate": 0.235,
+    "avgMovesLeft": 3.89,
     "status": "ok"
   }
 }

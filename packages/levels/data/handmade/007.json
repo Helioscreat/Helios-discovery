@@ -1,6 +1,6 @@
 {
   "n": 7,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "relax",
   "targetRate": 0.92,
@@ -30,13 +30,13 @@
       "count": 20
     }
   ],
-  "seed": "L7v1a0:32e12444",
+  "seed": "L7v2a0:b30c8999",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.995,
-    "avgMovesLeft": 6.36,
+    "botRate": 1,
+    "avgMovesLeft": 5.39,
     "status": "ok"
   }
 }

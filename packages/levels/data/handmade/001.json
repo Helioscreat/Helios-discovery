@@ -1,6 +1,6 @@
 {
   "n": 1,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Premiers pas",
   "tutorial": "match",
@@ -26,14 +26,14 @@
       "count": 26
     }
   ],
-  "seed": "L1v1a0:7f3aef2e",
+  "seed": "L1v2a0:bc16e1ff",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 1,
-    "avgMovesLeft": 5.2,
+    "botRate": 0.95,
+    "avgMovesLeft": 3.44,
     "status": "ok",
-    "auditRate": 1
+    "auditRate": 0.955
   }
 }

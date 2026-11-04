@@ -1,6 +1,6 @@
 {
   "n": 12,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "La Bombe à poser",
   "difficulty": "easy",
@@ -19,7 +19,7 @@
     ". . . . . . . . ."
   ],
   "colors": 5,
-  "moves": 23,
+  "moves": 18,
   "goals": [
     {
       "type": "collect",
@@ -27,13 +27,13 @@
       "count": 30
     }
   ],
-  "seed": "L12v1a0:987cd4be",
+  "seed": "L12v2a0:d558c78f",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.89,
-    "avgMovesLeft": 6.81,
+    "botRate": 0.905,
+    "avgMovesLeft": 5.28,
     "status": "ok"
   }
 }

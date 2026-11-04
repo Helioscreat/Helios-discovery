@@ -1,6 +1,6 @@
 {
   "n": 18,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "L'Arc-en-ciel",
   "difficulty": "medium",
@@ -32,13 +32,13 @@
       "count": 30
     }
   ],
-  "seed": "L18v1a0:a4578848",
+  "seed": "L18v2a0:c4aaf8ed",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.625,
-    "avgMovesLeft": 4.14,
+    "botRate": 0.685,
+    "avgMovesLeft": 3.86,
     "status": "ok"
   }
 }

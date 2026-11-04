@@ -1,6 +1,6 @@
 {
   "n": 73,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "easy",
   "targetRate": 0.85,
@@ -18,7 +18,7 @@
     ". . . . . . . . ."
   ],
   "colors": 5,
-  "moves": 35,
+  "moves": 33,
   "goals": [
     {
       "type": "drop",
@@ -34,13 +34,13 @@
     "total": 3,
     "maxOnBoard": 2
   },
-  "seed": "L73v1a0:2ddeebff",
+  "seed": "L73v2a0:f102f92e",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.86,
-    "avgMovesLeft": 12.52,
+    "botRate": 0.85,
+    "avgMovesLeft": 13.39,
     "status": "ok"
   }
 }

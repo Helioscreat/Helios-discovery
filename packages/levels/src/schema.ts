@@ -1,6 +1,6 @@
 import type { DropConfig, Goal, LevelSpec, ObstacleKind } from "@helios/core";
 
-export const CONTENT_VERSION = 1;
+export const CONTENT_VERSION = 2;
 
 export type Difficulty = "relax" | "easy" | "medium" | "hard" | "veryHard";
 
@@ -29,9 +29,20 @@ export function background(n: number): number {
 }
 
 /** Niveau d'introduction de chaque élément (tutoriel dédié dans les niveaux faits main). */
-export const ELEMENT_UNLOCK: Record<ObstacleKind | "drop", number> = {
+export const ELEMENT_UNLOCK: Record<ObstacleKind | "drop" | "portal" | "conveyor" | "generator", number> = {
   ice: 13, crate: 33, chain: 52, drop: 71, cage: 92, ivy: 112,
+  bubble: 131, portal: 152, conveyor: 172, generator: 191, chest: 212,
 };
+
+/** Variantes présentées comme nouveautés (avec tutoriel) pour tenir le rythme jusqu'au niveau 300. */
+export const VARIANT_UNLOCK = { chest2: 233, crateGenerator: 254, portalConveyor: 275 } as const;
+
+/** Niveau tutoriel d'un élément ou d'une variante → clé de tutoriel (textes du jeu). */
+export function introAt(n: number): string | null {
+  for (const [k, v] of Object.entries(ELEMENT_UNLOCK)) if (v === n) return k;
+  for (const [k, v] of Object.entries(VARIANT_UNLOCK)) if (v === n) return k;
+  return null;
+}
 
 export type LevelStatus = "ok" | "out_of_range";
 
@@ -49,6 +60,8 @@ export interface LevelFile {
   moves: number;
   goals: Goal[];
   drops?: Omit<DropConfig, "spawned">;
+  portals?: [number, number][];
+  conveyors?: number[][];
   seed: string;
   /** Paramètres de génération (niveaux générés) : tentative retenue et échelle des objectifs. */
   attempt?: number;
@@ -65,6 +78,6 @@ export interface LevelFile {
   };
 }
 
-export function toSpec(l: Pick<LevelFile, "width" | "height" | "layout" | "colors" | "moves" | "goals" | "drops" | "seed">): LevelSpec {
-  return { width: l.width, height: l.height, layout: l.layout, colors: l.colors, moves: l.moves, goals: l.goals, drops: l.drops, seed: l.seed };
+export function toSpec(l: Pick<LevelFile, "width" | "height" | "layout" | "colors" | "moves" | "goals" | "drops" | "seed" | "portals" | "conveyors">): LevelSpec {
+  return { width: l.width, height: l.height, layout: l.layout, colors: l.colors, moves: l.moves, goals: l.goals, drops: l.drops, seed: l.seed, portals: l.portals, conveyors: l.conveyors };
 }

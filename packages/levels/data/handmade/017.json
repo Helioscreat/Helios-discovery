@@ -1,6 +1,6 @@
 {
   "n": 17,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "hard",
   "targetRate": 0.35,
@@ -18,7 +18,7 @@
     "i2. i2. i1. . . . i1. i2. i2."
   ],
   "colors": 5,
-  "moves": 15,
+  "moves": 21,
   "goals": [
     {
       "type": "clear",
@@ -26,13 +26,13 @@
       "count": 24
     }
   ],
-  "seed": "L17v1a0:ee88b9cd",
+  "seed": "L17v2a0:4cf8de28",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.44,
-    "avgMovesLeft": 2.83,
+    "botRate": 0.415,
+    "avgMovesLeft": 3.22,
     "status": "ok"
   }
 }

@@ -3,6 +3,7 @@ import { crossLines, crossCells, rectCells, squareAround, tripleLines } from "./
 import { findMatches } from "./match";
 import { ensurePlayable, hasValidMove, isValidSwap, safeColor } from "./moves";
 import { cascadeLoop, isSpawner, Phase } from "./resolve";
+import { riseBubbles, rotateConveyors, runGenerators } from "./elements";
 import { nextInt, pick, seedRng } from "./rng";
 import type { AreaSpecial, ComboKind, DropConfig, GameEvent, GameState, Goal, Move, MoveResult, Piece, Pos } from "./types";
 
@@ -18,6 +19,9 @@ export interface LevelSpec {
   goals: Goal[];
   seed: string;
   drops?: Omit<DropConfig, "spawned">;
+  /** Portails [entrée, sortie] et boucles de tapis roulants (index de cases). */
+  portals?: [Pos, Pos][];
+  conveyors?: Pos[][];
   /**
    * Graine de l'essai. La grille de départ ne dépend que de `seed` (identique pour tous) ;
    * la suite des pièces qui tombent dépend de `seed` + `playSeed`. Absent = suite dérivée de `seed` seul.
@@ -60,6 +64,9 @@ export function createGame(spec: LevelSpec): GameState {
   if (ice.some((v) => v > 0)) st.ice = ice;
   const initialDrops = cellsSpec.filter((c) => c.content !== null && c.content !== "random" && c.content.kind === "drop").length;
   if (spec.drops) st.drops = { ...spec.drops, spawned: initialDrops };
+  if (spec.portals?.length) st.portals = spec.portals.map(([a, b]) => [a, b] as [Pos, Pos]);
+  if (spec.conveyors?.length) st.conveyors = spec.conveyors.map((l) => l.slice());
+  if (cellsSpec.some((c) => c.content !== null && c.content !== "random" && c.content.kind === "chest")) st.keys = 0;
 
   for (let attempt = 0; attempt < MAX_FILL_ATTEMPTS; attempt++) {
     st.nextId = 1;
@@ -117,7 +124,7 @@ export function applyMoveInPlace(st: GameState, move: Move): { events: GameEvent
 
   st.movesLeft--;
   st.moveCount++;
-  if (ivyBefore > 0 && countIvy(st) >= ivyBefore) spreadIvy(st, ev);
+  endOfTurn(st, ev, ivyBefore);
   if (goalsDone(st)) {
     runBonus(st, ev);
     st.status = "won";
@@ -133,6 +140,15 @@ export function applyMoveInPlace(st: GameState, move: Move): { events: GameEvent
 
 export function goalsDone(st: GameState): boolean {
   return st.goals.every((g, k) => st.progress[k] >= (g.type === "score" ? g.target : g.count));
+}
+
+/** Effets de fin de coup, dans l'ordre : tapis roulants, montée des bulles, générateurs, lierre. */
+export function endOfTurn(st: GameState, ev: GameEvent[], ivyBefore: number): void {
+  let c = 1;
+  if (rotateConveyors(st, ev)) c = cascadeLoop(st, ev, c);
+  if (riseBubbles(st, ev)) c = cascadeLoop(st, ev, c);
+  runGenerators(st, ev);
+  if (ivyBefore > 0 && countIvy(st) >= ivyBefore) spreadIvy(st, ev);
 }
 
 export function countIvy(st: GameState): number {
@@ -161,7 +177,7 @@ export function spreadIvy(st: GameState, ev: GameEvent[]): void {
   for (let i = 0; i < st.cells.length; i++) {
     if (st.cells[i]?.kind !== "ivy") continue;
     for (const nb of neighbors4(st, i))
-      if (isFreeNormal(st.cells[nb]) && !(st.ice && st.ice[nb] > 0) && !isSpawner(st, nb)) candidates.add(nb);
+      if (isFreeNormal(st.cells[nb]) && !st.cells[nb]!.key && !(st.ice && st.ice[nb] > 0) && !isSpawner(st, nb)) candidates.add(nb);
   }
   if (candidates.size === 0) return;
   const target = pick(st.rng, [...candidates].sort((a, b) => a - b));

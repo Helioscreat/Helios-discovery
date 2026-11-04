@@ -20,11 +20,21 @@ export interface Piece {
   kind?: PieceKind;
   hp?: number;
   lock?: Lock | null;
+  /** Pièce porteuse d'une clé : l'effacer ramasse la clé, qui ouvre un Coffre. */
+  key?: boolean;
+  /** Générateur : produit `product` tous les `every` coups. */
+  product?: "bubble" | "crate";
+  every?: number;
 }
 
-export type PieceKind = "piece" | "crate" | "ivy" | "drop";
+/**
+ *  - "bubble"    : Bulle, fixe, 1 PV ; monte d'une case après chaque coup (échange avec la pièce au-dessus).
+ *  - "generator" : Générateur, indestructible ; fait apparaître son produit sur une case voisine.
+ *  - "chest"     : Coffre, fixe et indestructible ; s'ouvre avec une clé (`hp` = serrures restantes).
+ */
+export type PieceKind = "piece" | "crate" | "ivy" | "drop" | "bubble" | "generator" | "chest";
 export type Lock = "chain" | "cage";
-export type ObstacleKind = "ice" | "crate" | "ivy" | "chain" | "cage";
+export type ObstacleKind = "ice" | "crate" | "ivy" | "chain" | "cage" | "bubble" | "chest";
 
 export type Goal =
   | { type: "score"; target: number }
@@ -60,6 +70,10 @@ export interface Board {
   cells: (Piece | null)[];
   /** Couches de Gel sous chaque case (0 à 3). Absent = aucun gel. */
   ice?: number[];
+  /** Portails : [entrée, sortie]. Une pièce sur l'entrée tombe dans la sortie si elle est vide. */
+  portals?: [Pos, Pos][];
+  /** Tapis roulants : boucles de cases ; après chaque coup, le contenu avance d'une case dans l'ordre. */
+  conveyors?: Pos[][];
 }
 
 /** État complet d'une partie : sérialisable en JSON, aucune référence partagée. */
@@ -76,6 +90,8 @@ export interface GameState extends Board {
   progress: number[];
   status: "playing" | "won" | "lost";
   drops?: DropConfig;
+  /** Clés ramassées et pas encore utilisées. */
+  keys?: number;
 }
 
 export type MatchShape = "line3" | "line4" | "line5" | "lt" | "square";
@@ -114,6 +130,11 @@ export type GameEvent =
   | { type: "damaged"; at: Pos; obstacle: ObstacleKind; left: number }
   | { type: "dropCollected"; at: Pos; id: number }
   | { type: "ivySpread"; at: Pos; id: number }
+  | { type: "conveyor"; moves: [Pos, Pos][] }
+  | { type: "bubbleRise"; moves: [Pos, Pos][] }
+  | { type: "generated"; at: Pos; id: number; product: "bubble" | "crate"; from: Pos }
+  | { type: "keyCollected"; at: Pos; held: number }
+  | { type: "chestOpened"; at: Pos; locksLeft: number }
   | { type: "won" }
   | { type: "lost" };
 

@@ -10,13 +10,13 @@ import { CONTENT_VERSION, difficultyOf, TARGET_RATE, type Difficulty } from "./s
  *   .  pièce au hasard     #  case inactive      a–f  pièce de couleur imposée
  *   i I J  gel 1, 2, 3 couches                   x X Y  caisse 1, 2, 3 PV
  *   k  pièce enchaînée     g  pièce en cage      v  lierre     D  objet à faire descendre
- *   q  caisse 1 PV sur gel     K  pièce enchaînée sur gel
+ *   q  caisse 1 PV sur gel     K  pièce enchaînée sur gel     B  bulle
  *   1  Fusée horizontale (a)   2  Fusée verticale (b)   3  Bombe (c)   4  Libellule (d)   P  Prisme
  */
 const CHAR: Record<string, string> = {
   ".": ".", "#": "#", a: "a", b: "b", c: "c", d: "d", e: "e", f: "f",
   i: "i1.", I: "i2.", J: "i3.", x: "X1", X: "X2", Y: "X3", k: "k.", g: "g.", v: "V", D: "D", q: "i1X1", K: "i1k.",
-  "1": "a-", "2": "b|", "3": "c*", "4": "d^", P: "P",
+  "1": "a-", "2": "b|", "3": "c*", "4": "d^", P: "P", B: "B",
 };
 
 export const LAYOUTS: Record<string, string[]> = {
@@ -64,6 +64,10 @@ export const LAYOUTS: Record<string, string[]> = {
   tutIvy: [".......", ".......", ".......", ".......", ".......", "...v...", "......."],
   ivyCorners: [".........", ".........", ".........", ".........", ".........", ".........", ".........", "v.......v", "vv.....vv"],
   ivyCrates: [".........", ".........", ".........", "..x...x..", ".........", ".........", "....v....", "...vvv...", "........."],
+  // ── Bulles ──
+  tutBubble: [".......", ".......", ".......", ".......", ".......", ".B...B.", "......."],
+  bubbleRows: [".........", ".........", ".........", ".........", ".........", ".B.B.B.B.", ".........", "B.B.B.B.B", "........."],
+  bubbleIce: [".........", ".........", "iiiiiiiii", "iiiiiiiii", ".........", ".B..B..B.", ".........", ".B..B..B.", "........."],
   // ── combinaisons (niveaux 120–150) ──
   mixA: [".........", ".........", "iiiiiiiii", "ixixixixi", "iiiiiiiii", ".g.....g.", ".........", "...kkk...", "........."],
   mixB: ["##.....##", "#.......#", "..x...x..", "..KiiiK..", "..iIJIi..", "..KiiiK..", "..x...x..", "#.......#", "##.....##"],
@@ -225,25 +229,25 @@ export const DESIGNS: Design[] = [
   { layout: "mixB", colors: 5, goals: "crate+ice+c0:16" },
   { layout: "mixC", colors: 6, goals: "drop:3" },
   { layout: "mixB", colors: 6, goals: "chain+ice+crate" },
-  // 131–140
-  { layout: "corners", colors: 5, goals: "c3:46" },
+  // 131–140 : les Bulles (131)
+  { layout: "tutBubble", colors: 4, goals: "bubble", title: "Les Bulles", tutorial: "bubble" },
   { layout: "crateIce", colors: 5, goals: "crate+ice", title: "Caisses sur la glace" },
-  { layout: "cageIce", colors: 5, goals: "cage+ice+c1:20" },
+  { layout: "bubbleRows", colors: 5, goals: "bubble" },
   { layout: "mixC", colors: 5, goals: "drop:4+crate" },
   { layout: "ivyCorners", colors: 6, goals: "ivy:0+c4:20" },
   { layout: "mixA", colors: 6, goals: "ice+cage+chain" },
-  { layout: "iceDiamond", colors: 6, goals: "ice+s:9000" },
+  { layout: "bubbleIce", colors: 6, goals: "bubble+ice" },
   { layout: "dropCrates", colors: 6, goals: "drop:5+crate" },
   { layout: "chainIce", colors: 6, goals: "chain+ice+c2:20" },
   { layout: "mixB", colors: 6, goals: "chain+ice+crate+c3:12" },
   // 141–150
-  { layout: "open9", colors: 6, goals: "c0:40" },
+  { layout: "bubbleRows", colors: 5, goals: "bubble+c0:24" },
   { layout: "cageGrid", colors: 6, goals: "cage+c4:24" },
   { layout: "ivyCrates", colors: 6, goals: "ivy:0+crate" },
   { layout: "mixA", colors: 6, goals: "ice+crate+cage" },
   { layout: "crateHeavy", colors: 6, goals: "crate+c1:24" },
   { layout: "mixC", colors: 6, goals: "drop:4+chain" },
-  { layout: "iceFloor", colors: 6, goals: "ice+c2:20" },
+  { layout: "bubbleIce", colors: 6, goals: "bubble+ice+c2:12" },
   { layout: "cageIce", colors: 6, goals: "cage+ice" },
   { layout: "diamond", colors: 6, goals: "c3:36+c4:36" },
   { layout: "mixB", colors: 6, goals: "chain+ice+crate+s:8000", title: "Le grand jardin" },
@@ -291,6 +295,7 @@ export function buildHandmade(n: number, attempt: number, scale: number): Candid
     else if (kind === "crate") goals.push({ type: "clear", target: "crate", count: countToken(layout, (t) => /X\d$/.test(t)) });
     else if (kind === "chain") goals.push({ type: "clear", target: "chain", count: countToken(layout, (t) => t.includes("k")) });
     else if (kind === "cage") goals.push({ type: "clear", target: "cage", count: countToken(layout, (t) => t.startsWith("g")) });
+    else if (kind === "bubble") goals.push({ type: "clear", target: "bubble", count: countToken(layout, (t) => t === "B") });
     // Lierre : détruire autant de lierre qu'il y en a au départ (toujours faisable, même si on l'élimine avant qu'il pousse).
     else if (kind === "ivy") goals.push({ type: "clear", target: "ivy", count: countToken(layout, (t) => t === "V") });
     else throw new Error(`objectif inconnu « ${part} » (niveau ${n})`);

@@ -1,6 +1,6 @@
 {
   "n": 13,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Le Gel",
   "tutorial": "ice",
@@ -26,13 +26,13 @@
       "count": 15
     }
   ],
-  "seed": "L13v1a0:396dffb9",
+  "seed": "L13v2a0:b80565e4",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.99,
-    "avgMovesLeft": 4.98,
+    "botRate": 1,
+    "avgMovesLeft": 5.04,
     "status": "ok"
   }
 }

@@ -1,6 +1,6 @@
 {
   "n": 2,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "La Fusée",
   "tutorial": "rocket",
@@ -26,13 +26,13 @@
       "count": 30
     }
   ],
-  "seed": "L2v1a0:80236b7b",
+  "seed": "L2v2a0:434778aa",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
     "botRate": 0.995,
-    "avgMovesLeft": 4.66,
+    "avgMovesLeft": 5.21,
     "status": "ok"
   }
 }

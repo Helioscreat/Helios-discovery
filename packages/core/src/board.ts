@@ -1,6 +1,7 @@
 import { seedRng } from "./rng";
 import type { Board, DropConfig, GameState, Goal, Piece, Pos, Special } from "./types";
 
+
 export const MAX_SIZE = 9;
 
 export const xOf = (b: Board, i: Pos) => i % b.width;
@@ -48,6 +49,8 @@ const clonePiece = (p: Piece): Piece => {
   if (p.kind !== undefined) q.kind = p.kind;
   if (p.hp !== undefined) q.hp = p.hp;
   if (p.lock) q.lock = p.lock;
+  if (p.key) q.key = true;
+  if (p.product) { q.product = p.product; q.every = p.every; }
   return q;
 };
 
@@ -81,11 +84,12 @@ export function hashString(str: string): string {
 
 // ───────────── Notation des cases (tests, niveaux faits main, générateur) ─────────────
 // Un jeton par case, séparés par des espaces : [préfixes]* base
-//   préfixes : i1 | i2 | i3  Gel (couches)    k  Chaîne    g  Cage
+//   préfixes : i1 | i2 | i3  Gel (couches)    k  Chaîne    g  Cage    y  pièce porteuse d'une clé
 //   base     : .  pièce au hasard     a..f  couleur 0..5, suivie éventuellement d'un suffixe de spéciale
 //              -  Fusée horizontale  |  Fusée verticale  *  Bombe  ^  Libellule
 //              P  Prisme   _  case vide   #  case inactive
 //              X1..X3  Caisse (PV)   V  Lierre   D  objet à faire descendre
+//              B  Bulle   G  Générateur de bulles   H  Générateur de caisses   C | C2  Coffre (1 ou 2 serrures)
 // Exemples : "i2."  gel 2 sous une pièce au hasard ; "kb" pièce b enchaînée ; "i1X2" caisse 2 PV sur gel.
 const SUFFIX: Record<string, Special> = { "-": "rocketH", "|": "rocketV", "*": "bomb", "^": "dragonfly" };
 const SUFFIX_OF: Partial<Record<Special, string>> = { rocketH: "-", rocketV: "|", bomb: "*", dragonfly: "^" };
@@ -100,21 +104,32 @@ export interface CellToken {
 export function parseToken(tok: string): CellToken {
   let ice = 0;
   let lock: Piece["lock"] = null;
+  let key = false;
   let rest = tok;
   for (;;) {
     const m = /^i([1-3])/.exec(rest);
     if (m) { ice = Number(m[1]); rest = rest.slice(2); continue; }
     if (rest.startsWith("k") && rest.length > 1) { lock = "chain"; rest = rest.slice(1); continue; }
     if (rest.startsWith("g") && rest.length > 1) { lock = "cage"; rest = rest.slice(1); continue; }
+    if (rest.startsWith("y") && rest.length > 1) { key = true; rest = rest.slice(1); continue; }
     break;
   }
-  const withLock = (c: Omit<Piece, "id">): Omit<Piece, "id"> => (lock ? { ...c, lock } : c);
+  const withLock = (c: Omit<Piece, "id">): Omit<Piece, "id"> => {
+    let out = lock ? { ...c, lock } : c;
+    if (key) out = { ...out, key: true };
+    return out;
+  };
   if (rest === "#") {
     if (ice || lock) throw new Error(`jeton invalide « ${tok} »`);
     return { active: false, ice: 0, content: null };
   }
   if (rest === "_") return { active: true, ice, content: null };
-  if (rest === ".") return { active: true, ice, content: lock ? withLock({ color: -2, special: null }) : "random" };
+  if (rest === ".") return { active: true, ice, content: lock || key ? withLock({ color: -2, special: null }) : "random" };
+  if (rest === "B") return { active: true, ice, content: { color: -1, special: null, kind: "bubble", hp: 1 } };
+  if (rest === "G") return { active: true, ice, content: { color: -1, special: null, kind: "generator", product: "bubble", every: 3 } };
+  if (rest === "H") return { active: true, ice, content: { color: -1, special: null, kind: "generator", product: "crate", every: 4 } };
+  const chest = /^C([12]?)$/.exec(rest);
+  if (chest) return { active: true, ice, content: { color: -1, special: null, kind: "chest", hp: chest[1] ? Number(chest[1]) : 1 } };
   if (rest === "P") return { active: true, ice, content: withLock({ color: -1, special: "prism" }) };
   if (rest === "V") return { active: true, ice, content: { color: -1, special: null, kind: "ivy", hp: 1 } };
   if (rest === "D") return { active: true, ice, content: { color: -1, special: null, kind: "drop" } };
@@ -132,11 +147,14 @@ export function tokenOf(b: Board, i: Pos): string {
   const p = b.cells[i];
   const ice = iceAt(b, i) > 0 ? `i${iceAt(b, i)}` : "";
   if (p === null) return `${ice}_`;
-  const lock = p.lock === "chain" ? "k" : p.lock === "cage" ? "g" : "";
+  const lock = (p.lock === "chain" ? "k" : p.lock === "cage" ? "g" : "") + (p.key ? "y" : "");
   const k = kindOf(p);
   if (k === "crate") return `${ice}X${p.hp ?? 1}`;
   if (k === "ivy") return `${ice}V`;
   if (k === "drop") return `${ice}D`;
+  if (k === "bubble") return `${ice}B`;
+  if (k === "generator") return `${ice}${p.product === "crate" ? "H" : "G"}`;
+  if (k === "chest") return `${ice}C${(p.hp ?? 1) > 1 ? p.hp : ""}`;
   if (p.special === "prism") return `${ice}${lock}P`;
   return `${ice}${lock}${String.fromCharCode(97 + p.color)}${p.special ? SUFFIX_OF[p.special] : ""}`;
 }
@@ -147,6 +165,8 @@ export interface AsciiOptions {
   goals?: Goal[];
   seed?: string;
   drops?: Omit<DropConfig, "spawned">;
+  portals?: [Pos, Pos][];
+  conveyors?: Pos[][];
 }
 
 /** Grille entièrement spécifiée (tests). Les jetons « . » reçoivent la couleur 0 : à éviter ici. */
@@ -196,6 +216,8 @@ export function fromAscii(rows: string[], opts: AsciiOptions = {}): GameState {
   };
   if (ice.some((v) => v > 0)) st.ice = ice;
   if (opts.drops) st.drops = { ...opts.drops, spawned: drops };
+  if (opts.portals) st.portals = opts.portals;
+  if (opts.conveyors) st.conveyors = opts.conveyors;
   return st;
 }
 

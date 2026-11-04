@@ -1,6 +1,6 @@
 {
   "n": 25,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "La Croix de feu",
   "difficulty": "medium",
@@ -27,13 +27,13 @@
       "count": 36
     }
   ],
-  "seed": "L25v1a0:95f357cc",
+  "seed": "L25v2a0:361eef81",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.66,
-    "avgMovesLeft": 2.63,
+    "botRate": 0.685,
+    "avgMovesLeft": 2.87,
     "status": "ok"
   }
 }

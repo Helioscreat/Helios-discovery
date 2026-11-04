@@ -1,6 +1,6 @@
 {
   "n": 92,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Les Cages",
   "tutorial": "cage",
@@ -26,13 +26,13 @@
       "count": 4
     }
   ],
-  "seed": "L92v1a0:cf1b2e46",
+  "seed": "L92v2a0:abf689f7",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
     "botRate": 1,
-    "avgMovesLeft": 9.19,
+    "avgMovesLeft": 8.57,
     "status": "ok"
   }
 }

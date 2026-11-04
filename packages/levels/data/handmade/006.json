@@ -1,6 +1,6 @@
 {
   "n": 6,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Combos",
   "tutorial": "combo",
@@ -25,13 +25,13 @@
       "target": 4000
     }
   ],
-  "seed": "L6v1a0:87ab0c1f",
+  "seed": "L6v2a0:cacfe2ce",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.96,
-    "avgMovesLeft": 5.68,
+    "botRate": 0.985,
+    "avgMovesLeft": 6.78,
     "status": "ok"
   }
 }

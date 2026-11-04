@@ -1,6 +1,6 @@
 {
   "n": 58,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "medium",
   "targetRate": 0.6,
@@ -18,7 +18,7 @@
     "# # # . . . # # #"
   ],
   "colors": 6,
-  "moves": 22,
+  "moves": 25,
   "goals": [
     {
       "type": "collect",
@@ -26,13 +26,13 @@
       "count": 30
     }
   ],
-  "seed": "L58v1a0:8420ecc4",
+  "seed": "L58v2a0:044c5219",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
     "botRate": 0.615,
-    "avgMovesLeft": 3.99,
+    "avgMovesLeft": 4.46,
     "status": "ok"
   }
 }

@@ -1,6 +1,6 @@
 {
   "n": 35,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "medium",
   "targetRate": 0.6,
@@ -28,16 +28,16 @@
     {
       "type": "collect",
       "color": 3,
-      "count": 34
+      "count": 41
     }
   ],
-  "seed": "L35v1a2:797a1e4f",
-  "attempt": 2,
-  "scale": 1.6900000000000002,
+  "seed": "L35v2a3:dcea4a89",
+  "attempt": 3,
+  "scale": 2.03125,
   "validation": {
     "runs": 200,
-    "botRate": 0.605,
-    "avgMovesLeft": 2.45,
+    "botRate": 0.665,
+    "avgMovesLeft": 2.49,
     "status": "ok"
   }
 }

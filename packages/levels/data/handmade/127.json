@@ -1,6 +1,6 @@
 {
   "n": 127,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "hard",
   "targetRate": 0.35,
@@ -18,7 +18,7 @@
     ". . . . . . . . ."
   ],
   "colors": 6,
-  "moves": 15,
+  "moves": 16,
   "goals": [
     {
       "type": "clear",
@@ -29,20 +29,15 @@
       "type": "clear",
       "target": "crate",
       "count": 4
-    },
-    {
-      "type": "collect",
-      "color": 1,
-      "count": 18
     }
   ],
-  "seed": "L127v1a1:3664700a",
-  "attempt": 1,
-  "scale": 1.25,
+  "seed": "L127v2a0:95d495f8",
+  "attempt": 0,
+  "scale": 1,
   "validation": {
     "runs": 200,
     "botRate": 0.39,
-    "avgMovesLeft": 2.5,
+    "avgMovesLeft": 2.42,
     "status": "ok"
   }
 }

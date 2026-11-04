@@ -1,6 +1,6 @@
 {
   "n": 50,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "veryHard",
   "targetRate": 0.2,
@@ -33,16 +33,16 @@
     {
       "type": "collect",
       "color": 0,
-      "count": 44
+      "count": 16
     }
   ],
-  "seed": "L50v1a4:ac48de30",
-  "attempt": 4,
-  "scale": 2.7462500000000003,
+  "seed": "L50v2a0:51b1b0b1",
+  "attempt": 0,
+  "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.215,
-    "avgMovesLeft": 2.02,
+    "botRate": 0.255,
+    "avgMovesLeft": 2.24,
     "status": "ok"
   }
 }

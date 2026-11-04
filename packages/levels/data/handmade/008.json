@@ -1,6 +1,6 @@
 {
   "n": 8,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Le Marteau",
   "difficulty": "relax",
@@ -26,13 +26,13 @@
       "count": 30
     }
   ],
-  "seed": "L8v1a0:6c544441",
+  "seed": "L8v2a0:cc28ac8c",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
     "botRate": 1,
-    "avgMovesLeft": 6.26,
+    "avgMovesLeft": 6.29,
     "status": "ok"
   }
 }

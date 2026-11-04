@@ -1,6 +1,6 @@
 {
   "n": 141,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "relax",
   "targetRate": 0.9,
@@ -12,28 +12,33 @@
     ". . . . . . . . .",
     ". . . . . . . . .",
     ". . . . . . . . .",
+    ". B . B . B . B .",
     ". . . . . . . . .",
-    ". . . . . . . . .",
-    ". . . . . . . . .",
+    "B . B . B . B . B",
     ". . . . . . . . ."
   ],
-  "colors": 6,
-  "moves": 35,
+  "colors": 5,
+  "moves": 12,
   "goals": [
+    {
+      "type": "clear",
+      "target": "bubble",
+      "count": 9
+    },
     {
       "type": "collect",
       "color": 0,
-      "count": 40
+      "count": 24
     }
   ],
-  "seed": "L141v1a0:3672dced",
+  "seed": "L141v2a0:161f6c48",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.91,
-    "avgMovesLeft": 8.63,
+    "botRate": 0.985,
+    "avgMovesLeft": 5.84,
     "status": "ok",
-    "auditRate": 0.895
+    "auditRate": 0.995
   }
 }

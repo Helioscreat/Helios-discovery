@@ -1,6 +1,6 @@
 {
   "n": 138,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "medium",
   "targetRate": 0.6,
@@ -18,11 +18,11 @@
     ". . . . . . . . ."
   ],
   "colors": 6,
-  "moves": 56,
+  "moves": 47,
   "goals": [
     {
       "type": "drop",
-      "count": 4
+      "count": 3
     },
     {
       "type": "clear",
@@ -31,16 +31,16 @@
     }
   ],
   "drops": {
-    "total": 4,
+    "total": 3,
     "maxOnBoard": 2
   },
-  "seed": "L138v1a1:6f3872d2",
-  "attempt": 1,
-  "scale": 0.8,
+  "seed": "L138v2a2:50a7d266",
+  "attempt": 2,
+  "scale": 0.6400000000000001,
   "validation": {
     "runs": 200,
-    "botRate": 0.605,
-    "avgMovesLeft": 17.07,
+    "botRate": 0.6,
+    "avgMovesLeft": 16.24,
     "status": "ok"
   }
 }

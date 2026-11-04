@@ -88,7 +88,7 @@ export function BoosterGlyph(props: { booster: string }) {
 }
 
 /** Icônes des obstacles et objets (objectifs du HUD) : forme et couleur, jamais la couleur seule. */
-export function ObstacleIcon(props: { kind: "ice" | "crate" | "chain" | "cage" | "ivy" | "drop" }) {
+export function ObstacleIcon(props: { kind: "ice" | "crate" | "chain" | "cage" | "ivy" | "drop" | "bubble" | "chest" }) {
   const s = 24;
   const shapes: Record<string, preact.JSX.Element> = {
     ice: <g><rect x="-0.85" y="-0.85" width="1.7" height="1.7" rx="0.3" fill="#BFE8FF" stroke="#0B0B0B" stroke-width="0.1" /><path d="M-0.5 -0.2 L0.2 -0.6 M-0.3 0.4 L0.5 -0.1" stroke="#FFFFFF" stroke-width="0.14" /></g>,
@@ -96,6 +96,8 @@ export function ObstacleIcon(props: { kind: "ice" | "crate" | "chain" | "cage" |
     chain: <g fill="none" stroke="#C8CDD4" stroke-width="0.22"><ellipse cx="-0.4" cy="0" rx="0.45" ry="0.28" /><ellipse cx="0.4" cy="0" rx="0.45" ry="0.28" /></g>,
     cage: <g fill="none" stroke="#E8EDF3" stroke-width="0.16"><rect x="-0.8" y="-0.8" width="1.6" height="1.6" rx="0.1" /><path d="M-0.3 -0.8 V0.8 M0.3 -0.8 V0.8" /></g>,
     ivy: <g><path d="M0 0.9 C-0.2 0.2 0.2 -0.2 0 -0.9" stroke="#2E7D32" stroke-width="0.14" fill="none" /><ellipse cx="-0.35" cy="0.1" rx="0.35" ry="0.2" fill="#43A047" /><ellipse cx="0.35" cy="-0.35" rx="0.35" ry="0.2" fill="#43A047" /></g>,
+    bubble: <g><circle r="0.8" fill="#D6F0FF" fill-opacity="0.6" stroke="#FFFFFF" stroke-width="0.12" /><ellipse cx="-0.3" cy="-0.35" rx="0.22" ry="0.12" fill="#FFFFFF" /></g>,
+    chest: <g><rect x="-0.85" y="-0.6" width="1.7" height="1.4" rx="0.12" fill="#8D5524" stroke="#3E2410" stroke-width="0.1" /><rect x="-0.85" y="-0.75" width="1.7" height="0.45" rx="0.12" fill="#C68642" /><rect x="-0.18" y="-0.15" width="0.36" height="0.45" rx="0.06" fill="#FFD166" /></g>,
     drop: <g><circle r="0.55" fill="#FFD166" stroke="#0B0B0B" stroke-width="0.1" /><path d="M0 -0.95 V-0.7 M0 0.7 V0.95 M-0.95 0 H-0.7 M0.7 0 H0.95" stroke="#FFD166" stroke-width="0.14" /></g>,
   };
   return <svg width={s} height={s} viewBox="-1 -1 2 2" aria-hidden="true">{shapes[props.kind]}</svg>;

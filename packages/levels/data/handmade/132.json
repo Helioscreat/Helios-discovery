@@ -1,6 +1,6 @@
 {
   "n": 132,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Caisses sur la glace",
   "difficulty": "easy",
@@ -19,7 +19,7 @@
     ". . . . . . . . ."
   ],
   "colors": 5,
-  "moves": 18,
+  "moves": 17,
   "goals": [
     {
       "type": "clear",
@@ -32,13 +32,13 @@
       "count": 45
     }
   ],
-  "seed": "L132v1a0:c2e08d2f",
+  "seed": "L132v2a0:8741cede",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.85,
-    "avgMovesLeft": 6.01,
+    "botRate": 0.895,
+    "avgMovesLeft": 4.51,
     "status": "ok"
   }
 }

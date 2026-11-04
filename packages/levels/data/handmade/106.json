@@ -1,6 +1,6 @@
 {
   "n": 106,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "medium",
   "targetRate": 0.6,
@@ -18,7 +18,7 @@
     ". . . . . . . . ."
   ],
   "colors": 6,
-  "moves": 24,
+  "moves": 23,
   "goals": [
     {
       "type": "clear",
@@ -31,13 +31,13 @@
       "count": 31
     }
   ],
-  "seed": "L106v1a0:ef99366c",
+  "seed": "L106v2a0:910202a1",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.65,
-    "avgMovesLeft": 4.51,
+    "botRate": 0.645,
+    "avgMovesLeft": 3.81,
     "status": "ok"
   }
 }

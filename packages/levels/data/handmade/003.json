@@ -1,6 +1,6 @@
 {
   "n": 3,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "La Libellule",
   "tutorial": "dragonfly",
@@ -26,13 +26,13 @@
       "count": 30
     }
   ],
-  "seed": "L3v1a0:b4371620",
+  "seed": "L3v2a0:5489bd45",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.99,
-    "avgMovesLeft": 4.62,
+    "botRate": 0.985,
+    "avgMovesLeft": 4.57,
     "status": "ok"
   }
 }

@@ -1,6 +1,6 @@
 {
   "n": 41,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "relax",
   "targetRate": 0.9,
@@ -26,14 +26,14 @@
       "count": 10
     }
   ],
-  "seed": "L41v1a0:2991d1de",
+  "seed": "L41v2a0:6530902f",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.985,
-    "avgMovesLeft": 6.27,
+    "botRate": 0.96,
+    "avgMovesLeft": 4.36,
     "status": "ok",
-    "auditRate": 0.995
+    "auditRate": 0.935
   }
 }

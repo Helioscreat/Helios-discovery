@@ -1,6 +1,6 @@
 {
   "n": 113,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "easy",
   "targetRate": 0.85,
@@ -31,13 +31,13 @@
       "count": 41
     }
   ],
-  "seed": "L113v1a2:0663bde0",
+  "seed": "L113v2a2:e73f1fdd",
   "attempt": 2,
   "scale": 1.5625,
   "validation": {
     "runs": 200,
-    "botRate": 0.875,
-    "avgMovesLeft": 4.47,
+    "botRate": 0.85,
+    "avgMovesLeft": 5.35,
     "status": "ok"
   }
 }

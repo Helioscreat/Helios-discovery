@@ -1,6 +1,6 @@
 {
   "n": 114,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "medium",
   "targetRate": 0.6,
@@ -28,16 +28,16 @@
     {
       "type": "collect",
       "color": 3,
-      "count": 33
+      "count": 34
     }
   ],
-  "seed": "L114v1a2:bf7a6dfd",
+  "seed": "L114v2a2:5e9e4280",
   "attempt": 2,
-  "scale": 1.625,
+  "scale": 1.6900000000000002,
   "validation": {
     "runs": 200,
-    "botRate": 0.6,
-    "avgMovesLeft": 2.56,
+    "botRate": 0.655,
+    "avgMovesLeft": 2.69,
     "status": "ok"
   }
 }

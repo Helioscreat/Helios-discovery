@@ -1,6 +1,6 @@
 {
   "n": 32,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Le Mélangeur",
   "difficulty": "easy",
@@ -19,7 +19,7 @@
     ". . . . . . . . ."
   ],
   "colors": 5,
-  "moves": 25,
+  "moves": 26,
   "goals": [
     {
       "type": "collect",
@@ -27,13 +27,13 @@
       "count": 36
     }
   ],
-  "seed": "L32v1a0:518c0758",
+  "seed": "L32v2a0:71df77fd",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.86,
-    "avgMovesLeft": 6.61,
+    "botRate": 0.885,
+    "avgMovesLeft": 6.72,
     "status": "ok"
   }
 }

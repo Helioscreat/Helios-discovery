@@ -1,6 +1,6 @@
 {
   "n": 112,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Le Lierre",
   "tutorial": "ivy",
@@ -26,13 +26,13 @@
       "count": 1
     }
   ],
-  "seed": "L112v1a0:55fb78e1",
+  "seed": "L112v2a0:b492acac",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
     "botRate": 1,
-    "avgMovesLeft": 9.38,
+    "avgMovesLeft": 10.81,
     "status": "ok"
   }
 }

@@ -1,6 +1,6 @@
 {
   "n": 93,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "easy",
   "targetRate": 0.85,
@@ -31,13 +31,13 @@
       "count": 18
     }
   ],
-  "seed": "L93v1a1:1bb2e48e",
+  "seed": "L93v2a1:7c4a1b7f",
   "attempt": 1,
   "scale": 1.25,
   "validation": {
     "runs": 200,
-    "botRate": 0.945,
-    "avgMovesLeft": 3.44,
+    "botRate": 0.93,
+    "avgMovesLeft": 4.04,
     "status": "ok"
   }
 }

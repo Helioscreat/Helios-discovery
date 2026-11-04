@@ -1,6 +1,6 @@
 {
   "n": 5,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Le Prisme",
   "tutorial": "prism",
@@ -26,13 +26,13 @@
       "count": 32
     }
   ],
-  "seed": "L5v1a0:54448d82",
+  "seed": "L5v2a0:111fb6d3",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.965,
-    "avgMovesLeft": 4.06,
+    "botRate": 0.99,
+    "avgMovesLeft": 4.75,
     "status": "ok"
   }
 }

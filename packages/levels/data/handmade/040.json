@@ -1,6 +1,6 @@
 {
   "n": 40,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "title": "Le Kit de départ",
   "difficulty": "veryHard",
@@ -19,26 +19,21 @@
     ". . . . . . . . ."
   ],
   "colors": 5,
-  "moves": 14,
+  "moves": 13,
   "goals": [
     {
       "type": "clear",
       "target": "crate",
       "count": 13
-    },
-    {
-      "type": "collect",
-      "color": 0,
-      "count": 18
     }
   ],
-  "seed": "L40v1a1:c845c6c6",
-  "attempt": 1,
-  "scale": 1.25,
+  "seed": "L40v2a0:491a6304",
+  "attempt": 0,
+  "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.26,
-    "avgMovesLeft": 1.46,
+    "botRate": 0.29,
+    "avgMovesLeft": 1.29,
     "status": "ok"
   }
 }

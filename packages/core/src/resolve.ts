@@ -26,7 +26,7 @@ export class Phase {
   private readonly touched = new Set<Pos>();
   private readonly queue: Activation[] = [];
   private readonly creates: { at: Pos; piece: Piece }[] = [];
-  private readonly destroyed: Record<ObstacleKind, number> = { ice: 0, crate: 0, ivy: 0, chain: 0, cage: 0 };
+  private readonly destroyed: Record<ObstacleKind, number> = { ice: 0, crate: 0, ivy: 0, chain: 0, cage: 0, bubble: 0, chest: 0 };
 
   constructor(readonly st: GameState, readonly ev: GameEvent[], readonly cascade: number) {}
 
@@ -43,8 +43,8 @@ export class Phase {
     const p = st.cells[i];
     if (p === null) return;
     const k = kindOf(p);
-    if (k === "drop") return; // indestructible
-    if (k === "crate" || k === "ivy") {
+    if (k === "drop" || k === "generator" || k === "chest") return; // indestructibles (le coffre s'ouvre avec une clé)
+    if (k === "crate" || k === "ivy" || k === "bubble") {
       p.hp = (p.hp ?? 1) - 1;
       this.ev.push({ type: "damaged", at: i, obstacle: k, left: Math.max(0, p.hp) });
       if (p.hp <= 0) {
@@ -74,7 +74,7 @@ export class Phase {
       for (const n of neighbors4(this.st, c)) {
         if (inGroup.has(n)) continue;
         const p = this.st.cells[n];
-        if (p !== null && (p.kind === "crate" || p.kind === "ivy" || p.lock === "cage")) this.hit(n);
+        if (p !== null && (p.kind === "crate" || p.kind === "ivy" || p.kind === "bubble" || p.lock === "cage")) this.hit(n);
       }
   }
 
@@ -172,16 +172,17 @@ export class Phase {
       if (g.type === "collect") wantColor.add(g.color);
       if (g.type === "clear") wantObstacle.add(g.target);
     });
+    const wantKeys = wantObstacle.has("chest");
     const obstacle: Pos[] = [], colored: Pos[] = [], any: Pos[] = [];
     for (let i = 0; i < st.cells.length; i++) {
       if (!st.mask[i] || this.touched.has(i)) continue;
       const p = st.cells[i];
       const ice = iceAt(st, i) > 0;
       if (p === null && !ice) continue;
-      if (p !== null && p.kind === "drop" && !ice) continue;
+      if (p !== null && (p.kind === "drop" || p.kind === "generator" || p.kind === "chest") && !ice) continue;
       any.push(i);
       const k = p ? kindOf(p) : null;
-      if ((ice && wantObstacle.has("ice")) || ((k === "crate" || k === "ivy") && wantObstacle.has(k)) || (p?.lock && wantObstacle.has(p.lock))) obstacle.push(i);
+      if ((ice && wantObstacle.has("ice")) || ((k === "crate" || k === "ivy" || k === "bubble") && wantObstacle.has(k)) || (p?.lock && wantObstacle.has(p.lock)) || (wantKeys && p?.key)) obstacle.push(i);
       else if (p && isPiece(p) && wantColor.has(p.color)) colored.push(i);
     }
     const pool = obstacle.length > 0 ? obstacle : colored.length > 0 ? colored : any;
@@ -232,10 +233,15 @@ export class Phase {
       if (isPiece(p)) {
         pieces++;
         if (p.color >= 0) collected[p.color]++;
+        if (p.key) {
+          st.keys = (st.keys ?? 0) + 1;
+          this.ev.push({ type: "keyCollected", at: i, held: st.keys });
+        }
       }
       st.cells[i] = null;
     }
-    const obstacles = this.destroyed.ice + this.destroyed.crate + this.destroyed.ivy + this.destroyed.chain + this.destroyed.cage;
+    const d = this.destroyed;
+    const obstacles = d.ice + d.crate + d.ivy + d.chain + d.cage + d.bubble;
     let delta = (pieces * SCORE_PER_PIECE + obstacles * SCORE_PER_OBSTACLE) * this.cascade;
     if (removed.length > 0) this.ev.push({ type: "cleared", cells: removed, cascade: this.cascade });
     for (const c of this.creates) {
@@ -253,17 +259,34 @@ export class Phase {
   }
 }
 
-/** Case d'apparition : active, et dont la case au-dessus est hors grille ou inactive. */
+/** Case d'apparition : active, dont la case au-dessus est hors grille ou inactive, et qui n'est pas une sortie de portail. */
 export function isSpawner(st: GameState, i: Pos): boolean {
-  return st.mask[i] && (i < st.width || !st.mask[i - st.width]);
+  if (!st.mask[i] || !(i < st.width || !st.mask[i - st.width])) return false;
+  if (st.portals) for (const [, out] of st.portals) if (out === i) return false;
+  return true;
 }
 
-/** Case de sortie des objets à faire descendre : active, et dont la case en dessous est hors grille ou inactive. */
+/** Case de sortie des objets à faire descendre : active, sous laquelle il n'y a rien (ni case ni portail). */
 export function isExit(st: GameState, i: Pos): boolean {
-  return st.mask[i] && (i + st.width >= st.cells.length || !st.mask[i + st.width]);
+  if (!st.mask[i] || !(i + st.width >= st.cells.length || !st.mask[i + st.width])) return false;
+  if (st.portals) for (const [inp] of st.portals) if (inp === i) return false;
+  return true;
+}
+
+/** Clés encore nécessaires : serrures restantes − clés en main − clés déjà sur la grille. */
+function keysNeeded(st: GameState): number {
+  let locks = 0, onBoard = 0;
+  for (const p of st.cells) {
+    if (p?.kind === "chest") locks += p.hp ?? 1;
+    else if (p?.key) onBoard++;
+  }
+  return locks - (st.keys ?? 0) - onBoard;
 }
 
 function newPiece(st: GameState): Piece {
+  if (st.keys !== undefined && keysNeeded(st) > 0 && nextInt(st.rng, 6) === 0) {
+    return { id: st.nextId++, color: nextInt(st.rng, st.colors), special: null, key: true };
+  }
   const d = st.drops;
   if (d && d.spawned < d.total) {
     let onBoard = 0;
@@ -313,6 +336,13 @@ export function settle(st: GameState, ev: GameEvent[]): void {
         }
       }
     }
+    // Portails : une pièce mobile sur l'entrée tombe dans la sortie vide.
+    if (st.portals)
+      for (const [inp, out] of st.portals)
+        if (st.cells[out] === null && isMovable(st.cells[inp])) {
+          move(inp, out);
+          changed = true;
+        }
     // 2. Apparition : remplit d'un coup la suite de cases vides sous chaque case d'apparition.
     for (let x = 0; x < w; x++)
       for (let y = 0; y < h; y++) {
@@ -376,10 +406,30 @@ export function collectDrops(st: GameState, ev: GameEvent[]): number {
 export const MAX_CASCADES = 200;
 
 /** Gravité → sortie des objets → alignements, jusqu'à stabilité. Renvoie le dernier indice de cascade. */
+/** Ouvre des coffres avec les clés en main (coffre de plus petit index d'abord). */
+export function openChests(st: GameState, ev: GameEvent[]): boolean {
+  let opened = false;
+  while ((st.keys ?? 0) > 0) {
+    const i = st.cells.findIndex((p) => p?.kind === "chest");
+    if (i < 0) break;
+    const chest = st.cells[i]!;
+    st.keys!--;
+    chest.hp = (chest.hp ?? 1) - 1;
+    ev.push({ type: "chestOpened", at: i, locksLeft: Math.max(0, chest.hp) });
+    if (chest.hp <= 0) {
+      st.cells[i] = null;
+      st.goals.forEach((g, k) => { if (g.type === "clear" && g.target === "chest") st.progress[k]++; });
+      opened = true;
+    }
+  }
+  return opened;
+}
+
 export function cascadeLoop(st: GameState, ev: GameEvent[], cascade: number): number {
   for (let guard = 0; guard < MAX_CASCADES; guard++) {
     settle(st, ev);
     if (collectDrops(st, ev) > 0) continue;
+    if (openChests(st, ev)) continue;
     const groups = findMatches(st);
     if (groups.length === 0) return cascade;
     cascade++;

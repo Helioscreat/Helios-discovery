@@ -1,6 +1,6 @@
 {
   "n": 133,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "easy",
   "targetRate": 0.85,
@@ -9,40 +9,35 @@
   "layout": [
     ". . . . . . . . .",
     ". . . . . . . . .",
-    "i1. i1. g. i1. i1. g. i1. i1. g.",
-    "i1. i1. i1. i1. i1. i1. i1. i1. i1.",
-    "g. i1. i1. g. i1. i1. g. i1. i1.",
-    "i1. i1. i1. i1. i1. i1. i1. i1. i1.",
-    "i1. i1. g. i1. i1. g. i1. i1. g.",
     ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". B . B . B . B .",
+    ". . . . . . . . .",
+    "B . B . B . B . B",
     ". . . . . . . . ."
   ],
   "colors": 5,
-  "moves": 16,
+  "moves": 17,
   "goals": [
     {
       "type": "clear",
-      "target": "cage",
+      "target": "bubble",
       "count": 9
     },
     {
-      "type": "clear",
-      "target": "ice",
-      "count": 36
-    },
-    {
       "type": "collect",
-      "color": 1,
-      "count": 20
+      "color": 3,
+      "count": 41
     }
   ],
-  "seed": "L133v1a0:ee15dbd4",
-  "attempt": 0,
-  "scale": 1,
+  "seed": "L133v2a2:6d7e7283",
+  "attempt": 2,
+  "scale": 1.5625,
   "validation": {
     "runs": 200,
     "botRate": 0.86,
-    "avgMovesLeft": 4.56,
+    "avgMovesLeft": 5.17,
     "status": "ok"
   }
 }

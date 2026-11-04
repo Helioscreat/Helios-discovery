@@ -1,6 +1,6 @@
 {
   "n": 29,
-  "version": 1,
+  "version": 2,
   "source": "handmade",
   "difficulty": "medium",
   "targetRate": 0.6,
@@ -18,7 +18,7 @@
     "# # # . . . # # #"
   ],
   "colors": 5,
-  "moves": 16,
+  "moves": 15,
   "goals": [
     {
       "type": "collect",
@@ -31,13 +31,13 @@
       "count": 32
     }
   ],
-  "seed": "L29v1a0:5d3dc2f0",
+  "seed": "L29v2a0:7ece6815",
   "attempt": 0,
   "scale": 1,
   "validation": {
     "runs": 200,
-    "botRate": 0.65,
-    "avgMovesLeft": 3.01,
+    "botRate": 0.61,
+    "avgMovesLeft": 2.41,
     "status": "ok"
   }
 }

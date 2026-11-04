@@ -1,7 +1,7 @@
 import { createGame, hashString, nextInt, pick, seedRng, type Goal, type LevelSpec, type ObstacleKind, type RngState } from "@helios/core";
 import { calibrate, runMonteCarlo } from "@helios/bot";
-import { background, CONTENT_VERSION, difficultyOf, ELEMENT_UNLOCK, TARGET_RATE, TOLERANCE, type Difficulty, type LevelFile } from "./schema";
-import { ALL_SHAPES, OPEN_SHAPES, SHAPES } from "./shapes";
+import { background, CONTENT_VERSION, difficultyOf, ELEMENT_UNLOCK, introAt, TARGET_RATE, TOLERANCE, VARIANT_UNLOCK, type Difficulty, type LevelFile } from "./schema";
+import { ALL_SHAPES, OPEN_SHAPES, PORTAL_SHAPES, ringLoop, SHAPES } from "./shapes";
 
 /**
  * Générateur procédural déterministe des niveaux 151–10 000.
@@ -27,11 +27,13 @@ export interface Candidate {
   difficulty: Difficulty;
   shape: string;
   goalKind: GoalKind;
+  /** Clé de tutoriel quand le niveau introduit un élément. */
+  tutorial?: string;
 }
 
 /** Obstacles disponibles au niveau N. */
 export function availableObstacles(n: number): ObstacleKind[] {
-  return (["ice", "crate", "chain", "cage", "ivy"] as ObstacleKind[]).filter((k) => n >= ELEMENT_UNLOCK[k]);
+  return (["ice", "crate", "chain", "cage", "ivy", "bubble", "chest"] as ObstacleKind[]).filter((k) => n >= ELEMENT_UNLOCK[k]);
 }
 
 /** Place `count` cases tirées au hasard parmi `pool`, en miroir gauche-droite quand c'est possible. */
@@ -60,7 +62,9 @@ export function buildCandidate(n: number, attempt: number, scale: number): Candi
   const seed = levelSeed(n, CONTENT_VERSION, attempt);
   const rng = seedRng(`${seed}:design`);
   const D = background(n);
-  const difficulty = difficultyOf(n);
+  // Niveau d'introduction d'un élément (≥ 151) : tutoriel facile, élément imposé.
+  const intro = n > 150 ? introAt(n) : null;
+  const difficulty: Difficulty = intro ? "relax" : difficultyOf(n);
   const obstacles = availableObstacles(n);
 
   const weights: [GoalKind, number][] = [["collect", 30], ["clear", obstacles.length ? 40 : 0], ["drop", n >= ELEMENT_UNLOCK.drop ? 14 : 0], ["score", 6], ["mixed", obstacles.length ? 10 : 0]];
@@ -68,44 +72,89 @@ export function buildCandidate(n: number, attempt: number, scale: number): Candi
   let roll = nextInt(rng, total);
   let goalKind: GoalKind = "collect";
   for (const [k, w] of weights) if ((roll -= w) < 0) { goalKind = k; break; }
+  let forcedClear: ObstacleKind | null = null;
+  if (intro === "portal") goalKind = "drop";
+  else if (intro === "conveyor" || intro === "portalConveyor") goalKind = "collect";
+  else if (intro === "generator") { goalKind = "clear"; forcedClear = "bubble"; }
+  else if (intro === "chest" || intro === "chest2") { goalKind = "clear"; forcedClear = "chest"; }
+  else if (intro === "crateGenerator") { goalKind = "clear"; forcedClear = "crate"; }
 
-  let shapePool = difficulty === "relax" || n < 300 ? OPEN_SHAPES : ALL_SHAPES;
-  if (goalKind === "drop") shapePool = shapePool.filter((s) => exitsOnBottomRow(SHAPES[s]));
-  const shape = pick(rng, shapePool);
-  const mask = SHAPES[shape];
+  // Forme : à portails (≥ 152, 15 % des niveaux, ou imposée par un tutoriel), sinon forme classique.
+  const usePortal = n >= ELEMENT_UNLOCK.portal && (intro === "portal" || intro === "portalConveyor" || (!intro && nextInt(rng, 100) < 15));
+  let shape: string;
+  let mask: string[];
+  let portals: [number, number][] | undefined;
+  if (usePortal) {
+    shape = pick(rng, Object.keys(PORTAL_SHAPES));
+    mask = PORTAL_SHAPES[shape].mask;
+    const w = mask[0].length;
+    portals = PORTAL_SHAPES[shape].portals.map(([x1, y1, x2, y2]) => [y1 * w + x1, y2 * w + x2]);
+  } else {
+    let shapePool = difficulty === "relax" || n < 300 ? OPEN_SHAPES : ALL_SHAPES;
+    if (goalKind === "drop") shapePool = shapePool.filter((s) => exitsOnBottomRow(SHAPES[s]));
+    shape = pick(rng, shapePool);
+    mask = SHAPES[shape];
+  }
   const height = mask.length, width = mask[0].length;
   const tokens: string[] = mask.flatMap((r) => [...r].map((c) => (c === "." ? "." : "#")));
   const active = tokens.map((t, i) => (t === "." ? i : -1)).filter((i) => i >= 0);
   const cells = active.length;
   const colors = difficulty === "relax" ? 4 + nextInt(rng, 2) : D < 0.55 ? 5 : 5 + nextInt(rng, 2);
 
+  // Tapis roulant : contour d'un rectangle de la moitié basse, seulement si toutes ses cases sont actives.
+  let conveyors: number[][] | undefined;
+  const useConveyor = n >= ELEMENT_UNLOCK.conveyor && (intro === "conveyor" || intro === "portalConveyor" || (!intro && nextInt(rng, 100) < 15));
+  if (useConveyor) {
+    const y1 = height - 2, y0 = Math.max(Math.ceil(height / 2), y1 - 2), x0 = Math.floor(width / 2) - 2, x1 = x0 + 4;
+    const loop = ringLoop(width, x0, y0, x1, y1);
+    if (loop.every((i) => tokens[i] === ".")) conveyors = [loop];
+  }
+  const loopCells = new Set(conveyors?.flat() ?? []);
+
   const goals: Goal[] = [];
   const taken = new Set<number>();
   // Les deux lignes du haut restent libres d'obstacles fixes : la grille doit toujours pouvoir se remplir.
   const lowerPool = active.filter((i) => Math.floor(i / width) >= 2);
+  // Générateurs et coffres bloqueraient un tapis : jamais sur une boucle.
+  const fixedPool = lowerPool.filter((i) => !loopCells.has(i));
   let drops: LevelSpec["drops"];
 
   const addObstacle = (kind: ObstacleKind, density: number, asGoal: boolean) => {
-    const count = Math.max(2, Math.round(cells * density * scale));
-    const placed = placeMirrored(rng, kind === "ice" ? active : lowerPool, width, count, taken);
+    const count = kind === "chest" ? 2 + nextInt(rng, 2) : Math.max(2, Math.round(cells * density * scale));
+    const placed = placeMirrored(rng, kind === "ice" ? active : kind === "chest" ? fixedPool : lowerPool, width, count, taken);
     let goalCount = 0;
     for (const i of placed) {
       if (kind === "ice") {
         const layers = 1 + nextInt(rng, D > 0.7 ? 3 : D > 0.45 ? 2 : 1);
         tokens[i] = `i${layers}.`;
-        goalCount++;
-      } else if (kind === "crate") {
-        tokens[i] = `X${1 + nextInt(rng, D > 0.7 ? 3 : 2)}`;
-        goalCount++;
-      } else if (kind === "chain") { tokens[i] = "k."; goalCount++; }
-      else if (kind === "cage") { tokens[i] = "g."; goalCount++; }
-      else if (kind === "ivy") { tokens[i] = "V"; goalCount++; }
+      } else if (kind === "crate") tokens[i] = `X${1 + nextInt(rng, D > 0.7 ? 3 : 2)}`;
+      else if (kind === "chain") tokens[i] = "k.";
+      else if (kind === "cage") tokens[i] = "g.";
+      else if (kind === "ivy") tokens[i] = "V";
+      else if (kind === "bubble") tokens[i] = "B";
+      else if (kind === "chest") tokens[i] = n >= VARIANT_UNLOCK.chest2 && (intro === "chest2" || nextInt(rng, 2) === 0) ? "C2" : "C";
+      goalCount++;
     }
-    if (asGoal && goalCount > 0) goals.push({ type: "clear", target: kind, count: goalCount });
+    if (kind === "chest") {
+      // Une première clé dans la moitié haute ; les suivantes arrivent avec les nouvelles pièces.
+      const top = active.filter((i) => Math.floor(i / width) < height / 2 && tokens[i] === ".");
+      if (top.length) tokens[pick(rng, top)] = "y.";
+    }
+    // Générateurs : de bulles (≥ 191) pour un objectif « bulles », de caisses (≥ 254) pour un objectif « caisses ».
+    let extra = 0;
+    if (asGoal && kind === "bubble" && n >= ELEMENT_UNLOCK.generator && (intro === "generator" || nextInt(rng, 2) === 0)) {
+      for (const g of placeMirrored(rng, fixedPool, width, 1 + nextInt(rng, 2), taken)) { tokens[g] = "G"; extra += 2; }
+    }
+    if (asGoal && kind === "crate" && n >= VARIANT_UNLOCK.crateGenerator && (intro === "crateGenerator" || nextInt(rng, 100) < 35)) {
+      for (const g of placeMirrored(rng, fixedPool, width, 1, taken)) { tokens[g] = "H"; extra += 2; }
+    }
+    if (asGoal && goalCount > 0) goals.push({ type: "clear", target: kind, count: goalCount + extra });
   };
 
   const collectCount = () => Math.max(12, Math.round((34 + 40 * D) * scale));
-  const density: Record<ObstacleKind, number> = { ice: 0.3 + 0.25 * D, crate: 0.16 + 0.12 * D, chain: 0.14 + 0.1 * D, cage: 0.1 + 0.08 * D, ivy: 0.05 + 0.04 * D };
+  const density: Record<ObstacleKind, number> = {
+    ice: 0.3 + 0.25 * D, crate: 0.16 + 0.12 * D, chain: 0.14 + 0.1 * D, cage: 0.1 + 0.08 * D, ivy: 0.05 + 0.04 * D, bubble: 0.08 + 0.06 * D, chest: 0,
+  };
 
   if (goalKind === "collect" || goalKind === "mixed") {
     const nColors = goalKind === "collect" && D > 0.4 && nextInt(rng, 2) === 0 ? 2 : 1;
@@ -114,25 +163,25 @@ export function buildCandidate(n: number, attempt: number, scale: number): Candi
     for (const c of picked) goals.push({ type: "collect", color: c, count: Math.round(collectCount() / (nColors === 2 ? 1.5 : 1)) });
   }
   if (goalKind === "clear" || goalKind === "mixed") {
-    const kind = pick(rng, obstacles);
+    const kind = forcedClear ?? pick(rng, obstacles);
     addObstacle(kind, density[kind] * (goalKind === "mixed" ? 0.6 : 1), true);
   }
   if (goalKind === "drop") {
     const totalDrops = Math.max(2, Math.round((2 + 2 * D) * scale));
     drops = { total: totalDrops, maxOnBoard: 2 };
     goals.push({ type: "drop", count: totalDrops });
-    const top = active.filter((i) => i < width);
+    const top = active.filter((i) => i < width && tokens[i] === ".");
     tokens[pick(rng, top)] = "D";
   }
   if (goalKind === "score") goals.push({ type: "score", target: Math.round((5000 + 9000 * D) * scale / 100) * 100 });
 
-  // Obstacle décoratif (non objectif) pour varier, à partir de N = 151 uniquement.
-  const decor = obstacles.filter((k) => k !== "ivy" && !goals.some((g) => g.type === "clear" && g.target === k));
-  if (n >= 151 && decor.length > 0 && nextInt(rng, 10) < 3 && difficulty !== "relax") addObstacle(pick(rng, decor), 0.05, false);
+  // Obstacle décoratif (non objectif) pour varier, à partir de N = 151 uniquement (jamais dans un tutoriel).
+  const decor = obstacles.filter((k) => k !== "ivy" && k !== "chest" && !goals.some((g) => g.type === "clear" && g.target === k));
+  if (n >= 151 && !intro && decor.length > 0 && nextInt(rng, 10) < 3 && difficulty !== "relax") addObstacle(pick(rng, decor), 0.05, false);
 
   const layout: string[] = [];
   for (let y = 0; y < height; y++) layout.push(tokens.slice(y * width, (y + 1) * width).join(" "));
-  return { spec: { width, height, layout, colors, moves: 0, goals, drops, seed }, difficulty, shape, goalKind };
+  return { spec: { width, height, layout, colors, moves: 0, goals, drops, seed, portals, conveyors }, difficulty, shape, goalKind, tutorial: intro ?? undefined };
 }
 
 export interface GenerateOptions {
@@ -170,8 +219,9 @@ export interface LevelMeta {
 }
 
 export function generateLevel(n: number, opts: GenerateOptions = DEFAULT_GENERATE, build = buildCandidate, meta?: LevelMeta): GeneratedLevel {
-  const difficulty = meta?.difficulty ?? difficultyOf(n);
-  const target = meta?.target ?? TARGET_RATE[difficulty];
+  const introKey = n > 150 ? introAt(n) : null;
+  const difficulty = meta?.difficulty ?? (introKey ? "relax" : difficultyOf(n));
+  const target = meta?.target ?? (introKey ? 0.95 : TARGET_RATE[difficulty]);
   let scale = 1;
   let best: { cand: Candidate; cal: ReturnType<typeof calibrate>; attempt: number; scale: number; mc: boolean } | null = null;
   let attempts = 0;
@@ -224,7 +274,7 @@ export function generateLevel(n: number, opts: GenerateOptions = DEFAULT_GENERAT
     version: CONTENT_VERSION,
     source: meta?.source ?? "generated",
     ...(meta?.title ? { title: meta.title } : {}),
-    ...(meta?.tutorial ? { tutorial: meta.tutorial } : {}),
+    ...(meta?.tutorial ?? cand.tutorial ? { tutorial: meta?.tutorial ?? cand.tutorial } : {}),
     difficulty,
     targetRate: target,
     width: cand.spec.width,
@@ -234,6 +284,8 @@ export function generateLevel(n: number, opts: GenerateOptions = DEFAULT_GENERAT
     moves: cal.moves,
     goals: cand.spec.goals,
     ...(cand.spec.drops ? { drops: cand.spec.drops } : {}),
+    ...(cand.spec.portals ? { portals: cand.spec.portals } : {}),
+    ...(cand.spec.conveyors ? { conveyors: cand.spec.conveyors } : {}),
     seed: cand.spec.seed,
     attempt: best.attempt,
     scale: best.scale,
@@ -249,6 +301,6 @@ export function generateLevel(n: number, opts: GenerateOptions = DEFAULT_GENERAT
 }
 
 /** Empreinte du contenu jouable d'un niveau (contrôle de régénération à l'exécution). */
-export function levelHash(l: Pick<LevelFile, "width" | "height" | "layout" | "colors" | "moves" | "goals" | "drops" | "seed">): string {
-  return hashString(JSON.stringify([l.width, l.height, l.layout, l.colors, l.moves, l.goals, l.drops ?? null, l.seed]));
+export function levelHash(l: Pick<LevelFile, "width" | "height" | "layout" | "colors" | "moves" | "goals" | "drops" | "seed" | "portals" | "conveyors">): string {
+  return hashString(JSON.stringify([l.width, l.height, l.layout, l.colors, l.moves, l.goals, l.drops ?? null, l.seed, l.portals ?? null, l.conveyors ?? null]));
 }
