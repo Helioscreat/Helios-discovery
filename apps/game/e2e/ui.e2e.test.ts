@@ -49,6 +49,8 @@ async function phone(vp = PHONES[0], settings?: Record<string, unknown>) {
   const page = await ctx.newPage();
   const errors: string[] = [];
   page.on("pageerror", (e: Error) => errors.push(e.message));
+  // Toute erreur de console compte (ex. empreinte d'un niveau régénéré différente du niveau validé).
+  page.on("console", (m) => { if (m.type() === "error") errors.push(`console: ${m.text()}`); });
   await page.goto(URL);
   await page.waitForSelector(".home");
   return { page, ctx, errors };
@@ -338,10 +340,17 @@ describe("niveaux réels et obstacles", () => {
     await ctx.close();
   });
 
-  it("un niveau avec caisses, chaînes, cages, lierre et objets se joue sans erreur (10 coups)", async () => {
+  it("niveaux avec caisses, chaînes, lierre, objets, bulles, coffres, portails et tapis : 10 coups sans erreur", async () => {
     const { page, ctx, errors } = await phone();
-    for (const n of [77, 122, 126]) {
+    // Niveaux générés (> 150) : le manifeste est chargé à la demande.
+    await page.waitForFunction(() => /\d/.test(document.querySelector(".pager span")?.textContent ?? "") && document.querySelectorAll(".pager .btn:not([disabled])").length > 0);
+    for (const n of [77, 126, 131, 212, 275]) {
       await startLevel(page, n);
+      if (n === 275) {
+        const st = await page.evaluate(() => ({ p: window.__helios!.session()!.state.portals?.length ?? 0, c: window.__helios!.session()!.state.conveyors?.length ?? 0 }));
+        expect(st.p).toBeGreaterThan(0);
+        expect(st.c).toBe(1);
+      }
       for (let k = 0; k < 10; k++) {
         const m = await page.evaluate(() => (window.__helios!.session()!.state.status === "playing" ? window.__helios!.hint() : null));
         if (!m) break;

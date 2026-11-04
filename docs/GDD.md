@@ -164,11 +164,14 @@ ligne > carré 2×2 > 3 en ligne.
 | 71 | Graines de lumière (objets à faire descendre) | Indestructibles ; sortent par le bas |
 | 92 | Cages | La pièce ne bouge pas et ne s'aligne pas ; un alignement voisin ouvre la cage |
 | 112 | Lierre | Gagne une case par coup sans lierre détruit ; jamais sur une case d'apparition, ni sous 50 % de pièces libres |
-| 120–150 | Combinaisons | Caisses sur gel, chaînes sur gel, cages sur gel… |
+| 131 | Bulles | Fixes, 1 PV ; montent d'une case après chaque coup |
+| 152 | Portails | Relient deux zones séparées par du vide |
+| 172 | Tapis roulants | Le contenu de la boucle avance d'une case après chaque coup |
+| 191 | Générateurs | Indestructibles ; une bulle tous les 3 coups |
+| 212 | Coffres à clé | Une pièce à clé effacée ouvre un coffre |
+| 233, 254, 275 | Variantes | Coffres à 2 serrures, générateurs de caisses, portails + tapis |
 
-L'écart entre deux éléments est de 19 à 21 niveaux, conforme à la fourchette de 15 à 25.
-
-**Écart au cahier des charges.** Les Bulles, Portails, Tapis roulants, Générateurs et Coffres à clé ne sont pas encore implémentés. Ils sont prévus entre les niveaux 130 et 230, ce qui demande une version 2 du contenu (régénération déterministe des niveaux 151 et suivants). Tant qu'ils manquent, aucun nouvel élément n'apparaît après le niveau 112 : la règle « un élément tous les 15 à 25 niveaux jusqu'au niveau 300 » n'est pas respectée.
+L'écart entre deux nouveautés est de 19 à 21 niveaux jusqu'au niveau 275, conforme à la fourchette de 15 à 25. Au-delà, il n'y a plus que des combinaisons inédites.
 
 ## 6. Difficulté et générateur (livrable 4, implémenté)
 

@@ -1,5 +1,5 @@
 import type { LevelSpec } from "@helios/core";
-import { buildCandidate, levelHash, toSpec, type LevelFile } from "@helios/levels";
+import { buildCandidate, CONTENT_VERSION, levelHash, toSpec, type LevelFile } from "@helios/levels";
 
 /**
  * Niveaux du jeu.
@@ -46,9 +46,12 @@ export function levelFile(n: number): LevelFile {
     const [, attempt, scale, moves, hash] = e;
     const cand = buildCandidate(n, attempt, scale);
     file = {
-      n, version: 1, source: "generated", difficulty: cand.difficulty, targetRate: 0,
+      n, version: CONTENT_VERSION, source: "generated", difficulty: cand.difficulty, targetRate: 0,
       width: cand.spec.width, height: cand.spec.height, layout: cand.spec.layout!, colors: cand.spec.colors, moves,
-      goals: cand.spec.goals, ...(cand.spec.drops ? { drops: cand.spec.drops } : {}), seed: cand.spec.seed, attempt, scale,
+      goals: cand.spec.goals, ...(cand.spec.drops ? { drops: cand.spec.drops } : {}),
+      ...(cand.spec.portals ? { portals: cand.spec.portals } : {}), ...(cand.spec.conveyors ? { conveyors: cand.spec.conveyors } : {}),
+      ...(cand.tutorial ? { tutorial: cand.tutorial } : {}),
+      seed: cand.spec.seed, attempt, scale,
       validation: { runs: 0, botRate: 0, avgMovesLeft: 0, status: "ok" },
     };
     if (levelHash(file) !== hash) console.error(`niveau ${n} : empreinte différente du niveau validé (version de contenu ?)`);

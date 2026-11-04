@@ -4,6 +4,10 @@ import { findMatches } from "./match";
 import { ensurePlayable, hasValidMove, isValidSwap, safeColor } from "./moves";
 import { cascadeLoop, isSpawner, Phase } from "./resolve";
 import { riseBubbles, rotateConveyors, runGenerators } from "./elements";
+import { registerSettle } from "./moves";
+
+// Après une libération de grille : gravité, apparition, puis résolution des alignements éventuels.
+registerSettle((st, ev) => { cascadeLoop(st, ev, 1); });
 import { nextInt, pick, seedRng } from "./rng";
 import type { AreaSpecial, ComboKind, DropConfig, GameEvent, GameState, Goal, Move, MoveResult, Piece, Pos } from "./types";
 

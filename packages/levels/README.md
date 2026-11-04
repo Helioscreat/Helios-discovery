@@ -42,33 +42,39 @@ Le dépôt contient `data/handmade/` (les 150 JSON faits main et leur rapport) e
 
 Niveaux 1 à 15 (accueil) : 92 à 95 %, sans badge. Tous les niveaux tutoriels sont à 95 %.
 
-## Éléments
+## Éléments (version de contenu 2)
 
 | Élément | Introduit au niveau | Règle |
 |---|---|---|
 | Gel (1 à 3 couches) | 13 | Un alignement ou une explosion sur la case enlève une couche |
-| Caisses (1 à 3 PV) | 33 | Fixes ; abîmées par un alignement voisin ou une explosion ; les cases en dessous se remplissent en diagonale |
+| Caisses (1 à 3 PV) | 33 | Fixes ; abîmées par un alignement voisin ou une explosion ; remplissage en diagonale en dessous |
 | Chaînes | 52 | La pièce ne bouge pas ; un alignement qui l'inclut brise la chaîne |
-| Graines de lumière (objets à faire descendre) | 71 | Indestructibles ; sortent par le bas de la grille |
+| Graines de lumière | 71 | Indestructibles ; sortent par le bas |
 | Cages | 92 | La pièce ne bouge pas et ne s'aligne pas ; un alignement voisin ouvre la cage |
-| Lierre | 112 | Gagne une case par coup si aucun lierre n'est détruit ; jamais sur une case d'apparition, ni sous 50 % de pièces libres |
+| Lierre | 112 | Gagne une case par coup sans lierre détruit ; jamais sur une case d'apparition, ni sous 50 % de pièces libres |
+| Bulles | 131 | Fixes, 1 PV ; montent d'une case après chaque coup |
+| Portails | 152 | Ce qui tombe dans l'entrée (violet) ressort par la sortie (vert) |
+| Tapis roulants | 172 | Après chaque coup, le contenu de la boucle avance d'une case |
+| Générateurs | 191 | Indestructibles ; une bulle tous les 3 coups (6 au plus) |
+| Coffres à clé | 212 | Effacer une pièce à clé ramasse la clé, qui ouvre un coffre |
+| Coffres à 2 serrures | 233 | Variante |
+| Générateurs de caisses | 254 | Variante (une caisse tous les 4 coups, 8 au plus) |
+| Portails + tapis | 275 | Variante |
 
-Les Bulles, Portails, Tapis roulants, Générateurs et Coffres à clé ne sont pas encore implémentés (voir le compte rendu du livrable 4).
+Les écarts entre deux nouveautés vont de 19 à 21 niveaux jusqu'au niveau 275. Au-delà, il n'y a plus que des combinaisons. Une grille bloquée par les obstacles ne fige jamais le jeu : le moteur force d'abord un coup, puis libère la grille en dernier recours.
 
-## Résultats de la génération (version de contenu 1)
+## Résultats de la génération (version de contenu 2)
 
 `data/generated/summary.json`, 4 workers sur 4 cœurs :
 
 | Mesure | Résultat |
 |---|---|
 | Niveaux générés et validés | 9 850 (151 à 10 000) |
-| Durée | 2 328 s pour la passe complète, puis 286 s et 302 s de régénérations ciblées (≈ 49 min au total) |
+| Durée | 3 171 s (52 min 51 s) en une seule passe complète, plus 1 s pour régénérer le niveau 6560 après le correctif des grilles bloquées |
 | Niveaux infaisables | 0 |
-| Dans la fourchette [cible, cible + 10 points] | 9 804 (99,5 %) |
-| Sous la cible | 46, de 2,5 points au plus (au plafond de coups) |
+| Dans la fourchette [cible, cible + 10 points] | 99,5 % |
+| Sous la cible | 44, de 2 points au plus (au plafond de coups) |
 | Audit hors échantillon (985 niveaux, 200 parties neuves) | 100 % à moins de 10 points de la cible |
-
-Les régénérations ciblées corrigent la règle d'acceptation, qui gardait des niveaux jusqu'à 10 points sous la cible. Seuls les niveaux concernés changent : chaque niveau est généré indépendamment des autres. `scripts/merge-generated.py` fusionne les passes.
 
 ## FAIR-02 : joueur gratuit à 10 niveaux par jour
 
@@ -77,7 +83,5 @@ Les régénérations ciblées corrigent la règle d'acceptation, qui gardait des
 | Scénario | Joueurs bloqués plus de 2 jours au moins une fois |
 |---|---|
 | Aucune aide | 25 / 1 000 (3 jours au plus) |
-| Aide gratuite après 8 échecs (+25 points sur un essai) | 6 / 1 000 |
-| Aide après 5 échecs | 1 / 1 000 |
+| Aide gratuite après 8 échecs (+25 points sur un essai) | 3 / 1 000 |
 | **Aide après 8 échecs + 1 booster gratuit par jour (roue, quêtes) — retenu** | **0 / 1 000** |
-| Aucune aide, 30 défaites par jour | 0 / 1 000 |

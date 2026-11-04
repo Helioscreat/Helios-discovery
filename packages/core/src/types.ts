@@ -135,6 +135,7 @@ export type GameEvent =
   | { type: "generated"; at: Pos; id: number; product: "bubble" | "crate"; from: Pos }
   | { type: "keyCollected"; at: Pos; held: number }
   | { type: "chestOpened"; at: Pos; locksLeft: number }
+  | { type: "freed"; cells: Pos[] }
   | { type: "won" }
   | { type: "lost" };
 

@@ -102,7 +102,8 @@ export class BoardScene extends Phaser.Scene {
         const d = next - c;
         const dir = d === 1 ? "r" : d === -1 ? "l" : d > 0 ? "d" : "u";
         const [cx, cy] = this.center(c);
-        this.add.image(cx, cy, `arrow-${dir}`).setDepth(1);
+        // Petite flèche au coin de la case, au-dessus des pièces : le sens du tapis reste visible.
+        this.add.image(cx + this.cell * 0.3, cy + this.cell * 0.3, `arrow-${dir}`).setScale(0.45).setDepth(4);
       });
     this.selectBox = this.add.rectangle(0, 0, this.cell - 4, this.cell - 4).setStrokeStyle(4, 0xffffff).setVisible(false).setDepth(5);
     this.cursorBox = this.add.rectangle(0, 0, this.cell - 2, this.cell - 2).setStrokeStyle(5, hex(TOKENS.focus)).setVisible(false).setDepth(6);
@@ -251,7 +252,10 @@ export class BoardScene extends Phaser.Scene {
         const rot = { r: 0, d: Math.PI / 2, l: Math.PI, u: -Math.PI / 2 }[dir]!;
         const pt = (x: number, y: number) => [r + (x * Math.cos(rot) - y * Math.sin(rot)) * r, r + (x * Math.sin(rot) + y * Math.cos(rot)) * r] as const;
         const [a, b, c] = [pt(0.95, 0), pt(0.65, -0.22), pt(0.65, 0.22)];
-        g.fillStyle(0xffffff, 0.55).fillTriangle(a[0], a[1], b[0], b[1], c[0], c[1]);
+        g.fillStyle(0x0b0b0b, 0.85).fillCircle(r, r, r * 0.95);
+        g.fillStyle(0xffffff, 1).fillTriangle(a[0], a[1], b[0], b[1], c[0], c[1]);
+        const [d1, d2] = [pt(-0.6, -0.12), pt(0.66, 0.12)];
+        g.fillRect(Math.min(d1[0], d2[0]), Math.min(d1[1], d2[1]), Math.abs(d2[0] - d1[0]) || 4, Math.abs(d2[1] - d1[1]) || 4);
       });
     make("portal-in", (g) => { g.fillStyle(0x7f5af0, 0.9).fillRoundedRect(s * 0.15, s * 0.84, s * 0.7, s * 0.14, s * 0.07); });
     make("portal-out", (g) => { g.fillStyle(0x2cb67d, 0.9).fillRoundedRect(s * 0.15, s * 0.02, s * 0.7, s * 0.14, s * 0.07); });

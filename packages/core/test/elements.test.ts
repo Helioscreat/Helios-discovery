@@ -171,3 +171,19 @@ describe("parties aléatoires avec les nouveaux éléments (fuzz)", () => {
     expect(moves).toBeGreaterThan(2000);
   });
 });
+
+describe("grille bloquée par les obstacles", () => {
+  it("ne lève jamais d'erreur : coup forcé, puis libération de la grille en dernier recours", () => {
+    // 4 cases jouables seulement, entourées de bulles : aucun mélange ne suffit.
+    const st = fromAscii([
+      "a b c d B",
+      "B B B B B",
+      "B B B B B",
+    ], { colors: 4 });
+    const ev: GameEvent[] = [];
+    expect(() => ensureAny(st, ev)).not.toThrow();
+    expect(hasValidMove(st)).toBe(true);
+    expect(findMatches(st)).toEqual([]);
+  });
+});
+import { ensurePlayable as ensureAny } from "../src";

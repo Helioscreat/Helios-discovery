@@ -30,7 +30,8 @@ summary = {
     "seconds": summaries[0]["seconds"],
     "repairSeconds": [s["seconds"] for s in summaries[1:]],
     "note": "seconds = génération complète en une passe ; repairSeconds = régénérations ciblées après correction de la règle d'acceptation (voir README).",
-    "levels": len(ordered), "infeasible": sum(s["infeasible"] for s in summaries), "errors": [],
+    # Infaisables : niveaux en erreur dans une passe et absents du résultat fusionné.
+    "levels": len(ordered), "infeasible": len({e["n"] for s in summaries for e in s.get("errors", []) if e["n"] not in rows}), "errors": [e for s in summaries for e in s.get("errors", []) if e["n"] not in rows],
     "inRange": ok, "inRangeShare": ok / len(ordered),
     "belowTarget": len(below), "maxBelowTarget": round(max((float(r[idx["cible"]]) - float(r[idx["taux_bot"]]) for r in below), default=0), 3),
     "audited": len(audited), "auditInRange": audit_ok, "auditInRangeShare": audit_ok / len(audited),

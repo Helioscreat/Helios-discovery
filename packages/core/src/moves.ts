@@ -242,6 +242,41 @@ export function ensurePlayable(st: GameState, ev: GameEvent[]): void {
   if (!hasValidMove(st)) forceShuffle(st, ev);
 }
 
+/**
+ * Coup forcé : trouve 4 pièces normales libres en motif « c c X » + « c » au-dessus ou au-dessous de X
+ * (horizontal ou vertical), et les recolore pour garantir un échange valide sans créer d'alignement.
+ */
+function forceMove(st: GameState, ev: GameEvent[]): boolean {
+  const w = st.width, h = st.height;
+  const free = (i: number) => i >= 0 && i < st.cells.length && st.mask[i] && isPiece(st.cells[i]) && !st.cells[i]!.lock && st.cells[i]!.special === null;
+  for (let i = 0; i < st.cells.length; i++) {
+    const x = i % w, y = (i - x) / w;
+    const patterns: [number, number, number, number][] = [];
+    if (x + 2 < w) for (const dy of [-1, 1]) if (y + dy >= 0 && y + dy < h) patterns.push([i, i + 1, i + 2, i + 2 + dy * w]);
+    if (y + 2 < h) for (const dx of [-1, 1]) if (x + dx >= 0 && x + dx < w) patterns.push([i, i + w, i + 2 * w, i + 2 * w + dx]);
+    for (const [a, b, xCell, j] of patterns) {
+      if (![a, b, xCell, j].every(free)) continue;
+      const saved = [a, b, xCell, j].map((c) => st.cells[c]!.color);
+      for (let c = 0; c < st.colors; c++) {
+        const other = (c + 1) % st.colors;
+        st.cells[a]!.color = c; st.cells[b]!.color = c; st.cells[j]!.color = c; st.cells[xCell]!.color = other;
+        if (findMatches(st).length === 0 && hasValidMove(st)) {
+          ev.push({ type: "shuffle", mapping: [a, b, xCell, j].map((q) => [q, q] as [Pos, Pos]) });
+          return true;
+        }
+      }
+      [a, b, xCell, j].forEach((q, k) => (st.cells[q]!.color = saved[k]));
+    }
+  }
+  return false;
+}
+
+/** Remplit les cases vides après libération (gravité + apparition), sans résoudre d'alignements. */
+let settleAndFill: (st: GameState, ev: GameEvent[]) => void = () => {};
+export function registerSettle(fn: (st: GameState, ev: GameEvent[]) => void): void {
+  settleAndFill = fn;
+}
+
 /** Mélange inconditionnel (booster Mélangeur, ou grille bloquée) : sans alignement, avec un coup jouable. */
 export function forceShuffle(st: GameState, ev: GameEvent[]): void {
   // Seules les pièces libres sont mélangées : obstacles, objets et pièces verrouillées restent en place.
@@ -275,5 +310,15 @@ export function forceShuffle(st: GameState, ev: GameEvent[]): void {
       return;
     }
   }
-  throw new Error("grille injouable : aucun mélange ne produit de coup valide");
+  if (forceMove(st, ev)) return;
+  // Dernier recours (grille presque entièrement bloquée par des obstacles) : la grille se libère.
+  // Bulles, lierre et caisses disparaissent sans compter pour les objectifs ; le jeu ne se fige jamais.
+  const freed: Pos[] = [];
+  for (let i = 0; i < st.cells.length; i++) {
+    const k = st.cells[i]?.kind;
+    if (k === "bubble" || k === "ivy" || k === "crate") { st.cells[i] = null; freed.push(i); }
+  }
+  ev.push({ type: "freed", cells: freed });
+  settleAndFill(st, ev);
+  if (!hasValidMove(st) && !forceMove(st, ev)) throw new Error("grille injouable : aucun coup possible même après libération");
 }
