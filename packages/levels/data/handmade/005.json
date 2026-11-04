@@ -1,0 +1,38 @@
+{
+  "n": 5,
+  "version": 1,
+  "source": "handmade",
+  "title": "Le Prisme",
+  "tutorial": "prism",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    "a a b a a . .",
+    ". . a . . . .",
+    ". . . . . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 10,
+  "goals": [
+    {
+      "type": "collect",
+      "color": 3,
+      "count": 32
+    }
+  ],
+  "seed": "L5v1a0:54448d82",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.965,
+    "avgMovesLeft": 4.06,
+    "status": "ok"
+  }
+}

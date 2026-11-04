@@ -1,0 +1,38 @@
+{
+  "n": 33,
+  "version": 1,
+  "source": "handmade",
+  "title": "Les Caisses",
+  "tutorial": "crate",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". X1 X1 X1 X1 X1 .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 12,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "crate",
+      "count": 5
+    }
+  ],
+  "seed": "L33v1a0:2656b8b3",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 1,
+    "avgMovesLeft": 8.81,
+    "status": "ok"
+  }
+}

@@ -11,7 +11,8 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test:e2e": "npm run test:e2e -w @helios/game",
     "build": "npm run build -w @helios/game",
-    "dev": "npm run dev -w @helios/game"
+    "dev": "npm run dev -w @helios/game",
+    "generate": "npm run generate -w @helios/levels --"
   },
   "devDependencies": {
     "@types/node": "22.19.1",
@@ -19,7 +20,8 @@
     "vite": "7.3.7",
     "vitest": "4.1.12",
     "yaml": "2.9.1",
-    "playwright-core": "1.63.0"
+    "playwright-core": "1.63.0",
+    "esbuild": "0.28.2"
   },
   "workspaces": [
     "packages/*",

@@ -1,0 +1,39 @@
+{
+  "n": 1,
+  "version": 1,
+  "source": "handmade",
+  "title": "Premiers pas",
+  "tutorial": "match",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 10,
+  "goals": [
+    {
+      "type": "collect",
+      "color": 0,
+      "count": 26
+    }
+  ],
+  "seed": "L1v1a0:7f3aef2e",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 1,
+    "avgMovesLeft": 5.2,
+    "status": "ok",
+    "auditRate": 1
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "n": 122,
+  "version": 1,
+  "source": "handmade",
+  "difficulty": "easy",
+  "targetRate": 0.85,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    "i1. i1. i1. i1. i1. i1. i1. i1. i1.",
+    "i1. X1 i1. X1 i1. X1 i1. X1 i1.",
+    "i1. i1. i1. i1. i1. i1. i1. i1. i1.",
+    ". g. . . . . . g. .",
+    ". . . . . . . . .",
+    ". . . k. k. k. . . .",
+    ". . . . . . . . ."
+  ],
+  "colors": 5,
+  "moves": 16,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "ice",
+      "count": 23
+    },
+    {
+      "type": "clear",
+      "target": "cage",
+      "count": 2
+    }
+  ],
+  "seed": "L122v1a0:be93730e",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.855,
+    "avgMovesLeft": 5.04,
+    "status": "ok"
+  }
+}

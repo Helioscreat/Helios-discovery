@@ -1,0 +1,38 @@
+{
+  "n": 2,
+  "version": 1,
+  "source": "handmade",
+  "title": "La Fusée",
+  "tutorial": "rocket",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    "a a b a . . .",
+    ". . a . . . .",
+    ". . . . . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 10,
+  "goals": [
+    {
+      "type": "collect",
+      "color": 0,
+      "count": 30
+    }
+  ],
+  "seed": "L2v1a0:80236b7b",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.995,
+    "avgMovesLeft": 4.66,
+    "status": "ok"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "n": 4,
+  "version": 1,
+  "source": "handmade",
+  "title": "La Bombe",
+  "tutorial": "bomb",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . c . . . .",
+    ". . c . . . .",
+    ". c d c c . .",
+    ". . . . . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 10,
+  "goals": [
+    {
+      "type": "collect",
+      "color": 2,
+      "count": 32
+    }
+  ],
+  "seed": "L4v1a0:d4099fbd",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.985,
+    "avgMovesLeft": 4.79,
+    "status": "ok"
+  }
+}

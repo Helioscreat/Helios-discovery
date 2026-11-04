@@ -1,0 +1,41 @@
+{
+  "n": 74,
+  "version": 1,
+  "source": "handmade",
+  "difficulty": "medium",
+  "targetRate": 0.6,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    ". . . . D . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . X1 . . . X1 . .",
+    ". . X1 . . . X1 . .",
+    ". . . . . . . . .",
+    "X1 . . . . . . . X1",
+    ". . . . . . . . .",
+    ". . . . . . . . ."
+  ],
+  "colors": 5,
+  "moves": 21,
+  "goals": [
+    {
+      "type": "drop",
+      "count": 3
+    }
+  ],
+  "drops": {
+    "total": 3,
+    "maxOnBoard": 2
+  },
+  "seed": "L74v1a0:978b400e",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.595,
+    "avgMovesLeft": 7.24,
+    "status": "ok"
+  }
+}

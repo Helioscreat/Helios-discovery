@@ -1,0 +1,17 @@
+{
+  "name": "@helios/levels",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p .",
+    "build:cli": "node scripts/build-cli.mjs",
+    "generate": "node scripts/build-cli.mjs && node dist/cli.cjs"
+  },
+  "dependencies": {
+    "@helios/bot": "0.1.0",
+    "@helios/core": "0.1.0"
+  }
+}

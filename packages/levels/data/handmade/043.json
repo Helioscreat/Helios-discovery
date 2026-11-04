@@ -1,0 +1,37 @@
+{
+  "n": 43,
+  "version": 1,
+  "source": "handmade",
+  "difficulty": "easy",
+  "targetRate": 0.85,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . # # # . . .",
+    ". . . # # # . . .",
+    ". . . # # # . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . ."
+  ],
+  "colors": 5,
+  "moves": 44,
+  "goals": [
+    {
+      "type": "score",
+      "target": 9000
+    }
+  ],
+  "seed": "L43v1a0:73704cd0",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.845,
+    "avgMovesLeft": 11.92,
+    "status": "ok"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "n": 15,
+  "version": 1,
+  "source": "handmade",
+  "difficulty": "easy",
+  "targetRate": 0.85,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    ". . . . . . . . .",
+    "# . . . . . . . #",
+    "# # . . . . . # #",
+    "# # # . . . # # #",
+    "# # # . . . # # #",
+    "# # # . . . # # #",
+    "# # . . . . . # #",
+    "# . . . . . . . #",
+    ". . . . . . . . ."
+  ],
+  "colors": 5,
+  "moves": 22,
+  "goals": [
+    {
+      "type": "collect",
+      "color": 2,
+      "count": 30
+    }
+  ],
+  "seed": "L15v1a0:20edbb2f",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.855,
+    "avgMovesLeft": 5.33,
+    "status": "ok"
+  }
+}

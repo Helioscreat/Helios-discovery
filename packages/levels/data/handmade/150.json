@@ -1,0 +1,53 @@
+{
+  "n": 150,
+  "version": 1,
+  "source": "handmade",
+  "title": "Le grand jardin",
+  "difficulty": "veryHard",
+  "targetRate": 0.2,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    "# # . . . . . # #",
+    "# . . . . . . . #",
+    ". . X1 . . . X1 . .",
+    ". . i1k. i1. i1. i1. i1k. . .",
+    ". . i1. i2. i3. i2. i1. . .",
+    ". . i1k. i1. i1. i1. i1k. . .",
+    ". . X1 . . . X1 . .",
+    "# . . . . . . . #",
+    "# # . . . . . # #"
+  ],
+  "colors": 6,
+  "moves": 35,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "chain",
+      "count": 4
+    },
+    {
+      "type": "clear",
+      "target": "ice",
+      "count": 15
+    },
+    {
+      "type": "clear",
+      "target": "crate",
+      "count": 4
+    },
+    {
+      "type": "score",
+      "target": 8000
+    }
+  ],
+  "seed": "L150v1a0:cfd1bdff",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.195,
+    "avgMovesLeft": 4.9,
+    "status": "ok"
+  }
+}

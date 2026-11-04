@@ -1,0 +1,42 @@
+{
+  "n": 99,
+  "version": 1,
+  "source": "handmade",
+  "difficulty": "medium",
+  "targetRate": 0.6,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". g. . g. . g. . g. .",
+    ". . . . . . . . .",
+    ". g. . g. . g. . g. .",
+    ". . . . . . . . .",
+    ". g. . g. . g. . g. .",
+    ". . . . . . . . .",
+    ". . . . . . . . ."
+  ],
+  "colors": 6,
+  "moves": 39,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "cage",
+      "count": 12
+    },
+    {
+      "type": "score",
+      "target": 7000
+    }
+  ],
+  "seed": "L99v1a0:af440f5b",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.605,
+    "avgMovesLeft": 8.98,
+    "status": "ok"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "n": 52,
+  "version": 1,
+  "source": "handmade",
+  "title": "Les Chaînes",
+  "tutorial": "chain",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . k. k. k. . .",
+    ". . k. k. k. . .",
+    ". . k. k. k. . .",
+    ". . . . . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 12,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "chain",
+      "count": 9
+    }
+  ],
+  "seed": "L52v1a0:09093d1a",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.995,
+    "avgMovesLeft": 7.27,
+    "status": "ok"
+  }
+}

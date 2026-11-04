@@ -1,0 +1,38 @@
+{
+  "n": 92,
+  "version": 1,
+  "source": "handmade",
+  "title": "Les Cages",
+  "tutorial": "cage",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". g. . . . g. .",
+    ". . . . . . .",
+    ". g. . . . g. .",
+    ". . . . . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 12,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "cage",
+      "count": 4
+    }
+  ],
+  "seed": "L92v1a0:cf1b2e46",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 1,
+    "avgMovesLeft": 9.19,
+    "status": "ok"
+  }
+}

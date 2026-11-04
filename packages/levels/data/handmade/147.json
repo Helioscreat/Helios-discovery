@@ -1,0 +1,43 @@
+{
+  "n": 147,
+  "version": 1,
+  "source": "handmade",
+  "difficulty": "hard",
+  "targetRate": 0.35,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    "i2. i2. i2. i2. i2. i2. i2. i2. i2.",
+    "i2. i2. i2. i2. i2. i2. i2. i2. i2.",
+    "i3. i3. i3. i3. i3. i3. i3. i3. i3.",
+    "i3. i3. i3. i3. i3. i3. i3. i3. i3."
+  ],
+  "colors": 6,
+  "moves": 35,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "ice",
+      "count": 36
+    },
+    {
+      "type": "collect",
+      "color": 2,
+      "count": 20
+    }
+  ],
+  "seed": "L147v1a0:d7d57cab",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.325,
+    "avgMovesLeft": 5.43,
+    "status": "ok"
+  }
+}

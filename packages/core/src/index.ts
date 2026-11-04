@@ -1,12 +1,14 @@
 export * from "./types";
 export * from "./rng";
-export { MAX_SIZE, xOf, yOf, at, inBounds, isActive, colorAt, areAdjacent, cloneState, hashState, fromAscii, toAscii } from "./board";
+export { MAX_SIZE, xOf, yOf, at, inBounds, isActive, colorAt, areAdjacent, cloneState, hashState, hashString, fromAscii, toAscii, parseToken, tokenOf, isPiece, isMovable, isFixed, isFreeNormal, iceAt, neighbors4 } from "./board";
+export type { CellToken } from "./board";
 export type { AsciiOptions } from "./board";
 export { findMatches, hasMatchAt } from "./match";
 export type { MatchGroup } from "./match";
 export * from "./effects";
-export { isValidSwap, listValidMoves, hasValidMove, getHint, moveValue, ensurePlayable, forceShuffle } from "./moves";
-export { Phase, applyGravity, refill, cascadeLoop, SCORE_PER_PIECE, SPECIAL_BONUS } from "./resolve";
-export { createGame, applyMove, applyMoveInPlace, goalsDone, runBonus, stabilize } from "./game";
+export { isValidSwap, listValidMoves, hasValidMove, getHint, moveValue, localMatch, goalContext, ensurePlayable, forceShuffle } from "./moves";
+export type { LocalMatch, GoalContext } from "./moves";
+export { Phase, settle, collectDrops, isSpawner, isExit, cascadeLoop, SCORE_PER_PIECE, SCORE_PER_OBSTACLE, SPECIAL_BONUS } from "./resolve";
+export { createGame, applyMove, applyMoveInPlace, goalsDone, runBonus, stabilize, countIvy, spreadIvy } from "./game";
 export type { LevelSpec } from "./game";
 export * from "./boosters";
