@@ -37,4 +37,5 @@ export const SCREENS: ScreenInfo[] = [
   { name: "delete-account", kind: "choice", purchase: false, usesCharacter: false },
   { name: "parental", kind: "info", purchase: false, usesCharacter: false },
   { name: "profile", kind: "info", purchase: false, usesCharacter: false },
+  { name: "changelog", kind: "info", purchase: false, usesCharacter: false },
 ];

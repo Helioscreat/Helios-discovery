@@ -20,5 +20,6 @@ npm run matrix:coverage  # couverture de la matrice de conformité
 | `packages/levels` | Niveaux 1–150 faits main, générateur 151–10 000, CLI `generate` |
 | `packages/economy` | Vies, boutique, passe de saison, récompenses gratuites, île |
 | `packages/compliance` | Règles d'âge, de consentement, de filtrage et de modération |
-| `apps/game` | Client Phaser + Preact |
+| `packages/config` | Config distante par pays, notifications, durées de conservation, sous-traitants, notes de version |
+| `apps/game` | Client Phaser + Preact, en 6 langues (fr, en, nl, de, es, it) |
 | `apps/server` | Serveur de l'éditeur, à héberger dans l'UE |

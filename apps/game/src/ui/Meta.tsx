@@ -5,7 +5,7 @@ import {
   TIERS, unlockedScenes, WHEEL, wheelProbabilities, XP_PER_TIER, type Contents, type Reward, type Sku,
 } from "@helios/economy";
 import { currentSeason, livesNow, type MetaState, type Shop } from "../game/meta";
-import { getLocale, t } from "../i18n";
+import { DATE_LOCALE, getLocale, t } from "../i18n";
 import { DualChoice, Modal } from "./components";
 
 const BOOSTER_NAME = (b: string) => t(`booster.${b}` as never);
@@ -26,7 +26,7 @@ export function formatDuration(min: number): string {
   return t("duration.minutes", { n: min });
 }
 
-const fmtDate = (ms: number) => new Date(ms).toLocaleDateString(getLocale() === "fr" ? "fr-FR" : "en-GB", { day: "numeric", month: "long", year: "numeric" });
+const fmtDate = (ms: number) => new Date(ms).toLocaleDateString(DATE_LOCALE[getLocale()], { day: "numeric", month: "long", year: "numeric" });
 
 /** Prix affiché, toujours accompagné de son attribut data-price pour le contrôle automatisé (COM-15). */
 export function Price(props: { value: string | null }) {
@@ -54,9 +54,11 @@ export function TopBar(props: { meta: MetaState; now: number }) {
 // ───────────────────────── boutique ─────────────────────────
 const SHOP_ORDER = ["starter_pack", "lives_1h", "lives_3h", "lives_24h", "boosters_s", "boosters_m", "boosters_l", "boosters_xl", "gardener_monthly"];
 
-export function ShopScreen(props: { meta: MetaState; shop: Shop; onOpen: (s: Sku) => void; onBack: () => void }) {
+export function ShopScreen(props: { meta: MetaState; shop: Shop; disabled?: string[]; onOpen: (s: Sku) => void; onBack: () => void }) {
   const owned = props.meta.account.wallet.ownedOnce;
-  const items = SHOP_ORDER.map((id) => CATALOG.find((s) => s.id === id)!).filter((s) => !(s.kind === "oneTime" && owned.includes(s.id)));
+  const items = SHOP_ORDER.map((id) => CATALOG.find((s) => s.id === id)!)
+    .filter((s) => !(s.kind === "oneTime" && owned.includes(s.id)))
+    .filter((s) => !(props.disabled ?? []).includes(s.id)); // articles désactivés dans ce pays (config distante)
   return (
     <main class="meta-screen" data-screen-name="shop">
       <h1>{t("shop.title")}</h1>
@@ -136,11 +138,13 @@ function RewardLine(props: { r: Reward; got: boolean }) {
   return <li class={props.got ? "got" : ""}>{t("pass.tier", { n: props.r.tier })} — {label}</li>;
 }
 
-export function PassScreen(props: { meta: MetaState; now: number; shop: Shop; onClaim: (r: Reward) => void; onOpenSheet: (tier: "premium" | "premiumPlus") => void; onBack: () => void }) {
+export function PassScreen(props: { meta: MetaState; now: number; shop: Shop; lateRule?: "warn" | "hide"; onClaim: (r: Reward) => void; onOpenSheet: (tier: "premium" | "premiumPlus") => void; onBack: () => void }) {
   const def = currentSeason(props.now);
   const st = props.meta.season;
   const tier = tierOf(st.xp);
-  const offer = passOffer(def, st, props.now, isProtected(props.meta.age));
+  const raw = passOffer(def, st, props.now, isProtected(props.meta.age));
+  // Pays où la config retire l'achat tardif : pas de proposition si le palier 40 est hors de portée.
+  const offer = props.lateRule === "hide" && raw.warning ? { ...raw, offered: false } : raw;
   const table = rewardTable();
   const toClaim = claimable(st);
   return (
@@ -268,14 +272,16 @@ export function IslandScreen(props: { meta: MetaState; hasPremium: boolean; onDo
 }
 
 // ───────────────────────── vies ─────────────────────────
-export function LivesModal(props: { meta: MetaState; now: number; onRefill: () => void; onShop: () => void; onClose: () => void }) {
+/** `featured` = false (config distante, ex. BE) : aucun renvoi vers la boutique depuis l'écran des vies. */
+export function LivesModal(props: { meta: MetaState; now: number; featured?: boolean; onRefill: () => void; onShop: () => void; onClose: () => void }) {
+  const showShop = !isProtected(props.meta.age) && props.featured !== false;
   const next = Math.ceil(nextLifeIn(props.meta.account.wallet, props.now) / 60_000);
   const enough = props.meta.account.wallet.coins >= COIN_PRICES.refillLives;
   return (
     <Modal name="lives" title={t("lives.title")} onEscape={props.onClose}>
       <p>{t("lives.empty", { m: next })}</p>
-      {!isProtected(props.meta.age) ? <p class="small muted">{t("lives.shopHint")}</p> : null}
-      {!isProtected(props.meta.age) ? <button type="button" class="btn" onClick={props.onShop}>{t("lives.toShop")}</button> : null}
+      {showShop ? <p class="small muted" data-testid="lives-shop-hint">{t("lives.shopHint")}</p> : null}
+      {showShop ? <button type="button" class="btn" onClick={props.onShop}>{t("lives.toShop")}</button> : null}
       <DualChoice accept={enough ? t("lives.refill", { n: COIN_PRICES.refillLives }) : t("lives.notEnough", { n: COIN_PRICES.refillLives })} decline={t("decline.close")} onAccept={() => enough && props.onRefill()} onDecline={props.onClose} />
     </Modal>
   );
@@ -285,7 +291,7 @@ export function LivesModal(props: { meta: MetaState; now: number; onRefill: () =
 export function PurchasesSettings(props: { meta: MetaState; platform: "google" | "apple" | "mock" }) {
   const recap = spendRecap(props.meta.account.ledger);
   const sub = props.meta.account.wallet.subscription;
-  const fmt = (c: number) => new Intl.NumberFormat(getLocale() === "fr" ? "fr-FR" : "en-GB", { style: "currency", currency: "EUR" }).format(c / 100);
+  const fmt = (c: number) => new Intl.NumberFormat(DATE_LOCALE[getLocale()], { style: "currency", currency: "EUR" }).format(c / 100);
   return (
     <fieldset data-testid="purchases-settings">
       <legend>{t("settings.section.purchases")}</legend>

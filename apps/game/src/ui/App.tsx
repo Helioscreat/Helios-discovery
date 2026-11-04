@@ -6,7 +6,7 @@ import type { Feedback } from "../feedback";
 import { difficultyOf, levelCount, levelFile, levelSpec, loadGeneratedLevels } from "../game/levels";
 import { grantUnlocks, recordFailure, recordWin, saveProfile, type Profile } from "../game/profile";
 import { GameSession } from "../game/session";
-import { CATALOGS, getLocale, setLocale, t, type Locale } from "../i18n";
+import { CATALOGS, DATE_LOCALE, getLocale, NATIVE_NAMES, setLocale, t, type Locale } from "../i18n";
 import type { BoardScene } from "../render/BoardScene";
 import { TEXT_SCALES, type Settings, type SettingsStore } from "../settings";
 import { BoardHost } from "./BoardHost";
@@ -15,9 +15,10 @@ import { IslandScreen, LivesModal, PassScreen, PassSheet, Price, PurchaseSheet, 
 import { continueGame } from "@helios/core";
 import {
   addXp, buyPass, canPlay, claim, claimQuest, doTask, claimSubscriptionPerks, COIN_PRICES, COIN_REWARDS, continueOffer, dailyQuests, login,
-  progressQuests, refillLivesWithCoins, skuById, spendCoins, spinWheel, WHEEL, winXp, type AgeBand, type Sku,
+  progressQuests, refillLivesWithCoins, skuById, spendCoins, spinWheel, tierOf, WHEEL, winXp, type AgeBand, type Sku,
 } from "@helios/economy";
 import { currentSeason, endLevel, grant, saveMeta, type MetaState, type Shop } from "../game/meta";
+import { categoriesFor, CHANGELOG, DEFAULT_CONFIG, DEFAULT_PREFS, resolveConfig, type ResolvedConfig } from "@helios/config";
 import type { ConsentChoice } from "@helios/compliance";
 import { Analytics, applyBirth, applyConsent, nextOnboardingStep, saveCompliance, type Api, type ComplianceState } from "../game/compliance";
 import { AgeGate, ConsentScreen, ContactScreen, DeleteAccountModal, ParentalModal, PrivacySettings, ReportModal, TeamScreen } from "./Compliance";
@@ -38,7 +39,8 @@ type Overlay =
   | { kind: "consent-manage" }
   | { kind: "delete"; done: string }
   | { kind: "parental" }
-  | { kind: "report"; target: { type: "message" | "profile"; id: string } };
+  | { kind: "report"; target: { type: "message" | "profile"; id: string } }
+  | { kind: "changelog" };
 
 export interface AppProps {
   settings: SettingsStore;
@@ -135,6 +137,21 @@ export function App(props: AppProps) {
     void api.ensureAccount(compRef.current).then((c) => api.restore(c)).then(setComp).catch(() => undefined);
   }, []);
   const step = nextOnboardingStep(comp);
+  // Config distante du pays du joueur (appliquée sans mise à jour de l'application).
+  const [rc, setRc] = useState<ResolvedConfig>(() => resolveConfig(DEFAULT_CONFIG, props.compliance.country));
+  useEffect(() => {
+    if (api.online) void api.config(compRef.current.country).then(setRc).catch(() => undefined);
+  }, []);
+  // Durée de session (mesure d'audience consentie) : envoyée quand le jeu passe en arrière-plan.
+  useEffect(() => {
+    let start = props.clock();
+    const onVis = () => {
+      if (document.visibilityState === "hidden") analytics.track("session_length", { seconds: Math.round((props.clock() - start) / 1000) });
+      else start = props.clock();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
 
   const submitAge = async (birth: string) => {
     const next = applyBirth(comp, birth, props.clock());
@@ -162,7 +179,7 @@ export function App(props: AppProps) {
   const deleteAccount = async () => {
     try {
       const r = api.online && comp.account ? await api.deleteAccount(comp) : { dueAt: props.clock() };
-      setOverlay({ kind: "delete", done: t("delete.done", { date: new Date(r.dueAt).toLocaleDateString(getLocale() === "fr" ? "fr-FR" : "en-GB") }) });
+      setOverlay({ kind: "delete", done: t("delete.done", { date: new Date(r.dueAt).toLocaleDateString(DATE_LOCALE[getLocale()]) }) });
       // Données locales effacées immédiatement ; au prochain lancement, nouveau compte.
       try {
         for (const k of Object.keys(localStorage)) if (k.startsWith("helios.")) localStorage.removeItem(k);
@@ -241,6 +258,10 @@ export function App(props: AppProps) {
 
   const startLevel = (n: number, useKit: boolean) => {
     const s = new GameSession(n, profile, useKit);
+    analytics.track("level_start", { n, boosters: useKit ? 1 : 0 });
+    s.subscribe((o) => {
+      for (const e of o.events) if (e.type === "booster") analytics.track("booster_use", { n, booster: e.booster });
+    });
     saveProfile(profile);
     setSession(s);
     setScreen("game");
@@ -262,7 +283,9 @@ export function App(props: AppProps) {
       recordWin(profile, n);
       endLevel(meta, "won", t0);
       grant(meta, profile, { coins: COIN_REWARDS.winBase + COIN_REWARDS.perStar * stars }, t0);
+      const tierBefore = tierOf(meta.season.xp);
       meta.season = addXp(currentSeason(t0), meta.season, winXp(difficultyOf(n), stars, meta.season.pass), t0);
+      if (tierOf(meta.season.xp) > tierBefore) analytics.track("season_tier", { tier: tierOf(meta.season.xp) });
       meta.free = progressQuests(progressQuests(meta.free, "wins", 1), "collect", session.state.progress.reduce((a, x, k) => a + (session.state.goals[k].type === "collect" ? x : 0), 0));
       persist();
       analytics.track("level_win", { n, stars, movesLeft: session.movesAtWin });
@@ -311,6 +334,7 @@ export function App(props: AppProps) {
         setMsg(t(`purchase.result.${r.reason}` as never));
         return;
       }
+      analytics.track("purchase", { sku: "extra_moves", eurCents: skuById("extra_moves").referenceEurCents });
     }
     const resumed = continueGame(session.state, 5);
     if (!resumed) return;
@@ -334,6 +358,7 @@ export function App(props: AppProps) {
       return;
     }
     if (sku.kind === "seasonPass") meta.season = buyPass(meta.season, sku.passTier!);
+    analytics.track("purchase", { sku: sku.id, eurCents: sku.referenceEurCents });
     persist();
     setOverlay({ kind: "toast", text: t("purchase.result.ok") });
     refresh();
@@ -405,9 +430,10 @@ export function App(props: AppProps) {
       {screen !== "game" ? <TopBar meta={meta} now={now} /> : null}
       {screen === "contact" && <ContactScreen api={api} state={comp} onBack={() => setScreen("home")} />}
       {screen === "team" && <TeamScreen api={api} state={comp} team="aerine-1" onReport={(target) => setOverlay({ kind: "report", target })} onBack={() => setScreen("home")} />}
-      {screen === "shop" && <ShopScreen meta={meta} shop={shop} onOpen={openSku} onBack={() => setScreen("home")} />}
+      {screen === "shop" && <ShopScreen meta={meta} shop={shop} disabled={rc.monetization.disabledSkus} onOpen={openSku} onBack={() => setScreen("home")} />}
       {screen === "pass" && (
         <PassScreen
+          lateRule={rc.monetization.lateSeasonPurchase}
           meta={meta}
           now={now}
           shop={shop}
@@ -683,6 +709,7 @@ export function App(props: AppProps) {
         <LivesModal
           meta={meta}
           now={now}
+          featured={rc.monetization.featuredOffers}
           onRefill={() => {
             const w = refillLivesWithCoins(meta.account.wallet, props.clock());
             if (!w) return;
@@ -693,6 +720,18 @@ export function App(props: AppProps) {
           onShop={() => { setOverlay({ kind: "none" }); setScreen("shop"); }}
           onClose={() => setOverlay({ kind: "none" })}
         />
+      )}
+      {overlay.kind === "changelog" && (
+        <Modal name="changelog" title={t("changelog.title")} onEscape={() => setOverlay({ kind: "settings" })}>
+          {CHANGELOG.map((r) => (
+            <section key={r.version} data-version={r.version}>
+              <h3>{r.version} · {r.date}{r.compliance ? ` · ${t("changelog.compliance")}` : ""}</h3>
+              {/* Notes de version rédigées en français et en anglais ; les autres langues affichent l'anglais, balisé comme tel. */}
+              <ul class="small" lang={getLocale() === "fr" ? "fr" : "en"}>{r.notes[getLocale() === "fr" ? "fr" : "en"].map((x) => <li key={x}>{x}</li>)}</ul>
+            </section>
+          ))}
+          <div class="single-choice"><button type="button" class="btn" onClick={() => setOverlay({ kind: "settings" })}>{t("decline.close")}</button></div>
+        </Modal>
       )}
       {overlay.kind === "consent-manage" && <ConsentScreen state={comp} onSave={saveConsent} asModal onClose={() => setOverlay({ kind: "settings" })} />}
       {overlay.kind === "delete" && <DeleteAccountModal done={overlay.done} onConfirm={() => void (overlay.done ? location.reload() : deleteAccount())} onCancel={() => setOverlay(overlay.done ? { kind: "none" } : { kind: "settings" })} />}
@@ -706,7 +745,8 @@ export function App(props: AppProps) {
 
       {overlay.kind === "settings" && (
         <Modal name="settings" title={t("settings.title")} onEscape={() => setOverlay({ kind: "none" })}>
-          <SettingsForm store={props.settings} value={settings} />
+          <SettingsForm store={props.settings} value={settings} protectedPlayer={meta.age !== "adult"} />
+          <div class="single-choice"><button type="button" class="btn small" onClick={() => setOverlay({ kind: "changelog" })}>{t("changelog.open")}</button></div>
           <PurchasesSettings meta={meta} platform={shop.store.platform} />
           <PrivacySettings
             state={comp}
@@ -732,11 +772,32 @@ function Toggle(props: { label: string; checked: boolean; onChange: (v: boolean)
   );
 }
 
-function SettingsForm(props: { store: SettingsStore; value: Settings }) {
+function SettingsForm(props: { store: SettingsStore; value: Settings; protectedPlayer: boolean }) {
   const s = props.value;
   const up = (p: Partial<Settings>) => props.store.update(p);
+  const n = s.notifications ?? DEFAULT_PREFS;
   return (
     <div class="settings">
+      <fieldset data-testid="notification-settings">
+        <legend>{t("notif.title")}</legend>
+        <p class="small">{t("notif.explain")}</p>
+        <Toggle
+          name="notifOptIn"
+          label={t("notif.optIn")}
+          checked={n.optIn}
+          onChange={(v) => {
+            up({ notifications: { ...n, optIn: v } });
+            // Permission système demandée seulement après l'explication et l'accord dans le jeu.
+            if (v && typeof Notification !== "undefined" && Notification.permission === "default") void Notification.requestPermission().catch(() => undefined);
+          }}
+        />
+        {n.optIn
+          ? categoriesFor(props.protectedPlayer).map((c) => (
+              <Toggle key={c} name={`notif-${c}`} label={t(`notif.cat.${c}` as never)} checked={n.categories[c]} onChange={(v) => up({ notifications: { ...n, categories: { ...n.categories, [c]: v } } })} />
+            ))
+          : null}
+        <p class="small muted">{t("notif.rules")}</p>
+      </fieldset>
       <fieldset>
         <legend>{t("settings.section.audio")}</legend>
         <Toggle name="sound" label={t("settings.sound")} checked={s.sound} onChange={(v) => up({ sound: v })} />
@@ -767,7 +828,7 @@ function SettingsForm(props: { store: SettingsStore; value: Settings }) {
               up({ locale: l });
             }}
           >
-            {(Object.keys(CATALOGS) as Locale[]).map((l) => <option key={l} value={l}>{l === "fr" ? "Français" : "English"}</option>)}
+            {(Object.keys(CATALOGS) as Locale[]).map((l) => <option key={l} value={l} lang={l}>{NATIVE_NAMES[l]}</option>)}
           </select>
         </label>
       </fieldset>

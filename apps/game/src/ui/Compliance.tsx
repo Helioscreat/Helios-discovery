@@ -1,7 +1,7 @@
 import { offeredPurposes, PRESET_MESSAGES, REPORT_REASONS, type ConsentChoice, type Purpose, type ReportReason } from "@helios/compliance";
 import { useEffect, useState } from "preact/hooks";
 import type { Api, ComplianceState } from "../game/compliance";
-import { getLocale, t } from "../i18n";
+import { DATE_LOCALE, getLocale, t } from "../i18n";
 import { DualChoice, Modal } from "./components";
 
 const MONTHS = Array.from({ length: 12 }, (_, k) => k + 1);
@@ -15,7 +15,7 @@ export function AgeGate(props: { nowYear: number; error: string; onSubmit: (birt
   const [m, setM] = useState("");
   const [y, setY] = useState("");
   const years = Array.from({ length: 100 }, (_, k) => props.nowYear - k);
-  const monthName = (k: number) => new Date(Date.UTC(2000, k - 1, 1)).toLocaleDateString(getLocale() === "fr" ? "fr-FR" : "en-GB", { month: "long" });
+  const monthName = (k: number) => new Date(Date.UTC(2000, k - 1, 1)).toLocaleDateString(DATE_LOCALE[getLocale()], { month: "long" });
   const complete = d && m && y;
   return (
     <main class="meta-screen age-gate" data-screen-name="age-gate">

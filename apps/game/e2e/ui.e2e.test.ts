@@ -76,13 +76,13 @@ async function phone(vp = PHONES[0], settings?: Record<string, unknown>, o: Phon
   const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, deviceScaleFactor: 1, hasTouch: false, locale: "fr-FR" });
   if (settings) await ctx.addInitScript((s: Record<string, unknown>) => localStorage.setItem("helios.settings.v1", JSON.stringify(s)), settings);
   if (!o.fresh)
-    await ctx.addInitScript(() => {
+    await ctx.addInitScript((country: string) => {
       if (!localStorage.getItem("helios.compliance.v1"))
         localStorage.setItem("helios.compliance.v1", JSON.stringify({
           ageSet: true, age: { band: "minor", underConsentAge: false, chatRestricted: false },
-          consent: { analytics: false, adsPersonalized: false, adsNonPersonalized: false }, consentDecided: true, country: "FR",
+          consent: { analytics: false, adsPersonalized: false, adsNonPersonalized: false }, consentDecided: true, country,
         }));
-    });
+    }, o.country ?? "FR");
   const page = await ctx.newPage();
   if (o.requests) page.on("request", (r) => o.requests!.push(r.url()));
   const errors: string[] = [];
@@ -766,7 +766,7 @@ describe("écran d'âge et consentement", () => {
     await startLevel(page, 2);
     await page.evaluate(() => window.__helios!.forceStatus("won"));
     await page.waitForTimeout(400);
-    expect(requests.filter((u) => u.includes("/v1/events")).length).toBe(1);
+    expect(requests.filter((u) => u.includes("/v1/events")).length).toBe(2); // level_start + level_win
     await page.locator("[data-modal='end-win'] button").click();
     // Clic 1 : Paramètres ; clic 2 : Gérer mes choix.
     await page.getByRole("button", { name: "Paramètres" }).click();
@@ -775,7 +775,8 @@ describe("écran d'âge et consentement", () => {
     await startLevel(page, 3);
     await page.evaluate(() => window.__helios!.forceStatus("won"));
     await page.waitForTimeout(400);
-    expect(requests.filter((u) => u.includes("/v1/events")).length).toBe(1);
+    // Après retrait : ni level_start ni level_win du niveau 3.
+    expect(requests.filter((u) => u.includes("/v1/events")).length).toBe(2);
     await ctx.close();
   });
 
@@ -869,6 +870,91 @@ describe("confidentialité et DSA", () => {
     await page.waitForFunction(() => /Compte verrouillé/.test(document.querySelector("[data-modal='delete-account']")?.textContent ?? ""));
     expect(await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("helios.")))).toEqual([]);
     expect((await fetch(`${API}/v1/me`, { headers: { authorization: `Bearer ${token}` } })).status).toBe(410);
+    await ctx.close();
+  });
+});
+
+describe("mesure, config distante, notifications et langues", () => {
+  it("[T-NOT-01] notifications : désactivées par défaut, permission système demandée seulement après l'accord ; jamais d'offres pour un mineur", async () => {
+    const { page, ctx } = await phone();
+    await page.evaluate(() => {
+      const w = window as unknown as { __permAsked: number };
+      w.__permAsked = 0;
+      Object.defineProperty(Notification, "permission", { get: () => "default", configurable: true });
+      Notification.requestPermission = (async () => { w.__permAsked++; return "denied"; }) as typeof Notification.requestPermission;
+    });
+    await page.getByRole("button", { name: "Paramètres" }).click();
+    const box = page.locator("[data-testid='notification-settings']");
+    expect(await box.locator("input[name='notifOptIn']").isChecked()).toBe(false);
+    expect(await box.locator("input[name^='notif-']").count()).toBe(0);
+    expect(await page.evaluate(() => (window as unknown as { __permAsked: number }).__permAsked)).toBe(0);
+    await box.locator("input[name='notifOptIn']").check();
+    expect(await page.evaluate(() => (window as unknown as { __permAsked: number }).__permAsked)).toBe(1);
+    const cats = await box.locator("input[name^='notif-']").evaluateAll((els) => els.map((e) => (e as HTMLInputElement).name));
+    expect(cats).toEqual(["notif-lives", "notif-team", "notif-season"]);
+    // Opt-in global ne coche aucune catégorie : chaque catégorie est un choix séparé.
+    for (const c of cats) expect(await box.locator(`input[name='${c}']`).isChecked(), c).toBe(false);
+    await ctx.close();
+  });
+
+  it("adulte : la catégorie « Nouveautés de la boutique » existe, désactivée par défaut", async () => {
+    const { page, ctx } = await phone();
+    await page.evaluate(() => window.__helios!.setAge("adult"));
+    await page.getByRole("button", { name: "Paramètres" }).click();
+    const box = page.locator("[data-testid='notification-settings']");
+    await box.locator("input[name='notifOptIn']").check();
+    expect(await box.locator("input[name='notif-offers']").isChecked()).toBe(false);
+    await ctx.close();
+  });
+
+  it("nouveautés : la version en cours est listée en premier depuis les paramètres", async () => {
+    const { page, ctx } = await phone();
+    await page.getByRole("button", { name: "Paramètres" }).click();
+    await page.getByRole("button", { name: "Nouveautés" }).click();
+    const first = page.locator("[data-modal='changelog'] section").first();
+    expect(await first.getAttribute("data-version")).toBe("0.7.0");
+    expect(await first.innerText()).toMatch(/sécurité et conformité/);
+    await ctx.close();
+  });
+
+  it("[T-DFA-01] config distante BE : aucun renvoi vers la boutique depuis l'écran des vies ; FR : renvoi présent (adulte)", async () => {
+    for (const [country, expected] of [["BE", 0], ["FR", 1]] as const) {
+      const { page, ctx } = await phone(PHONES[0], undefined, { online: true, country });
+      await page.evaluate(() => window.__helios!.setAge("adult"));
+      await page.waitForTimeout(500); // config distante chargée au démarrage
+      await page.evaluate(() => window.__helios!.openOverlay({ kind: "lives", level: 1 }));
+      await page.locator("[data-modal='lives']").waitFor();
+      expect(await page.locator("[data-testid='lives-shop-hint']").count(), country).toBe(expected);
+      await ctx.close();
+    }
+  });
+
+  it("mesure consentie : level_start puis level_win envoyés, sans champ hors schéma", async () => {
+    const bodies: { name: string; data: Record<string, unknown> }[] = [];
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, online: true });
+    page.on("request", (r) => { if (r.url().includes("/v1/events")) bodies.push(JSON.parse(r.postData() ?? "{}")); });
+    await page.waitForFunction(() => !!window.__helios!.compliance().account);
+    await answerAge(page, yearsAgo(30));
+    await page.locator("[data-modal='consent'] [data-choice='accept']").click();
+    await startLevel(page, 2);
+    await page.evaluate(() => window.__helios!.forceStatus("won"));
+    await page.waitForTimeout(400);
+    expect(bodies.map((b) => b.name)).toEqual(["level_start", "level_win"]);
+    expect(Object.keys(bodies[0].data).sort()).toEqual(["boosters", "n"]);
+    await ctx.close();
+  });
+
+  it("[T-STO-05] changement de langue : interface en néerlandais, attribut lang mis à jour, choix conservé", async () => {
+    const { page, ctx } = await phone();
+    await page.getByRole("button", { name: "Paramètres" }).click();
+    const options = await page.locator("select[name='locale'] option").allInnerTexts();
+    expect(options).toEqual(["Français", "English", "Nederlands", "Deutsch", "Español", "Italiano"]);
+    await page.locator("select[name='locale']").selectOption("nl");
+    expect(await page.evaluate(() => document.documentElement.lang)).toBe("nl");
+    await page.getByRole("button", { name: "Mijn privacykeuzes beheren" }).waitFor();
+    await page.reload();
+    await page.waitForSelector(".home");
+    await page.getByRole("button", { name: "Instellingen" }).waitFor();
     await ctx.close();
   });
 });

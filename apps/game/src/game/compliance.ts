@@ -1,3 +1,4 @@
+import type { ResolvedConfig } from "@helios/config";
 import {
   ageFromBirth, ageProfile, allowedSdks, normalizeConsent, REFUSE_ALL, showConsentScreen, UNKNOWN_AGE, type AgeProfile, type ConsentChoice,
 } from "@helios/compliance";
@@ -119,6 +120,7 @@ export class Api {
   block = (c: ComplianceState, playerId: string) => this.call("POST", "/v1/blocks", c.account!.token, { playerId });
   report = (c: ComplianceState, body: { targetType: "message" | "profile"; targetId: string; reason: string; details: string }) => this.call<{ id: string; receivedAt: number }>("POST", "/v1/reports", c.account!.token, body);
   event = (c: ComplianceState, name: string, data: Record<string, unknown>) => this.call("POST", "/v1/events", c.account!.token, { name, data });
+  config = (country: string) => this.call<ResolvedConfig>("GET", `/v1/config?country=${encodeURIComponent(country)}`, null);
 }
 
 /**
