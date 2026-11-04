@@ -180,6 +180,7 @@ Voir `packages/levels/README.md` pour le détail.
 - **Niveaux 1–150 :** conçus à la main dans `packages/levels/src/handmade.ts` (grilles dessinées, objectifs et couleurs choisis niveau par niveau). Seul le nombre de coups est calibré par le bot. Les JSON sont dans `data/handmade/`.
 - **Niveaux 151–10 000 :** `seed = hash(N, version, tentative)`. La forme, les couleurs, les objectifs et les obstacles sont dérivés de N et d'un fond de difficulté logarithmique plafonné à N = 2000.
 - **Règle d'équité (FAIR-01) :** la grille de départ est identique pour tous. Seule la suite des pièces qui tombent varie d'un essai à l'autre, selon le numéro d'essai. Elle ne dépend jamais du profil ni des dépenses.
+- **Tests A/B de difficulté (décision du 2026-11-04) :** interdits sur les niveaux publiés. Le validateur de la config distante refuse toute expérience de difficulté qui vise un niveau inférieur ou égal au dernier niveau livré. La difficulté se règle avant la sortie, par le bot ; un recalibrage après sortie change `contentVersion` pour tous les joueurs à la fois.
 - **Calibrage :** 200 parties de bot par niveau. On retient le plus petit nombre de coups dont le taux de réussite atteint la cible (borne basse). Si le taux sort de ±10 points, l'échelle des objectifs est ajustée et le niveau régénéré. Un niveau sur dix est contrôlé sur 200 parties neuves.
 - **Critère FAIR-02 et tension du cahier des charges :** voir le compte rendu du livrable 4 (aide gratuite après plusieurs échecs, à décider).
 
