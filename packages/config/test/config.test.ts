@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   assignVariant, catalogFor, categoriesFor, CHANGELOG, DEFAULT_CONFIG, DEFAULT_PREFS, EU_REGIONS, plan, resolveConfig, RETENTION, SUBPROCESSORS,
-  validateConfig, validateExperiments, type RemoteConfig,
+  PUBLISHED_THROUGH_LEVEL, validateConfig, validateExperiments, type RemoteConfig,
 } from "../src";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -49,8 +49,19 @@ describe("[T-ANA-02] expériences A/B encadrées", () => {
     expect(validateExperiments([{ id: "ok", variable: "price", variants: ["a", "b"], publicAnnouncementUrl: "https://helios.example/tests-de-prix", maxPriceDeltaPct: 10, segment: { countries: ["FR"] } }])).toEqual([]);
   });
 
-  it("test de difficulté : refusé sans accord explicite (exception à « niveau identique pour tous »)", () => {
-    expect(validateExperiments([{ id: "d", variable: "difficulty", variants: ["a", "b"] }]).join()).toMatch(/accord explicite/);
+  it("[T-FAIR-01] test de difficulté : refusé sur tout niveau publié, accepté seulement au-delà du dernier niveau livré", () => {
+    const d = (levels?: [number, number]) => validateExperiments([{ id: "d", variable: "difficulty", variants: ["a", "b"], ...(levels ? { segment: { levels } } : {}) }]);
+    expect(d().join()).toMatch(/interdit sur un niveau publié/);
+    expect(d([1, 50]).join()).toMatch(/interdit sur un niveau publié/);
+    expect(d([PUBLISHED_THROUGH_LEVEL, PUBLISHED_THROUGH_LEVEL + 100]).join()).toMatch(/interdit/);
+    expect(d([PUBLISHED_THROUGH_LEVEL + 1, PUBLISHED_THROUGH_LEVEL + 100])).toEqual([]);
+    // Une config publiée à chaud passe par le même validateur.
+    expect(validateConfig({ ...DEFAULT_CONFIG, experiments: [{ id: "d", variable: "difficulty", variants: ["a", "b"], segment: { levels: [10, 20] } }] }, Date.UTC(2026, 10, 4)).join()).toMatch(/interdit sur un niveau publié/);
+  });
+
+  it("le dernier niveau publié correspond au manifeste des niveaux livrés", () => {
+    const m = JSON.parse(readFileSync(join(ROOT, "packages/levels/data/generated/manifest.json"), "utf8")) as { to: number };
+    expect(PUBLISHED_THROUGH_LEVEL).toBe(m.to);
   });
 
   it("affectation déterministe par hachage de l'identifiant ; joueurs protégés exclus des tests de prix", () => {

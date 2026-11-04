@@ -32,8 +32,6 @@ export interface Experiment {
   segment?: { countries?: string[]; levels?: [number, number] } & Record<string, unknown>;
   /** Test de prix : écart annoncé publiquement (obligatoire). */
   publicAnnouncementUrl?: string;
-  /** Test de difficulté : exception assumée à « niveau identique pour tous » (affectation au hasard seulement). */
-  fairnessAck?: boolean;
   /** Écart de prix maximal, en %. */
   maxPriceDeltaPct?: number;
 }
@@ -95,7 +93,13 @@ export function catalogFor(r: ResolvedConfig, catalog: Sku[] = CATALOG): Sku[] {
 const FORBIDDEN_SEGMENT_KEYS = /age|minor|spend|revenue|payer|whale|fail|streak|session|churn|vulnerab|frustr/i;
 
 /** ANA-02 : tests de prix annoncés publiquement, écart borné ; aucun ciblage sur un profil vulnérable. */
-export function validateExperiments(list: Experiment[]): string[] {
+/**
+ * Dernier niveau livré aux joueurs. Les tests de difficulté ne peuvent viser que des niveaux au-delà
+ * (calibrage avant sortie). Un test croisé vérifie qu'il correspond au manifeste des niveaux générés.
+ */
+export const PUBLISHED_THROUGH_LEVEL = 10_000;
+
+export function validateExperiments(list: Experiment[], publishedThrough = PUBLISHED_THROUGH_LEVEL): string[] {
   const errors: string[] = [];
   const ids = new Set<string>();
   for (const e of list) {
@@ -107,7 +111,12 @@ export function validateExperiments(list: Experiment[]): string[] {
       if (!e.publicAnnouncementUrl || !/^https:\/\//.test(e.publicAnnouncementUrl)) errors.push(`expérience ${e.id} : test de prix sans annonce publique`);
       if (e.maxPriceDeltaPct === undefined || e.maxPriceDeltaPct > 20) errors.push(`expérience ${e.id} : écart de prix non borné (≤ 20 %)`);
     }
-    if (e.variable === "difficulty" && !e.fairnessAck) errors.push(`expérience ${e.id} : test de difficulté sans accord explicite (exception à « niveau identique pour tous »)`);
+    // FAIR-01 (décision du 2026-11-04) : un niveau publié est identique pour tous ; aucun test de difficulté ne peut le viser.
+    if (e.variable === "difficulty") {
+      const from = e.segment?.levels?.[0];
+      if (from === undefined || from <= publishedThrough)
+        errors.push(`expérience ${e.id} : test de difficulté interdit sur un niveau publié (1–${publishedThrough}) : le niveau N est identique pour tous`);
+    }
   }
   return errors;
 }

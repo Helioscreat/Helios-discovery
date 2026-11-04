@@ -524,7 +524,7 @@ rows:
     ref: "Engagement ; directive 2005/29/CE art. 5"
     nature: engagement
     exigence: "La difficulté ne dépend jamais du profil de dépense : le niveau N est identique pour tous."
-    fonctionnalite: "Le chargeur de niveau a pour signature (N, contentVersion) ; aucune difficulté dynamique individuelle."
+    fonctionnalite: "Le chargeur de niveau a pour signature (N, contentVersion) ; aucune difficulté dynamique individuelle ; la config distante refuse tout test A/B de difficulté sur un niveau publié."
     test: { id: T-FAIR-01, type: property, verif: "Le hash du niveau N est identique pour 1 000 profils aléatoires ; une règle d'import interdit levels → player|purchases|analytics ; un recalibrage global change contentVersion pour tous." }
     livrable: 4
   - id: FAIR-02
