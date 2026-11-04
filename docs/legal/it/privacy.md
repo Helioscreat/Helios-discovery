@@ -8,7 +8,7 @@ Traduzione dell'originale francese; non ancora rivista da un traduttore giuridic
 
 - Il tuo account è pseudonimo: non ti chiediamo né il nome, né l'indirizzo, né il numero di telefono.
 - I nostri server sono nell'Unione europea. Non vendiamo alcun dato.
-- La misurazione del pubblico e la pubblicità partono solo se sei d'accordo. Puoi cambiare idea in qualsiasi momento.
+- La misurazione del pubblico parte solo se sei d'accordo. Per la pubblicità, Google ti chiede la tua scelta; se rifiuti, restano possibili solo annunci limitati, senza tracciamento, quando scegli di guardare un video con ricompensa.
 - Puoi scaricare o cancellare i tuoi dati da Impostazioni > Privacy.
 
 ## 1. Titolare del trattamento
@@ -47,7 +47,8 @@ Solo le persone del nostro team che ne hanno bisogno accedono ai tuoi dati. I no
 | Scaleway SAS | Hosting del server e del database (Parigi) | Francia | Dati nell'UE |
 | Google Ireland Ltd (Google Play) | Pagamento e verifica degli acquisti su Android | Irlanda | Quadro UE-USA e clausole tipo |
 | Apple Distribution International | Pagamento e verifica degli acquisti su iOS | Irlanda | Quadro UE-USA e clausole tipo |
-| Google Ireland Ltd (AdMob, UMP) | Video con ricompensa e piattaforma di consenso (solo dopo il tuo consenso) | Irlanda | Quadro UE-USA e clausole tipo |
+| Google Ireland Ltd (UMP) | Modulo di consenso per la pubblicità (Google UMP) | Irlanda | Quadro UE-USA e clausole tipo |
+| Google Ireland Ltd (AdMob) | Video con ricompensa facoltativi (solo dopo il tuo consenso) | Irlanda | Quadro UE-USA e clausole tipo |
 | Google Ireland Ltd (Firebase Cloud Messaging) | Invio delle notifiche su Android (solo dopo il tuo consenso) | Irlanda | Quadro UE-USA e clausole tipo |
 | Apple Distribution International (APNs) | Invio delle notifiche su iOS (solo dopo il tuo consenso) | Irlanda | Quadro UE-USA e clausole tipo |
 
@@ -84,8 +85,9 @@ Il gioco salva sul tuo dispositivo solo ciò che è strettamente necessario per 
 | helios.profile.v1 | Numero di tentativi per livello (aiuto gratuito dopo 8 sconfitte) |
 | helios.compliance.v1 | Fascia d'età e scelte di consenso |
 | helios.account.v1 | Identificativo e token dell'account |
+| IABTCF_* | Le tue scelte pubblicitarie, salvate dal modulo di Google |
 
-Gli strumenti di pubblicità e di notifica vengono caricati solo dopo il tuo consenso. Prima di questa scelta, nessuna richiesta parte verso terzi.
+Gli strumenti di pubblicità e di notifica vengono caricati solo dopo il tuo consenso. Prima, l'unica chiamata a terzi è il modulo di consenso di Google (UMP), e solo se la pubblicità può esserti proposta (età e paese).
 
 ## 7. Se hai meno di 18 anni
 

@@ -8,7 +8,7 @@ Version originale du document. Modèle à faire valider par un professionnel du 
 
 - Ton compte est pseudonyme : nous ne te demandons ni ton nom, ni ton adresse, ni ton numéro.
 - Nos serveurs sont dans l'Union européenne. Nous ne vendons aucune donnée.
-- La mesure d'audience et la publicité ne démarrent que si tu es d'accord. Tu peux changer d'avis à tout moment.
+- La mesure d'audience ne démarre que si tu es d'accord. Pour la publicité, Google te demande ton choix ; si tu refuses, seules des publicités limitées, sans suivi, restent possibles quand tu choisis de regarder une vidéo récompensée.
 - Tu peux télécharger ou supprimer tes données depuis Paramètres > Confidentialité.
 
 ## 1. Responsable du traitement
@@ -47,7 +47,8 @@ Seules les personnes de notre équipe qui en ont besoin accèdent à tes donnée
 | Scaleway SAS | Hébergement du serveur et de la base de données (Paris) | France | Données dans l'UE |
 | Google Ireland Ltd (Google Play) | Paiement et vérification des achats sur Android | Irlande | Cadre UE–États-Unis et clauses types |
 | Apple Distribution International | Paiement et vérification des achats sur iOS | Irlande | Cadre UE–États-Unis et clauses types |
-| Google Ireland Ltd (AdMob, UMP) | Vidéos récompensées et plateforme de consentement (seulement après ton accord) | Irlande | Cadre UE–États-Unis et clauses types |
+| Google Ireland Ltd (UMP) | Formulaire de consentement à la publicité (Google UMP) | Irlande | Cadre UE–États-Unis et clauses types |
+| Google Ireland Ltd (AdMob) | Vidéos récompensées facultatives (seulement après ton accord) | Irlande | Cadre UE–États-Unis et clauses types |
 | Google Ireland Ltd (Firebase Cloud Messaging) | Envoi des notifications sur Android (seulement après ton accord) | Irlande | Cadre UE–États-Unis et clauses types |
 | Apple Distribution International (APNs) | Envoi des notifications sur iOS (seulement après ton accord) | Irlande | Cadre UE–États-Unis et clauses types |
 
@@ -84,8 +85,9 @@ Le jeu enregistre sur ton appareil uniquement ce qui est strictement nécessaire
 | helios.profile.v1 | Nombre d'essais par niveau (aide gratuite après 8 échecs) |
 | helios.compliance.v1 | Tranche d'âge et choix de consentement |
 | helios.account.v1 | Identifiant et jeton du compte |
+| IABTCF_* | Tes choix publicitaires, enregistrés par le formulaire de Google |
 
-Les outils de publicité et de notification ne sont chargés qu'après ton accord. Avant ce choix, aucune requête ne part vers un tiers.
+Les outils de publicité et de notification ne sont chargés qu'après ton accord. Avant cela, le seul appel à un tiers est celui du formulaire de consentement de Google (UMP), et seulement si la publicité peut t'être proposée (âge et pays).
 
 ## 7. Si tu as moins de 18 ans
 

@@ -70,6 +70,8 @@ interface PhoneOpts {
   country?: string;
   /** Requêtes réseau observées (toutes origines). */
   requests?: string[];
+  /** Doublure UMP : afficher le formulaire Google au premier lancement (sinon : refus déjà enregistré). */
+  umpForm?: boolean;
 }
 
 async function phone(vp = PHONES[0], settings?: Record<string, unknown>, o: PhoneOpts = {}) {
@@ -80,7 +82,7 @@ async function phone(vp = PHONES[0], settings?: Record<string, unknown>, o: Phon
       if (!localStorage.getItem("helios.compliance.v1"))
         localStorage.setItem("helios.compliance.v1", JSON.stringify({
           ageSet: true, age: { band: "minor", underConsentAge: false, chatRestricted: false },
-          consent: { analytics: false, adsPersonalized: false, adsNonPersonalized: false }, consentDecided: true, country,
+          consent: { analytics: false }, consentDecided: true, country,
         }));
     }, o.country ?? "FR");
   const page = await ctx.newPage();
@@ -89,7 +91,7 @@ async function phone(vp = PHONES[0], settings?: Record<string, unknown>, o: Phon
   page.on("pageerror", (e: Error) => errors.push(e.message));
   // Toute erreur de console compte (ex. empreinte d'un niveau régénéré différente du niveau validé).
   page.on("console", (m) => { if (m.type() === "error") errors.push(`console: ${m.text()}`); });
-  const url = `${URL}${o.online ? `&api=${encodeURIComponent(API)}` : ""}${o.country ? `&country=${o.country}` : ""}`;
+  const url = `${URL}${o.online ? `&api=${encodeURIComponent(API)}` : ""}${o.country ? `&country=${o.country}` : ""}${o.umpForm ? "&ump=form" : ""}`;
   await page.goto(url);
   await page.waitForSelector(o.fresh ? "[data-screen-name='age-gate']" : ".home");
   return { page, ctx, errors, url };
@@ -203,7 +205,7 @@ describe("[T-COM-04] modales de choix : le refus est aussi visible que l'accepta
 
   it("aucune case pré-cochée sur l'écran de début de niveau (Kit de départ)", async () => {
     const c2 = await browser.newContext({ viewport: { width: 393, height: 727 }, locale: "fr-FR" });
-    await c2.addInitScript(() => localStorage.setItem("helios.compliance.v1", JSON.stringify({ ageSet: true, age: { band: "adult", underConsentAge: false, chatRestricted: false }, consent: { analytics: false, adsPersonalized: false, adsNonPersonalized: false }, consentDecided: true, country: "FR" })));
+    await c2.addInitScript(() => localStorage.setItem("helios.compliance.v1", JSON.stringify({ ageSet: true, age: { band: "adult", underConsentAge: false, chatRestricted: false }, consent: { analytics: false }, consentDecided: true, country: "FR" })));
     await c2.addInitScript(() => localStorage.setItem("helios.profile.v1", JSON.stringify({ levelReached: 41, granted: ["hammer", "bomb", "rainbow", "fireCross", "shuffler", "starterKit"], inventory: { hammer: 3, bomb: 3, rainbow: 3, fireCross: 3, shuffler: 3, starterKit: 3 }, stars: {} })));
     const p2 = await c2.newPage();
     await p2.goto(URL);
@@ -700,32 +702,46 @@ describe("écran d'âge et consentement", () => {
     await ctx.close();
   });
 
-  it("[T-GDPR-02] « Tout accepter » et « Tout refuser » au même niveau ; finalités séparées et indépendantes", async () => {
-    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true });
+  it("[T-GDPR-02] « Accepter » et « Refuser » au même niveau ; publicité demandée ensuite par Google UMP, sur un écran séparé", async () => {
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, umpForm: true });
     await answerAge(page, yearsAgo(30));
     const modal = page.locator("[data-modal='consent']");
     await modal.waitFor();
     const [a, d] = await Promise.all(["accept", "decline"].map((k) => modal.locator(`[data-choice='${k}']`).boundingBox()));
     expect(Math.abs(a!.width * a!.height - d!.width * d!.height) / (a!.width * a!.height)).toBeLessThanOrEqual(0.05);
-    await modal.getByRole("button", { name: "Choisir finalité par finalité" }).click();
-    const switches = modal.locator("[data-testid='consent-custom'] input[role='switch']");
-    expect(await switches.count()).toBe(3);
-    await switches.nth(0).check();
-    expect(await switches.nth(1).isChecked()).toBe(false);
-    await modal.getByRole("button", { name: "Enregistrer mes choix" }).click();
-    expect(await page.evaluate(() => window.__helios!.compliance().consent)).toEqual({ analytics: true, adsPersonalized: false, adsNonPersonalized: false });
+    expect(await modal.locator("li").count()).toBe(1); // seule la mesure d'audience
+    expect(await modal.locator("[data-testid='consent-ads-next']").count()).toBe(1);
+    // Rien n'est demandé à Google avant la fin de notre écran.
+    expect(await page.evaluate(() => window.__helios!.umpCalls())).toEqual([]);
+    await modal.locator("[data-choice='accept']").click();
+    expect(await page.evaluate(() => window.__helios!.compliance().consent)).toEqual({ analytics: true });
+    const ump = page.locator("[data-testid='ump-form']");
+    await ump.waitFor();
+    expect(await page.evaluate(() => window.__helios!.umpCalls())).toEqual([{ method: "gather", tagForUnderAgeOfConsent: false }]);
+    await ump.locator("[data-ump='decline']").click();
+    await page.waitForFunction(() => window.__helios!.compliance().ads.status === "OBTAINED");
+    // Choix publicitaires : modifiables depuis les paramètres en 2 clics (point d'entrée exigé par UMP).
+    await page.getByRole("button", { name: "Paramètres" }).click();
+    await page.locator("[data-testid='ad-choices']").click();
+    await ump.waitFor();
+    await ump.locator("[data-ump='consent']").click();
+    expect((await page.evaluate(() => window.__helios!.umpCalls())).map((c) => c.method)).toEqual(["gather", "privacyOptions"]);
     await ctx.close();
   });
 
   it("[T-COM-05] aucune case pré-cochée : consentement, signalement, fiche d'achat, début de niveau", async () => {
-    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true });
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, umpForm: true });
     await answerAge(page, yearsAgo(17));
     const modal = page.locator("[data-modal='consent']");
-    await modal.getByRole("button", { name: "Choisir finalité par finalité" }).click();
+    await modal.waitFor();
     const checked = async () => page.evaluate(() => [...document.querySelectorAll("[data-modal] input[type=checkbox], [data-modal] input[type=radio]")].filter((i) => (i as HTMLInputElement).checked).length);
-    expect(await modal.locator("input[role='switch']").count()).toBe(2); // mineur : pas de pub personnalisée
     expect(await checked()).toBe(0);
+    // Mineur : aucun formulaire Google annoncé ni affiché ; UMP appelé « sous l'âge du consentement ».
+    expect(await modal.locator("[data-testid='consent-ads-next']").count()).toBe(0);
     await page.locator("[data-modal='consent'] [data-choice='decline']").click();
+    await page.waitForFunction(() => window.__helios!.compliance().ads.status === "NOT_REQUIRED");
+    expect(await page.evaluate(() => window.__helios!.umpCalls())).toEqual([{ method: "gather", tagForUnderAgeOfConsent: true }]);
+    expect(await page.locator("[data-testid='ump-form']").count()).toBe(0);
     await page.evaluate(() => window.__helios!.openOverlay({ kind: "report", target: { type: "profile", id: "x" } }));
     expect(await checked()).toBe(0);
     await page.evaluate(() => window.__helios!.openOverlay({ kind: "purchase", skuId: "boosters_s" }));
@@ -733,16 +749,19 @@ describe("écran d'âge et consentement", () => {
     await ctx.close();
   });
 
-  it("[T-GDPR-11] FR, 14 ans : aucune CMP ; toutes les finalités soumises au consentement restent inactives", async () => {
-    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, country: "FR" });
+  it("[T-GDPR-11] FR, 14 ans : aucun écran de consentement, aucun appel à Google UMP ; finalités inactives", async () => {
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, country: "FR", umpForm: true });
     await answerAge(page, yearsAgo(14));
     await page.waitForSelector(".home");
+    await page.waitForTimeout(300);
     expect(await page.locator("[data-modal='consent']").count()).toBe(0);
-    expect(await page.evaluate(() => window.__helios!.compliance())).toMatchObject({ consentDecided: true, consent: { analytics: false, adsPersonalized: false, adsNonPersonalized: false } });
+    expect(await page.evaluate(() => window.__helios!.compliance())).toMatchObject({ consentDecided: true, consent: { analytics: false }, ads: { status: "UNKNOWN", canRequestAds: false } });
+    expect(await page.evaluate(() => window.__helios!.umpCalls())).toEqual([]);
+    expect(await page.locator("[data-testid='ump-form']").count()).toBe(0);
     await ctx.close();
   });
 
-  it("[T-GDPR-03] avant et après « Tout refuser » : aucune requête vers un tiers, aucun événement de mesure", async () => {
+  it("[T-GDPR-03] avant et après « Refuser » : aucune requête vers un tiers, aucun événement de mesure", async () => {
     const requests: string[] = [];
     const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, online: true, requests });
     await page.waitForFunction(() => !!window.__helios!.compliance().account);
@@ -780,7 +799,7 @@ describe("écran d'âge et consentement", () => {
     await ctx.close();
   });
 
-  it("[T-GDPR-05] « Tout refuser » : le jeu reste entièrement jouable, sans relance du consentement", async () => {
+  it("[T-GDPR-05] « Refuser » : le jeu reste entièrement jouable, sans relance du consentement", async () => {
     const { page, ctx, errors } = await phone(PHONES[0], undefined, { fresh: true });
     await answerAge(page, yearsAgo(30));
     await page.locator("[data-modal='consent'] [data-choice='decline']").click();
@@ -912,7 +931,7 @@ describe("mesure, config distante, notifications et langues", () => {
     await page.getByRole("button", { name: "Paramètres" }).click();
     await page.getByRole("button", { name: "Nouveautés" }).click();
     const first = page.locator("[data-modal='changelog'] section").first();
-    expect(await first.getAttribute("data-version")).toBe("0.8.0");
+    expect(await first.getAttribute("data-version")).toBe("0.9.0");
     expect(await first.innerText()).toMatch(/sécurité et conformité/);
     await ctx.close();
   });

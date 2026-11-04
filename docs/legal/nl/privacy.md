@@ -8,7 +8,7 @@ Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertal
 
 - Je account is pseudoniem: we vragen niet naar je naam, adres of telefoonnummer.
 - Onze servers staan in de Europese Unie. We verkopen geen gegevens.
-- Bezoekersmeting en reclame starten alleen als je ermee instemt. Je kunt op elk moment van gedachten veranderen.
+- Bezoekersmeting start alleen als je ermee instemt. Voor reclame vraagt Google je keuze; als je weigert, blijven alleen beperkte advertenties zonder tracking mogelijk wanneer je zelf een beloningsvideo kiest.
 - Je kunt je gegevens downloaden of verwijderen via Instellingen > Privacy.
 
 ## 1. Verwerkingsverantwoordelijke
@@ -47,7 +47,8 @@ Alleen de leden van ons team die ze nodig hebben, hebben toegang tot je gegevens
 | Scaleway SAS | Hosting van de server en de database (Parijs) | Frankrijk | Gegevens blijven in de EU |
 | Google Ireland Ltd (Google Play) | Betaling en controle van aankopen op Android | Ierland | EU-VS-kader en standaardbepalingen |
 | Apple Distribution International | Betaling en controle van aankopen op iOS | Ierland | EU-VS-kader en standaardbepalingen |
-| Google Ireland Ltd (AdMob, UMP) | Beloningsvideo's en toestemmingsplatform (alleen na je toestemming) | Ierland | EU-VS-kader en standaardbepalingen |
+| Google Ireland Ltd (UMP) | Toestemmingsformulier voor reclame (Google UMP) | Ierland | EU-VS-kader en standaardbepalingen |
+| Google Ireland Ltd (AdMob) | Optionele beloningsvideo's (alleen na je toestemming) | Ierland | EU-VS-kader en standaardbepalingen |
 | Google Ireland Ltd (Firebase Cloud Messaging) | Versturen van meldingen op Android (alleen na je toestemming) | Ierland | EU-VS-kader en standaardbepalingen |
 | Apple Distribution International (APNs) | Versturen van meldingen op iOS (alleen na je toestemming) | Ierland | EU-VS-kader en standaardbepalingen |
 
@@ -84,8 +85,9 @@ Het spel slaat op je apparaat alleen op wat strikt noodzakelijk is om te werken.
 | helios.profile.v1 | Aantal pogingen per level (gratis hulp na 8 mislukkingen) |
 | helios.compliance.v1 | Leeftijdscategorie en toestemmingskeuzes |
 | helios.account.v1 | ID en token van het account |
+| IABTCF_* | Je reclamekeuzes, opgeslagen door het formulier van Google |
 
-Reclame- en meldingstools worden pas geladen na je toestemming. Vóór die keuze gaat er geen enkel verzoek naar een derde.
+Reclame- en meldingstools worden pas geladen na je toestemming. Daarvoor is de enige oproep naar een derde het toestemmingsformulier van Google (UMP), en alleen als reclame je kan worden aangeboden (leeftijd en land).
 
 ## 7. Als je jonger bent dan 18
 

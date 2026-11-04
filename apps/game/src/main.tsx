@@ -3,6 +3,7 @@ import { Feedback } from "./feedback";
 import { loadProfile } from "./game/profile";
 import { loadMeta, Shop } from "./game/meta";
 import { Api, detectCountry, loadCompliance } from "./game/compliance";
+import { choosePlatform } from "./game/ump";
 import { detectLocale, setLocale } from "./i18n";
 import { loadSettings, SettingsStore } from "./settings";
 import { applyTokens } from "./theme/tokens";
@@ -33,7 +34,8 @@ meta.age = compliance.age.band;
 
 // Crochets de test : uniquement avec ?test=1 (tests d'interface automatisés).
 const testMode = new URLSearchParams(location.search).get("test") === "1";
+const consentPlatform = choosePlatform(testMode, params.get("ump") === "form");
 render(
-  <App settings={settings} feedback={feedback} profile={profile} meta={meta} shop={shop} clock={clock} api={api} compliance={compliance} testHooks={testMode ? (api) => (window.__helios = api) : undefined} />,
+  <App settings={settings} feedback={feedback} profile={profile} meta={meta} shop={shop} clock={clock} api={api} compliance={compliance} consentPlatform={consentPlatform} testHooks={testMode ? (api) => (window.__helios = api) : undefined} />,
   document.getElementById("root")!,
 );

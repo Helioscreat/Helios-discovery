@@ -8,7 +8,7 @@ Translation of the French original; it has not yet been reviewed by a legal tran
 
 - Your account is pseudonymous: we do not ask for your name, address or phone number.
 - Our servers are in the European Union. We do not sell any data.
-- Audience measurement and advertising only start if you agree. You can change your mind at any time.
+- Audience measurement only starts if you agree. For advertising, Google asks for your choice; if you decline, only limited ads, without tracking, remain possible when you choose to watch a rewarded video.
 - You can download or delete your data from Settings > Privacy.
 
 ## 1. Controller
@@ -47,7 +47,8 @@ Only the members of our team who need it can access your data. Our providers pro
 | Scaleway SAS | Hosting of the server and database (Paris) | France | Data stays in the EU |
 | Google Ireland Ltd (Google Play) | Payment and purchase verification on Android | Ireland | EU–US framework and standard clauses |
 | Apple Distribution International | Payment and purchase verification on iOS | Ireland | EU–US framework and standard clauses |
-| Google Ireland Ltd (AdMob, UMP) | Rewarded videos and consent platform (only after your consent) | Ireland | EU–US framework and standard clauses |
+| Google Ireland Ltd (UMP) | Advertising consent form (Google UMP) | Ireland | EU–US framework and standard clauses |
+| Google Ireland Ltd (AdMob) | Optional rewarded videos (only after your consent) | Ireland | EU–US framework and standard clauses |
 | Google Ireland Ltd (Firebase Cloud Messaging) | Sending notifications on Android (only after your consent) | Ireland | EU–US framework and standard clauses |
 | Apple Distribution International (APNs) | Sending notifications on iOS (only after your consent) | Ireland | EU–US framework and standard clauses |
 
@@ -84,8 +85,9 @@ The game stores on your device only what is strictly necessary for it to work. T
 | helios.profile.v1 | Number of attempts per level (free help after 8 failures) |
 | helios.compliance.v1 | Age range and consent choices |
 | helios.account.v1 | Account identifier and token |
+| IABTCF_* | Your advertising choices, stored by Google's form |
 
-Advertising and notification tools are only loaded after your consent. Before that choice, no request is sent to any third party.
+Advertising and notification tools are only loaded after your consent. Before that, the only call to a third party is Google's consent form (UMP), and only if advertising can be offered to you (age and country).
 
 ## 7. If you are under 18
 

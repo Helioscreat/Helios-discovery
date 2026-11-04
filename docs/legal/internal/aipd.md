@@ -8,7 +8,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne. Motif : traitement de donné
 |---|---|---|---|
 | account | Fournir le jeu : compte pseudonyme, progression, synchronisation | Art. 6(1)(b) exécution du contrat | Identifiant pseudonyme du compte (UUID) ; Pays (déduit de la langue de l'appareil) ; Pseudonyme choisi pour l'équipe |
 | age | Adapter le jeu à l'âge : protections des mineurs, âge du consentement | Art. 6(1)(c) obligation légale | Mois et année de naissance |
-| consent | Recueillir et prouver le consentement | Art. 6(1)(c) obligation légale | Choix de consentement, date et version de la notice |
+| consent | Recueillir et prouver le consentement | Art. 6(1)(c) obligation légale | Choix de mesure d'audience, statut renvoyé par Google UMP, date et version de la notice |
 | purchases | Achats intégrés : livraison, plafond mensuel des mineurs, remboursements, comptabilité | Art. 6(1)(b) exécution du contrat | Achats (article, prix, date, numéro de commande du store) |
 | chat | Chat d'équipe, blocage de joueurs | Art. 6(1)(b) exécution du contrat | Équipe rejointe ; Messages du chat d'équipe ; Joueurs bloqués |
 | moderation | Signalements, modération, décisions motivées, recours | Art. 6(1)(c) obligation légale | Signalements envoyés (motif, précisions) ; Décisions de modération et leurs motifs ; Recours contre une décision ; Avis envoyés au joueur dans le jeu (décisions, résultats de recours) |
@@ -16,7 +16,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne. Motif : traitement de donné
 | rights | Exercice des droits : export, suppression du compte | Art. 6(1)(c) obligation légale | Demande de suppression et échéance |
 | analytics | Mesure d'audience first-party pour améliorer les niveaux | Art. 6(1)(a) consentement | Événements de jeu (niveau joué, réussi, échoué ; boosters ; durée de session) |
 | protection | Indicateurs agrégés de protection (revenus des mineurs, plafonds atteints, sessions longues) | Art. 6(1)(f) intérêt légitime | Achats (article, prix, date, numéro de commande du store) ; Événements de jeu (niveau joué, réussi, échoué ; boosters ; durée de session) |
-| ads | Vidéos récompensées facultatives (Google AdMob) et plateforme de consentement (Google UMP) | Art. 6(1)(a) consentement | Identifiant publicitaire et données techniques de l'appareil (SDK Google Mobile Ads) |
+| ads | Vidéos récompensées facultatives (Google AdMob) ; consentement recueilli par Google UMP | Art. 6(1)(a) consentement | Identifiant publicitaire et données techniques de l'appareil (SDK Google Mobile Ads) |
 | notifications | Notifications facultatives (vies, équipe, saison) | Art. 6(1)(a) consentement | Jeton de notification de l'appareil (FCM, APNs) |
 
 Public : 13 ans et plus, dont des mineurs. Âges du consentement appliqués : FR 15, BE 13, DE 16, ES 14, IT 14, NL 16. Pays : FR, BE, DE, ES, IT, NL.

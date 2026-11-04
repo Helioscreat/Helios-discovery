@@ -24,7 +24,8 @@ const SP_KEY: Record<string, keyof Phrases> = {
   "Scaleway SAS": "sp.scaleway",
   "Google Ireland Ltd (Google Play)": "sp.googleplay",
   "Apple Distribution International": "sp.apple",
-  "Google Ireland Ltd (AdMob, UMP)": "sp.admob",
+  "Google Ireland Ltd (UMP)": "sp.ump",
+  "Google Ireland Ltd (AdMob)": "sp.admob",
   "Google Ireland Ltd (Firebase Cloud Messaging)": "sp.fcm",
   "Apple Distribution International (APNs)": "sp.apns",
 };

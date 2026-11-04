@@ -42,7 +42,7 @@ rows:
     ref: "DSA art. 28(2) ; RGPD art. 8"
     nature: obligation
     exigence: "Aucune publicité personnalisée ni profilage publicitaire pour les mineurs (< 18 ans)."
-    fonctionnalite: "Profil mineur : requêtes publicitaires marquées non personnalisées et âge inférieur au consentement (TFUA), aucun identifiant publicitaire lu ; finalité « pub personnalisée » absente de la CMP."
+    fonctionnalite: "Profil mineur au-dessus de l'âge du consentement : UMP appelé avec tagForUnderAgeOfConsent (aucun formulaire, publicité limitée), requêtes marquées TFUA et non personnalisées, aucun identifiant publicitaire ; sous l'âge du consentement : ni UMP ni AdMob."
     test: { id: T-AGE-04, type: network, verif: "Avec un profil de 15 et de 17 ans, toutes les requêtes publicitaires interceptées portent les paramètres non personnalisés et TFUA ; aucun AAID/IDFA non nul n'est transmis ; la CMP ne propose pas la finalité." }
     livrable: 6
   - id: AGE-05
@@ -280,7 +280,7 @@ rows:
     ref: "RGPD art. 4(11), 7 ; ePrivacy art. 5(3) ; CNIL délibération 2020-091"
     nature: obligation
     exigence: "Bandeau de consentement au premier lancement : « Tout accepter » et « Tout refuser » au même niveau, finalités séparées."
-    fonctionnalite: "CMP Google UMP (TCF v2.2), affichée après l'écran d'âge ; finalités mesure d'audience, pub personnalisée (majeurs seulement) et pub non personnalisée."
+    fonctionnalite: "Après l'écran d'âge : écran first-party pour la mesure d'audience (« Accepter » / « Refuser » au même niveau), puis Google UMP (TCF v2.2) pour la publicité, sur un écran séparé ; bouton « Ne pas autoriser » activé dans AdMob (docs/stores/ump-config.md)."
     test: { id: T-GDPR-02, type: e2e-ui, verif: "Les deux boutons sont sur le premier écran, à surface égale à ±5 % ; les 3 finalités sont activables séparément ; T-COM-05 s'applique." }
     livrable: 6
   - id: GDPR-03
@@ -296,7 +296,7 @@ rows:
     ref: "RGPD art. 7(3)"
     nature: obligation
     exigence: "Consentement modifiable et retirable à tout moment, aussi facilement qu'il a été donné."
-    fonctionnalite: "Paramètres > Confidentialité > « Gérer mes choix » rouvre la CMP ; le retrait coupe les SDK concernés sans redémarrage."
+    fonctionnalite: "Paramètres > Confidentialité > « Gérer mes choix » rouvre l'écran de mesure d'audience ; « Choix publicitaires (Google) » rouvre le formulaire UMP ; le retrait coupe les SDK concernés sans redémarrage."
     test: { id: T-GDPR-04, type: e2e-ui, verif: "L'écran est à 2 clics au plus depuis l'accueil ; après retrait de la mesure d'audience, plus aucun événement analytics n'est émis (interception réseau)." }
     livrable: 6
   - id: GDPR-05
@@ -352,7 +352,7 @@ rows:
     ref: "RGPD art. 8(1)-(2)"
     nature: obligation
     exigence: "Sous le seuil national, aucun traitement fondé sur le consentement sans autorisation parentale."
-    fonctionnalite: "Sous consentAge(pays), les finalités soumises au consentement ne sont pas proposées et sont traitées comme refusées (pas de recueil parental à vérifier)."
+    fonctionnalite: "Sous consentAge(pays), les finalités soumises au consentement ne sont pas proposées et sont traitées comme refusées (pas de recueil parental à vérifier) ; aucun appel à Google UMP ni AdMob."
     test: { id: T-GDPR-11, type: e2e-ui, verif: "Profil FR de 14 ans : la CMP n'est pas affichée, la mesure d'audience et la pub non personnalisée avec stockage sont inactives, et T-GDPR-03 s'applique comme en refus." }
     livrable: 6
 

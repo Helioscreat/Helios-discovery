@@ -40,7 +40,9 @@ export const SUBPROCESSORS: Subprocessor[] = [
   { name: "Scaleway SAS", role: "Hébergement du serveur et de la base de données (région fr-par)", country: "FR", hosts: ["api.helios-discovery.example"], safeguard: "UE", dpa: "https://www.scaleway.com/en/contracts/", afterConsent: false },
   { name: "Google Ireland Ltd (Google Play)", role: "Paiement et vérification des achats (Android)", country: "IE", hosts: ["androidpublisher.googleapis.com"], safeguard: "DPF + CCT", dpa: "https://business.safety.google/processorterms/", afterConsent: false },
   { name: "Apple Distribution International", role: "Paiement et vérification des achats (iOS)", country: "IE", hosts: ["api.storekit.itunes.apple.com"], safeguard: "DPF + CCT", dpa: "https://www.apple.com/legal/internet-services/", afterConsent: false },
-  { name: "Google Ireland Ltd (AdMob, UMP)", role: "Publicité récompensée et plateforme de consentement certifiée", country: "IE", hosts: ["googleads.g.doubleclick.net", "fundingchoicesmessages.google.com"], safeguard: "DPF + CCT", dpa: "https://business.safety.google/adsprocessorterms/", afterConsent: true },
+  // UMP est contacté avant le choix, pour l'afficher : seulement pour un joueur à qui la publicité peut être proposée (âge, pays).
+  { name: "Google Ireland Ltd (UMP)", role: "Plateforme de consentement certifiée (TCF v2.2) pour la publicité", country: "IE", hosts: ["fundingchoicesmessages.google.com"], safeguard: "DPF + CCT", dpa: "https://business.safety.google/adsprocessorterms/", afterConsent: false },
+  { name: "Google Ireland Ltd (AdMob)", role: "Publicité récompensée (vidéos facultatives)", country: "IE", hosts: ["googleads.g.doubleclick.net"], safeguard: "DPF + CCT", dpa: "https://business.safety.google/adsprocessorterms/", afterConsent: true },
   { name: "Google Ireland Ltd (Firebase Cloud Messaging)", role: "Envoi des notifications (Android), après opt-in", country: "IE", hosts: ["fcm.googleapis.com"], safeguard: "DPF + CCT", dpa: "https://firebase.google.com/terms/data-processing-terms", afterConsent: true },
   { name: "Apple Distribution International (APNs)", role: "Envoi des notifications (iOS), après opt-in", country: "IE", hosts: ["api.push.apple.com"], safeguard: "DPF + CCT", dpa: "https://www.apple.com/legal/internet-services/", afterConsent: true },
 ];
@@ -57,6 +59,15 @@ export interface ReleaseNote {
 }
 
 export const CHANGELOG: ReleaseNote[] = [
+  {
+    version: "0.9.0",
+    date: "2026-11-04",
+    compliance: true,
+    notes: {
+      fr: ["Les choix publicitaires sont désormais demandés par le formulaire certifié de Google (UMP), sur un écran séparé de la mesure d'audience.", "Nouveau bouton « Choix publicitaires (Google) » dans Paramètres > Confidentialité."],
+      en: ["Advertising choices are now requested by Google's certified form (UMP), on a screen separate from audience measurement.", "New \"Advertising choices (Google)\" button in Settings > Privacy."],
+    },
+  },
   {
     version: "0.8.0",
     date: "2026-11-04",

@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS consents (
   at INTEGER NOT NULL,
   version TEXT NOT NULL,
   analytics INTEGER NOT NULL,
-  ads_personalized INTEGER NOT NULL,
-  ads_non_personalized INTEGER NOT NULL
+  -- Statut renvoyé par Google UMP (UNKNOWN, REQUIRED, OBTAINED, NOT_REQUIRED) ; le détail (chaîne TC) reste sur l'appareil.
+  ads_status TEXT
 );
 CREATE TABLE IF NOT EXISTS ledger (
   order_id TEXT PRIMARY KEY,
