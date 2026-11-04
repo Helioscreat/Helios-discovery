@@ -87,6 +87,8 @@ CREATE TABLE IF NOT EXISTS tickets (
   lang TEXT NOT NULL,
   at INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, player_id TEXT NOT NULL, name TEXT NOT NULL, data TEXT NOT NULL, at INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS remote_config (version INTEGER PRIMARY KEY, json TEXT NOT NULL, at INTEGER NOT NULL, author TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS deletion_requests (player_id TEXT PRIMARY KEY, requested_at INTEGER NOT NULL, due_at INTEGER NOT NULL, done_at INTEGER);
 `;
 
@@ -108,13 +110,14 @@ export const PERSONAL_TABLES: { table: string; column: string }[] = [
   { table: "appeals", column: "player_id" },
   { table: "notifications", column: "player_id" },
   { table: "tickets", column: "player_id" },
+  { table: "events", column: "player_id" },
 ];
 
 /** Tables conservées sous forme pseudonymisée après effacement (obligation comptable, C. com. L123-22). */
 export const PSEUDONYMIZED_TABLES: { table: string; column: string }[] = [{ table: "ledger", column: "player_ref" }];
 
 /** Tables techniques sans donnée personnelle après effacement. */
-export const TECHNICAL_TABLES = ["deletion_requests"];
+export const TECHNICAL_TABLES = ["deletion_requests", "remote_config"];
 
 export type Db = DatabaseSync;
 

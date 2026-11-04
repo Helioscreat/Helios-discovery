@@ -4,6 +4,8 @@ import {
   REPORT_REASONS, statementOfReasons, UNKNOWN_AGE, validateDecision, type AgeProfile, type ConsentChoice, type DecisionInput, type ReportReason,
 } from "@helios/compliance";
 import { applyVerified, CATALOG, MockVerifier, newWallet, purchaseGate, skuById, type Receipt } from "@helios/economy";
+import { DEFAULT_CONFIG, resolveConfig, validateConfig, type RemoteConfig } from "@helios/config";
+import { dashboard, DEFAULT_THRESHOLDS, runRetentionJob, storeEvent, validateEvent, type Thresholds } from "./analytics";
 import { PERSONAL_TABLES, PSEUDONYMIZED_TABLES, type Db } from "./db";
 
 /** Erreur métier → code HTTP. */
@@ -19,7 +21,10 @@ export interface ServiceConfig {
   deletionDelayMs: number;
   moderators: string[];
   contact: { email: string; languages: string[] };
+  /** Valeur par défaut si la config distante ne fixe rien (remplacée par la config du pays du joueur). */
   minorCapCents: number;
+  adminKeys?: string[];
+  thresholds?: Thresholds;
   verifier?: { verify(r: Receipt): Promise<{ orderId: string; skuId: string; state: "purchased" | "pending" | "refunded" | "invalid"; eurCents: number; at: number }> };
 }
 
@@ -114,7 +119,9 @@ export class Service {
     const sku = skuById(skuId);
     const band = this.ageOf(p).band;
     const owned = this.ledgerOf(p.id).filter((e) => e.state === "credited").map((e) => e.skuId);
-    const g = purchaseGate(band, this.ledgerOf(p.id), sku, sku.kind === "oneTime" ? owned : [], this.cfg.clock(), this.cfg.minorCapCents);
+    const cap = this.config(p.country).monetization.minorCapCents;
+    if (this.config(p.country).monetization.disabledSkus.includes(skuId)) return { allowed: false, reason: "unavailable" };
+    const g = purchaseGate(band, this.ledgerOf(p.id), sku, sku.kind === "oneTime" ? owned : [], this.cfg.clock(), cap);
     return g.allowed ? { allowed: true } : { allowed: false, reason: g.reason };
   }
 
@@ -241,6 +248,49 @@ export class Service {
 
   notifications(p: PlayerRow) {
     return (this.db.prepare("SELECT kind, body, at FROM notifications WHERE player_id = ? ORDER BY at").all(p.id) as { kind: string; body: string; at: number }[]).map((n) => ({ ...n, body: JSON.parse(n.body) }));
+  }
+
+  // ───────────── config distante par pays (DFA-01) ─────────────
+  remoteConfig(): RemoteConfig {
+    const r = this.db.prepare("SELECT json FROM remote_config ORDER BY version DESC LIMIT 1").get() as { json: string } | undefined;
+    return r ? (JSON.parse(r.json) as RemoteConfig) : DEFAULT_CONFIG;
+  }
+
+  config(country: string) {
+    return resolveConfig(this.remoteConfig(), country);
+  }
+
+  private admin(key: string | undefined): string {
+    if (!key || !(this.cfg.adminKeys ?? []).includes(key)) throw new ApiError(403, "notAdmin");
+    return key;
+  }
+
+  /** Publication d'une nouvelle config : validée, versionnée, effective immédiatement (sans mise à jour de l'app). */
+  publishConfig(adminKey: string | undefined, cfg: RemoteConfig): { version: number } {
+    const author = this.admin(adminKey);
+    const errors = validateConfig(cfg, this.cfg.clock());
+    if (errors.length) throw new ApiError(422, "invalidConfig", errors.join(" ; "));
+    const version = this.remoteConfig().version + 1;
+    this.db.prepare("INSERT INTO remote_config VALUES (?, ?, ?, ?)").run(version, JSON.stringify({ ...cfg, version }), this.cfg.clock(), author.slice(0, 4) + "…");
+    return { version };
+  }
+
+  // ───────────── mesure d'audience (après consentement) et tableau de bord ─────────────
+  event(p: PlayerRow, name: string, data: Record<string, unknown>): { accepted: true } {
+    if (!this.latestConsent(p.id)?.analytics) throw new ApiError(403, "noConsent");
+    const err = validateEvent(name, data ?? {});
+    if (err) throw new ApiError(422, "invalidEvent", err);
+    storeEvent(this.db, p.id, name, data ?? {}, this.cfg.clock());
+    return { accepted: true };
+  }
+
+  dashboard(adminKey: string | undefined) {
+    this.admin(adminKey);
+    return dashboard(this.db, this.cfg.clock(), (c) => this.config(c).monetization.minorCapCents, this.cfg.thresholds ?? DEFAULT_THRESHOLDS);
+  }
+
+  runRetentionJob(): Record<string, number> {
+    return runRetentionJob(this.db, this.cfg.clock());
   }
 
   // ───────────── point de contact (DSA art. 11-12) ─────────────

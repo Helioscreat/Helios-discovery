@@ -10,5 +10,9 @@
     "build": "node scripts/build.mjs",
     "start": "node --no-warnings dist/server.cjs"
   },
-  "dependencies": { "@helios/compliance": "0.1.0", "@helios/economy": "0.1.0" }
+  "dependencies": {
+    "@helios/compliance": "0.1.0",
+    "@helios/economy": "0.1.0",
+    "@helios/config": "0.1.0"
+  }
 }
