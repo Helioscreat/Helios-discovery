@@ -1,0 +1,14 @@
+{
+  "name": "@helios/economy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@helios/core": "0.1.0"
+  }
+}
