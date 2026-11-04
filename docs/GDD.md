@@ -83,7 +83,7 @@ zones est calibré au livrable 5.
 
 ### 4.1 Grille
 - Grille jusqu'à 9×9, avec masque de cases actives pour les formes irrégulières. De 4 à 6 couleurs.
-- Les pièces tombent vers le bas. Le remplissage se fait par des points d'apparition déclarés par colonne.
+- Les pièces tombent vers le bas. Une case inactive coupe la colonne en segments indépendants ; chaque segment est rempli par sa case la plus haute. (La chute en diagonale autour des trous viendra au livrable 4 si les formes de grille l'exigent.)
 - L'échange n'est valide que s'il crée un alignement ou s'il implique deux spéciales.
 - **Mélange automatique** quand aucun coup n'est possible. Il ne consomme pas de coup et garantit au moins un coup après le mélange.
 - **Indice** après 5 s sans action. Il est désactivable.
@@ -125,9 +125,10 @@ ligne > carré 2×2 > 3 en ligne.
 | Fusée + Fusée | Croix : la ligne et la colonne |
 | Fusée + Bombe | 3 lignes et 3 colonnes centrées |
 | Bombe + Bombe | Zone 5×5 |
-| Prisme + Fusée | Toutes les pièces de la couleur dominante deviennent des Fusées, puis se déclenchent |
-| Prisme + Bombe | *(non spécifié, complété)* La couleur devient des Bombes |
-| Prisme + Libellule | *(complété)* La couleur devient des Libellules |
+| Prisme + Fusée | Toutes les pièces de la couleur de la Fusée deviennent des Fusées (orientation tirée au PRNG), puis se déclenchent |
+| Prisme + Bombe | *(non spécifié, complété)* La couleur de la Bombe devient des Bombes |
+| Prisme + Libellule | *(complété)* La couleur de la Libellule devient des Libellules |
+| Prisme déclenché par une explosion | *(complété)* Efface la couleur la plus présente sur la grille |
 | Prisme + Prisme | Toute la grille est effacée. Les obstacles reçoivent 1 point de dégât |
 | Libellule + Libellule | *(complété)* 3 Libellules partent vers 3 cibles |
 | Libellule + Fusée ou Bombe | La Libellule transporte l'effet et le déclenche sur sa cible |
