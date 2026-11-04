@@ -98,6 +98,7 @@ export const fr = {
   "end.continue": "Continuer",
   "end.fail.title": "Niveau non terminé",
   "end.fail.remaining": "Objectifs restants :",
+  "help.gift": "Aide gratuite : un booster {name} a été ajouté à ta réserve. Il est offert à tous les joueurs après 8 essais sur un même niveau.",
   "end.fail.retry": "Réessayer",
 
   "quit.title": "Quitter le niveau ?",

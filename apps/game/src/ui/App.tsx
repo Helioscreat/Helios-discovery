@@ -4,7 +4,7 @@ import {
 import { useEffect, useLayoutEffect, useMemo, useState } from "preact/hooks";
 import type { Feedback } from "../feedback";
 import { difficultyOf, levelCount, levelFile, levelSpec, loadGeneratedLevels } from "../game/levels";
-import { grantUnlocks, saveProfile, type Profile } from "../game/profile";
+import { grantUnlocks, recordFailure, recordWin, saveProfile, type Profile } from "../game/profile";
 import { GameSession } from "../game/session";
 import { CATALOGS, getLocale, setLocale, t, type Locale } from "../i18n";
 import type { BoardScene } from "../render/BoardScene";
@@ -19,7 +19,7 @@ type Overlay =
   | { kind: "settings" }
   | { kind: "quit" }
   | { kind: "end-win" }
-  | { kind: "end-fail" };
+  | { kind: "end-fail"; gift: Booster | null };
 
 export interface AppProps {
   settings: SettingsStore;
@@ -129,10 +129,13 @@ export function App(props: AppProps) {
       const n = session.level;
       profile.levelReached = Math.max(profile.levelReached, Math.min(levelCount(), n + 1));
       profile.stars[n] = Math.max(profile.stars[n] ?? 0, session.stars());
+      recordWin(profile, n);
       saveProfile(profile);
       setOverlay({ kind: "end-win" });
     } else if (session.state.status === "lost") {
-      setOverlay({ kind: "end-fail" });
+      const gift = recordFailure(profile, session.level);
+      saveProfile(profile);
+      setOverlay({ kind: "end-fail", gift });
     }
   };
 
@@ -354,6 +357,9 @@ export function App(props: AppProps) {
         <Modal name="end-fail" title={t("end.fail.title")} onEscape={leaveGame}>
           <p>{t("end.fail.remaining")}</p>
           <GoalList state={session.state} />
+          {overlay.gift ? (
+            <p class="tutorial-text" data-testid="help-gift">{t("help.gift", { name: t(`booster.${overlay.gift}` as never) })}</p>
+          ) : null}
           <DualChoice accept={t("end.fail.retry")} decline={t("decline.giveUp")} onAccept={() => chooseLevel(session.level)} onDecline={leaveGame} />
         </Modal>
       )}

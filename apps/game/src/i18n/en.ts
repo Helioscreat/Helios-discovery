@@ -94,6 +94,7 @@ export const en: Record<MessageKey, string> = {
   "end.continue": "Continue",
   "end.fail.title": "Level not completed",
   "end.fail.remaining": "Remaining goals:",
+  "help.gift": "Free help: a {name} booster has been added to your reserve. Every player receives it after 8 tries on the same level.",
   "end.fail.retry": "Try again",
 
   "quit.title": "Leave the level?",
