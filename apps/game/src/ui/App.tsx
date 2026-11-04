@@ -18,6 +18,9 @@ import {
   progressQuests, refillLivesWithCoins, skuById, spendCoins, spinWheel, WHEEL, winXp, type AgeBand, type Sku,
 } from "@helios/economy";
 import { currentSeason, endLevel, grant, saveMeta, type MetaState, type Shop } from "../game/meta";
+import type { ConsentChoice } from "@helios/compliance";
+import { Analytics, applyBirth, applyConsent, nextOnboardingStep, saveCompliance, type Api, type ComplianceState } from "../game/compliance";
+import { AgeGate, ConsentScreen, ContactScreen, DeleteAccountModal, ParentalModal, PrivacySettings, ReportModal, TeamScreen } from "./Compliance";
 
 type Overlay =
   | { kind: "none" }
@@ -31,7 +34,11 @@ type Overlay =
   | { kind: "subscription"; skuId: string }
   | { kind: "pass-sheet"; tier: "premium" | "premiumPlus" }
   | { kind: "lives"; level: number }
-  | { kind: "toast"; text: string };
+  | { kind: "toast"; text: string }
+  | { kind: "consent-manage" }
+  | { kind: "delete"; done: string }
+  | { kind: "parental" }
+  | { kind: "report"; target: { type: "message" | "profile"; id: string } };
 
 export interface AppProps {
   settings: SettingsStore;
@@ -40,6 +47,8 @@ export interface AppProps {
   meta: MetaState;
   shop: Shop;
   clock: () => number;
+  api: Api;
+  compliance: ComplianceState;
   /** Crochets de test (activés par ?test=1) : exposent l'état sans passer par le canvas. */
   testHooks?: (api: TestApi) => void;
 }
@@ -58,9 +67,11 @@ export interface TestApi {
   setAge: (a: AgeBand) => void;
   meta: () => MetaState;
   goto: (s: Screen) => void;
+  compliance: () => ComplianceState;
+  analyticsSent: () => number;
 }
 
-type Screen = "home" | "game" | "shop" | "pass" | "rewards" | "island";
+type Screen = "home" | "game" | "shop" | "pass" | "rewards" | "island" | "contact" | "team";
 
 function useSettings(store: SettingsStore): Settings {
   const [s, set] = useState(store.value);
@@ -104,6 +115,64 @@ export function App(props: AppProps) {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
   const [wheelResult, setWheelResult] = useState("");
+  const [comp, setCompState] = useState<ComplianceState>(props.compliance);
+  const [ageError, setAgeError] = useState("");
+  const api = props.api;
+  const compRef = useMemo(() => ({ current: props.compliance }), []);
+  const analytics = useMemo(() => new Analytics(api, () => compRef.current), []);
+  const setComp = (c: ComplianceState) => {
+    compRef.current = c;
+    saveCompliance(c);
+    if (meta.age !== c.age.band) {
+      meta.age = c.age.band;
+      saveMeta(meta);
+    }
+    setCompState(c);
+  };
+  // Compte pseudonyme et reprise d'un compte dont le cache local a été effacé (l'âge déjà déclaré est récupéré).
+  useEffect(() => {
+    if (!api.online) return;
+    void api.ensureAccount(compRef.current).then((c) => api.restore(c)).then(setComp).catch(() => undefined);
+  }, []);
+  const step = nextOnboardingStep(comp);
+
+  const submitAge = async (birth: string) => {
+    const next = applyBirth(comp, birth, props.clock());
+    if (!next) return setAgeError(t("age.invalid"));
+    if (api.online && comp.account) {
+      try {
+        await api.setAge(comp, birth);
+      } catch (e) {
+        // Âge déjà déclaré pour ce compte (409) : on reprend la tranche connue du serveur, sans nouvelle déclaration.
+        if ((e as { status?: number }).status === 409) return setComp(await api.restore({ ...comp, ageSet: false }));
+        return setAgeError(t("privacy.error"));
+      }
+    }
+    setAgeError("");
+    setComp(next);
+  };
+
+  const saveConsent = (choice: Partial<ConsentChoice>) => {
+    const next = applyConsent(compRef.current, choice);
+    setComp(next);
+    if (api.online && next.account) void api.setConsent(next).catch(() => undefined);
+    setOverlay({ kind: "none" });
+  };
+
+  const deleteAccount = async () => {
+    try {
+      const r = api.online && comp.account ? await api.deleteAccount(comp) : { dueAt: props.clock() };
+      setOverlay({ kind: "delete", done: t("delete.done", { date: new Date(r.dueAt).toLocaleDateString(getLocale() === "fr" ? "fr-FR" : "en-GB") }) });
+      // Données locales effacées immédiatement ; au prochain lancement, nouveau compte.
+      try {
+        for (const k of Object.keys(localStorage)) if (k.startsWith("helios.")) localStorage.removeItem(k);
+      } catch {
+        /* stockage indisponible */
+      }
+    } catch {
+      setOverlay({ kind: "delete", done: t("privacy.error") });
+    }
+  };
   const [overlay, setOverlay] = useState<Overlay>({ kind: "none" });
   const [session, setSession] = useState<GameSession | null>(null);
   const [scene, setScene] = useState<BoardScene | null>(null);
@@ -196,9 +265,11 @@ export function App(props: AppProps) {
       meta.season = addXp(currentSeason(t0), meta.season, winXp(difficultyOf(n), stars, meta.season.pass), t0);
       meta.free = progressQuests(progressQuests(meta.free, "wins", 1), "collect", session.state.progress.reduce((a, x, k) => a + (session.state.goals[k].type === "collect" ? x : 0), 0));
       persist();
+      analytics.track("level_win", { n, stars, movesLeft: session.movesAtWin });
       setOverlay({ kind: "end-win" });
     } else if (session.state.status === "lost") {
       const gift = recordFailure(profile, session.level);
+      analytics.track("level_fail", { n: session.level });
       persist();
       setOverlay({ kind: "end-fail", gift });
     }
@@ -309,17 +380,31 @@ export function App(props: AppProps) {
     },
     setAge: (a) => {
       meta.age = a;
+      const c = { ...compRef.current, age: { ...compRef.current.age, band: a } };
+      compRef.current = c;
+      saveCompliance(c);
       persist();
       refresh();
     },
     meta: () => meta,
     goto: (sc) => setScreen(sc),
+    compliance: () => compRef.current,
+    analyticsSent: () => analytics.sent,
   });
 
   const st = session?.state;
+  if (step !== "done") {
+    return (
+      <div class="app" data-screen={step === "age" ? "age-gate" : "consent"}>
+        {step === "age" ? <AgeGate nowYear={new Date(props.clock()).getUTCFullYear()} error={ageError} onSubmit={(b) => void submitAge(b)} /> : <ConsentScreen state={comp} onSave={saveConsent} />}
+      </div>
+    );
+  }
   return (
     <div class="app" data-screen={screen}>
       {screen !== "game" ? <TopBar meta={meta} now={now} /> : null}
+      {screen === "contact" && <ContactScreen api={api} state={comp} onBack={() => setScreen("home")} />}
+      {screen === "team" && <TeamScreen api={api} state={comp} team="aerine-1" onReport={(target) => setOverlay({ kind: "report", target })} onBack={() => setScreen("home")} />}
       {screen === "shop" && <ShopScreen meta={meta} shop={shop} onOpen={openSku} onBack={() => setScreen("home")} />}
       {screen === "pass" && (
         <PassScreen
@@ -406,6 +491,7 @@ export function App(props: AppProps) {
             <button type="button" class="btn small" onClick={() => setScreen("rewards")}>{t("home.rewards")}</button>
             <button type="button" class="btn small" onClick={() => setScreen("pass")}>{t("home.pass")}</button>
             <button type="button" class="btn small" onClick={() => setScreen("shop")}>{t("home.shop")}</button>
+            <button type="button" class="btn small" onClick={() => setScreen("team")}>{t("home.team")}</button>
           </nav>
           <nav class="bottom-bar">
             <button type="button" class="btn" onClick={() => setOverlay({ kind: "settings" })}>{t("home.settings")}</button>
@@ -608,6 +694,10 @@ export function App(props: AppProps) {
           onClose={() => setOverlay({ kind: "none" })}
         />
       )}
+      {overlay.kind === "consent-manage" && <ConsentScreen state={comp} onSave={saveConsent} asModal onClose={() => setOverlay({ kind: "settings" })} />}
+      {overlay.kind === "delete" && <DeleteAccountModal done={overlay.done} onConfirm={() => void (overlay.done ? location.reload() : deleteAccount())} onCancel={() => setOverlay(overlay.done ? { kind: "none" } : { kind: "settings" })} />}
+      {overlay.kind === "parental" && <ParentalModal onClose={() => setOverlay({ kind: "settings" })} />}
+      {overlay.kind === "report" && <ReportModal target={overlay.target} api={api} state={comp} onClose={() => setOverlay({ kind: "none" })} />}
       {overlay.kind === "toast" && (
         <Modal name="toast" title={overlay.text} onEscape={() => setOverlay({ kind: "none" })}>
           <div class="single-choice"><button type="button" class="btn" onClick={() => setOverlay({ kind: "none" })}>{t("decline.close")}</button></div>
@@ -618,6 +708,14 @@ export function App(props: AppProps) {
         <Modal name="settings" title={t("settings.title")} onEscape={() => setOverlay({ kind: "none" })}>
           <SettingsForm store={props.settings} value={settings} />
           <PurchasesSettings meta={meta} platform={shop.store.platform} />
+          <PrivacySettings
+            state={comp}
+            api={api}
+            onManageConsent={() => setOverlay({ kind: "consent-manage" })}
+            onDelete={() => setOverlay({ kind: "delete", done: "" })}
+            onContact={() => { setOverlay({ kind: "none" }); setScreen("contact"); }}
+            onParental={() => setOverlay({ kind: "parental" })}
+          />
           <div class="single-choice"><button type="button" class="btn" onClick={() => setOverlay({ kind: "none" })}>{t("decline.close")}</button></div>
         </Modal>
       )}

@@ -21,10 +21,20 @@ const PHONES = [
 ];
 
 let server: ChildProcess;
+let api: ChildProcess;
+const API_PORT = 4291; // 4190 figure dans la liste des ports interdits par fetch
+const API = `http://127.0.0.1:${API_PORT}`;
 let browser: Browser;
 
 beforeAll(async () => {
   execSync("npx vite build --logLevel error", { cwd: ROOT, stdio: "inherit" });
+  // Serveur de conformité (UE) réel, base SQLite en mémoire.
+  execSync("node scripts/build.mjs", { cwd: join(ROOT, "../server"), stdio: "inherit" });
+  api = spawn("node", ["--no-warnings", "dist/server.cjs"], {
+    cwd: join(ROOT, "../server"),
+    stdio: "ignore",
+    env: { ...process.env, PORT: String(API_PORT), ALLOWED_ORIGINS: `http://127.0.0.1:${PORT}`, MODERATORS: "mod-a,mod-b" },
+  });
   server = spawn("npx", ["vite", "preview", "--port", String(PORT), "--strictPort", "--host", "127.0.0.1"], { cwd: ROOT, stdio: "ignore" });
   for (let k = 0; k < 100; k++) {
     try {
@@ -35,25 +45,54 @@ beforeAll(async () => {
     await new Promise((r) => setTimeout(r, 200));
   }
   // CHROMIUM_PATH permet d'utiliser un Chromium déjà installé (CI, conteneur) ; sinon celui de Playwright.
+  for (let k = 0; k < 50; k++) {
+    try {
+      if ((await fetch(`${API}/v1/health`)).ok) break;
+    } catch {
+      /* pas encore prêt */
+    }
+    await new Promise((r) => setTimeout(r, 200));
+  }
   browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 });
 
 afterAll(async () => {
   await browser?.close();
   server?.kill();
+  api?.kill();
 });
 
-async function phone(vp = PHONES[0], settings?: Record<string, unknown>) {
+interface PhoneOpts {
+  /** Premier lancement : aucun âge ni consentement enregistrés. */
+  fresh?: boolean;
+  /** Brancher le client sur le serveur réel. */
+  online?: boolean;
+  country?: string;
+  /** Requêtes réseau observées (toutes origines). */
+  requests?: string[];
+}
+
+async function phone(vp = PHONES[0], settings?: Record<string, unknown>, o: PhoneOpts = {}) {
   const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, deviceScaleFactor: 1, hasTouch: false, locale: "fr-FR" });
   if (settings) await ctx.addInitScript((s: Record<string, unknown>) => localStorage.setItem("helios.settings.v1", JSON.stringify(s)), settings);
+  if (!o.fresh)
+    await ctx.addInitScript(() => {
+      if (!localStorage.getItem("helios.compliance.v1"))
+        localStorage.setItem("helios.compliance.v1", JSON.stringify({
+          ageSet: true, age: { band: "minor", underConsentAge: false, chatRestricted: false },
+          consent: { analytics: false, adsPersonalized: false, adsNonPersonalized: false }, consentDecided: true, country: "FR",
+        }));
+    });
   const page = await ctx.newPage();
+  if (o.requests) page.on("request", (r) => o.requests!.push(r.url()));
   const errors: string[] = [];
   page.on("pageerror", (e: Error) => errors.push(e.message));
   // Toute erreur de console compte (ex. empreinte d'un niveau régénéré différente du niveau validé).
   page.on("console", (m) => { if (m.type() === "error") errors.push(`console: ${m.text()}`); });
-  await page.goto(URL);
-  await page.waitForSelector(".home");
-  return { page, ctx, errors };
+  const url = `${URL}${o.online ? `&api=${encodeURIComponent(API)}` : ""}${o.country ? `&country=${o.country}` : ""}`;
+  await page.goto(url);
+  await page.waitForSelector(o.fresh ? "[data-screen-name='age-gate']" : ".home");
+  return { page, ctx, errors, url };
 }
 
 const hook = <T>(page: Page, fn: string) => page.evaluate(fn) as Promise<T>;
@@ -105,6 +144,15 @@ describe("[T-COM-04] modales de choix : le refus est aussi visible que l'accepta
     lives: async (page) => {
       await page.evaluate(() => window.__helios!.openOverlay({ kind: "lives", level: 1 }));
     },
+    consent: async (page) => {
+      await page.evaluate(() => window.__helios!.openOverlay({ kind: "consent-manage" }));
+    },
+    report: async (page) => {
+      await page.evaluate(() => window.__helios!.openOverlay({ kind: "report", target: { type: "profile", id: "x" } }));
+    },
+    "delete-account": async (page) => {
+      await page.evaluate(() => window.__helios!.openOverlay({ kind: "delete", done: "" }));
+    },
   };
 
   it("chaque modale « choice » du registre est couverte par ce test", () => {
@@ -155,6 +203,7 @@ describe("[T-COM-04] modales de choix : le refus est aussi visible que l'accepta
 
   it("aucune case pré-cochée sur l'écran de début de niveau (Kit de départ)", async () => {
     const c2 = await browser.newContext({ viewport: { width: 393, height: 727 }, locale: "fr-FR" });
+    await c2.addInitScript(() => localStorage.setItem("helios.compliance.v1", JSON.stringify({ ageSet: true, age: { band: "adult", underConsentAge: false, chatRestricted: false }, consent: { analytics: false, adsPersonalized: false, adsNonPersonalized: false }, consentDecided: true, country: "FR" })));
     await c2.addInitScript(() => localStorage.setItem("helios.profile.v1", JSON.stringify({ levelReached: 41, granted: ["hammer", "bomb", "rainbow", "fireCross", "shuffler", "starterKit"], inventory: { hammer: 3, bomb: 3, rainbow: 3, fireCross: 3, shuffler: 3, starterKit: 3 }, stars: {} })));
     const p2 = await c2.newPage();
     await p2.goto(URL);
@@ -602,6 +651,224 @@ describe("parcours de jeu méta", () => {
     await page.evaluate(() => window.__helios!.goto("island"));
     await page.getByRole("button", { name: "Décoration 2" }).click();
     expect(await page.evaluate(() => Object.keys(window.__helios!.meta().island.done).length)).toBe(1);
+    await ctx.close();
+  });
+});
+
+// ───────────────────────── livrable 6 : âge, consentement, confidentialité, DSA ─────────────────────────
+const sameHosts = (urls: string[]) => [...new Set(urls.map((u) => new globalThis.URL(u).origin))];
+
+async function answerAge(page: Page, birth: string) {
+  const [y, m, d] = birth.split("-").map(Number);
+  await page.selectOption("select[name='day']", String(d));
+  await page.selectOption("select[name='month']", String(m));
+  await page.selectOption("select[name='year']", String(y));
+  await page.getByRole("button", { name: "Valider" }).click();
+}
+
+const yearsAgo = (n: number) => `${new Date().getUTCFullYear() - n}-01-15`;
+
+describe("écran d'âge et consentement", () => {
+  it("[T-AGE-01] premier lancement : date de naissance vide, aucun indice d'âge, aucune requête tierce", async () => {
+    const requests: string[] = [];
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, online: true, requests });
+    for (const n of ["day", "month", "year"]) expect(await page.locator(`select[name='${n}']`).inputValue()).toBe("");
+    const text = await page.locator("[data-screen-name='age-gate']").evaluate((el) => {
+      const c = el.cloneNode(true) as HTMLElement;
+      c.querySelectorAll("select").forEach((x) => x.remove());
+      return c.innerText;
+    });
+    expect(text).not.toMatch(/\d|minimum|au moins|\+\s?1\d|majeur|enfant|parent/i);
+    expect(await page.getByRole("button", { name: "Valider" }).isDisabled()).toBe(true);
+    expect(sameHosts(requests).filter((o) => o !== `http://127.0.0.1:${PORT}` && o !== API)).toEqual([]);
+    await ctx.close();
+  });
+
+  it("[T-AGE-02] après validation, l'écran d'âge ne revient pas, même si le cache local du jeu est effacé (compte conservé)", async () => {
+    const { page, ctx, url } = await phone(PHONES[0], undefined, { fresh: true, online: true });
+    await page.waitForFunction(() => !!window.__helios!.compliance().account);
+    await answerAge(page, yearsAgo(30));
+    await page.locator("[data-modal='consent']").waitFor();
+    await page.locator("[data-modal='consent'] [data-choice='decline']").click();
+    await page.waitForSelector(".home");
+    await page.goto(url);
+    await page.waitForSelector(".home");
+    await page.evaluate(() => { for (const k of Object.keys(localStorage)) if (k !== "helios.account.v1") localStorage.removeItem(k); });
+    await page.goto(url);
+    await page.waitForSelector(".home", { timeout: 10000 });
+    expect(await page.locator("[data-screen-name='age-gate']").count()).toBe(0);
+    await ctx.close();
+  });
+
+  it("[T-GDPR-02] « Tout accepter » et « Tout refuser » au même niveau ; finalités séparées et indépendantes", async () => {
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true });
+    await answerAge(page, yearsAgo(30));
+    const modal = page.locator("[data-modal='consent']");
+    await modal.waitFor();
+    const [a, d] = await Promise.all(["accept", "decline"].map((k) => modal.locator(`[data-choice='${k}']`).boundingBox()));
+    expect(Math.abs(a!.width * a!.height - d!.width * d!.height) / (a!.width * a!.height)).toBeLessThanOrEqual(0.05);
+    await modal.getByRole("button", { name: "Choisir finalité par finalité" }).click();
+    const switches = modal.locator("[data-testid='consent-custom'] input[role='switch']");
+    expect(await switches.count()).toBe(3);
+    await switches.nth(0).check();
+    expect(await switches.nth(1).isChecked()).toBe(false);
+    await modal.getByRole("button", { name: "Enregistrer mes choix" }).click();
+    expect(await page.evaluate(() => window.__helios!.compliance().consent)).toEqual({ analytics: true, adsPersonalized: false, adsNonPersonalized: false });
+    await ctx.close();
+  });
+
+  it("[T-COM-05] aucune case pré-cochée : consentement, signalement, fiche d'achat, début de niveau", async () => {
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true });
+    await answerAge(page, yearsAgo(17));
+    const modal = page.locator("[data-modal='consent']");
+    await modal.getByRole("button", { name: "Choisir finalité par finalité" }).click();
+    const checked = async () => page.evaluate(() => [...document.querySelectorAll("[data-modal] input[type=checkbox], [data-modal] input[type=radio]")].filter((i) => (i as HTMLInputElement).checked).length);
+    expect(await modal.locator("input[role='switch']").count()).toBe(2); // mineur : pas de pub personnalisée
+    expect(await checked()).toBe(0);
+    await page.locator("[data-modal='consent'] [data-choice='decline']").click();
+    await page.evaluate(() => window.__helios!.openOverlay({ kind: "report", target: { type: "profile", id: "x" } }));
+    expect(await checked()).toBe(0);
+    await page.evaluate(() => window.__helios!.openOverlay({ kind: "purchase", skuId: "boosters_s" }));
+    expect(await checked()).toBe(0);
+    await ctx.close();
+  });
+
+  it("[T-GDPR-11] FR, 14 ans : aucune CMP ; toutes les finalités soumises au consentement restent inactives", async () => {
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, country: "FR" });
+    await answerAge(page, yearsAgo(14));
+    await page.waitForSelector(".home");
+    expect(await page.locator("[data-modal='consent']").count()).toBe(0);
+    expect(await page.evaluate(() => window.__helios!.compliance())).toMatchObject({ consentDecided: true, consent: { analytics: false, adsPersonalized: false, adsNonPersonalized: false } });
+    await ctx.close();
+  });
+
+  it("[T-GDPR-03] avant et après « Tout refuser » : aucune requête vers un tiers, aucun événement de mesure", async () => {
+    const requests: string[] = [];
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, online: true, requests });
+    await page.waitForFunction(() => !!window.__helios!.compliance().account);
+    await answerAge(page, yearsAgo(30));
+    await page.locator("[data-modal='consent']").waitFor();
+    await page.locator("[data-modal='consent'] [data-choice='decline']").click();
+    await startLevel(page, 2);
+    await page.evaluate(() => window.__helios!.forceStatus("won"));
+    await page.waitForTimeout(500);
+    expect(sameHosts(requests).filter((o) => o !== `http://127.0.0.1:${PORT}` && o !== API)).toEqual([]);
+    expect(requests.filter((u) => u.includes("/v1/events"))).toEqual([]);
+    await ctx.close();
+  });
+
+  it("[T-GDPR-04] choix modifiables en 2 clics depuis l'accueil ; retrait de la mesure d'audience effectif immédiatement", async () => {
+    const requests: string[] = [];
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, online: true, requests });
+    await page.waitForFunction(() => !!window.__helios!.compliance().account);
+    await answerAge(page, yearsAgo(30));
+    await page.locator("[data-modal='consent'] [data-choice='accept']").click();
+    await startLevel(page, 2);
+    await page.evaluate(() => window.__helios!.forceStatus("won"));
+    await page.waitForTimeout(400);
+    expect(requests.filter((u) => u.includes("/v1/events")).length).toBe(1);
+    await page.locator("[data-modal='end-win'] button").click();
+    // Clic 1 : Paramètres ; clic 2 : Gérer mes choix.
+    await page.getByRole("button", { name: "Paramètres" }).click();
+    await page.getByRole("button", { name: "Gérer mes choix de confidentialité" }).click();
+    await page.locator("[data-modal='consent'] [data-choice='decline']").click();
+    await startLevel(page, 3);
+    await page.evaluate(() => window.__helios!.forceStatus("won"));
+    await page.waitForTimeout(400);
+    expect(requests.filter((u) => u.includes("/v1/events")).length).toBe(1);
+    await ctx.close();
+  });
+
+  it("[T-GDPR-05] « Tout refuser » : le jeu reste entièrement jouable, sans relance du consentement", async () => {
+    const { page, ctx, errors } = await phone(PHONES[0], undefined, { fresh: true });
+    await answerAge(page, yearsAgo(30));
+    await page.locator("[data-modal='consent'] [data-choice='decline']").click();
+    await startLevel(page, 4);
+    const m = (await page.evaluate(() => window.__helios!.hint()))!;
+    const a = await cellCenter(page, m.from), b = await cellCenter(page, m.to);
+    await page.mouse.click(a.x, a.y);
+    await page.mouse.click(b.x, b.y);
+    await waitIdle(page, 1500);
+    for (const sc of ["shop", "rewards", "pass", "island"] as const) {
+      await page.evaluate((x) => window.__helios!.goto(x), sc);
+      await page.waitForTimeout(150);
+      expect(await page.locator("[data-modal='consent']").count(), sc).toBe(0);
+    }
+    expect(errors).toEqual([]);
+    await ctx.close();
+  });
+});
+
+describe("confidentialité et DSA", () => {
+  it("[T-DSA-01] point de contact en 2 clics : e-mail, formulaire, langues ; l'envoi crée un ticket", async () => {
+    const { page, ctx } = await phone(PHONES[0], undefined, { online: true });
+    await page.getByRole("button", { name: "Paramètres" }).click();
+    await page.getByRole("button", { name: "Contact et signalements" }).click();
+    await page.waitForFunction(() => /@/.test(document.querySelector("[data-testid='contact-email']")?.textContent ?? ""));
+    expect(await page.locator("[data-testid='contact-languages']").innerText()).toMatch(/fr.*en/);
+    await page.selectOption("select[name='topic']", "authority");
+    await page.fill("textarea[name='message']", "Demande d'information d'une autorité.");
+    await page.getByRole("button", { name: "Envoyer" }).click();
+    await page.locator("[data-testid='contact-status']").waitFor();
+    expect(await page.locator("[data-testid='contact-status']").innerText()).toMatch(/référence/);
+    await ctx.close();
+  });
+
+  it("[T-DSA-02] chaque message et chaque profil a un bouton « Signaler » accessible ; l'envoi renvoie un accusé de réception", async () => {
+    // Un autre joueur écrit dans l'équipe via l'API.
+    const post = (path: string, body: unknown, token?: string) => fetch(API + path, { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify(body) }).then((r) => r.json());
+    const other = await post("/v1/accounts", { country: "FR" });
+    await post("/v1/me/age", { birth: yearsAgo(25) }, other.token);
+    await post("/v1/me/nickname", { nickname: "Jardinier42" }, other.token);
+    await post("/v1/teams/aerine-1/join", {}, other.token);
+    await post("/v1/teams/aerine-1/messages", { text: "bonjour à tous" }, other.token);
+    await post("/v1/teams/aerine-1/messages", { presetId: "thanks" }, other.token);
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, online: true });
+    await page.waitForFunction(() => !!window.__helios!.compliance().account);
+    await answerAge(page, yearsAgo(30));
+    await page.locator("[data-modal='consent'] [data-choice='decline']").click();
+    await page.evaluate(() => window.__helios!.goto("team"));
+    await page.waitForFunction(() => document.querySelectorAll("[data-message]").length >= 2);
+    const items = page.locator("[data-message]");
+    for (let k = 0; k < (await items.count()); k++) expect(await items.nth(k).getByRole("button", { name: /^Signaler le message de/ }).count()).toBe(1);
+    await items.first().getByRole("button", { name: /^Signaler le message de/ }).click();
+    await page.locator("[data-modal='report'] input[value='insult']").check();
+    await page.locator("[data-modal='report'] [data-choice='accept']").click();
+    await page.locator("[data-testid='report-ack']").waitFor();
+    expect(await page.locator("[data-testid='report-ack']").innerText()).toMatch(/référence/);
+    await page.keyboard.press("Escape");
+    await items.first().getByRole("button", { name: /^Profil de/ }).click();
+    expect(await page.locator("[data-testid='report-profile']").count()).toBe(1);
+    await ctx.close();
+  });
+
+  it("chat sous 16 ans : seuls les messages prédéfinis sont proposés", async () => {
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, online: true });
+    await page.waitForFunction(() => !!window.__helios!.compliance().account);
+    await answerAge(page, yearsAgo(15));
+    await page.locator("[data-modal='consent'] [data-choice='decline']").click();
+    await page.evaluate(() => window.__helios!.goto("team"));
+    await page.getByRole("button", { name: "Merci !" }).click();
+    await page.waitForFunction(() => document.querySelectorAll("[data-message]").length >= 1);
+    expect(await page.locator("input[name='text']").count()).toBe(0);
+    await ctx.close();
+  });
+
+  it("export JSON téléchargeable ; suppression du compte : verrouillage, données locales effacées", async () => {
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, online: true });
+    await page.waitForFunction(() => !!window.__helios!.compliance().account);
+    await answerAge(page, yearsAgo(30));
+    await page.locator("[data-modal='consent'] [data-choice='decline']").click();
+    await page.getByRole("button", { name: "Paramètres" }).click();
+    const [dl] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Exporter mes données (JSON)" }).click()]);
+    const data = JSON.parse(await (await import("node:fs/promises")).readFile((await dl.path())!, "utf8"));
+    expect(data["players.id"]).toHaveLength(1);
+    const token = await page.evaluate(() => window.__helios!.compliance().account!.token);
+    await page.getByRole("button", { name: "Supprimer mon compte et mes données" }).click();
+    await page.locator("[data-modal='delete-account'] [data-choice='accept']").click();
+    await page.waitForFunction(() => /Compte verrouillé/.test(document.querySelector("[data-modal='delete-account']")?.textContent ?? ""));
+    expect(await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("helios.")))).toEqual([]);
+    expect((await fetch(`${API}/v1/me`, { headers: { authorization: `Bearer ${token}` } })).status).toBe(410);
     await ctx.close();
   });
 });

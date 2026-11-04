@@ -8,5 +8,17 @@ Match-3 free-to-play original où l'on restaure une île céleste. Moteur de gri
 
 ```bash
 npm install
-npm run matrix:coverage
+npm test                 # tests unitaires de tous les paquets
+npm run test:e2e         # tests d'interface (Chromium) avec le serveur réel
+npm run matrix:coverage  # couverture de la matrice de conformité
 ```
+
+| Paquet | Rôle |
+|---|---|
+| `packages/core` | Moteur de grille déterministe : spéciales, combos, obstacles, boosters |
+| `packages/bot` | Bots de validation (glouton, Monte-Carlo) et calibrage |
+| `packages/levels` | Niveaux 1–150 faits main, générateur 151–10 000, CLI `generate` |
+| `packages/economy` | Vies, boutique, passe de saison, récompenses gratuites, île |
+| `packages/compliance` | Règles d'âge, de consentement, de filtrage et de modération |
+| `apps/game` | Client Phaser + Preact |
+| `apps/server` | Serveur de l'éditeur, à héberger dans l'UE |

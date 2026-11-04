@@ -141,3 +141,16 @@ html[data-reduced-motion="true"] * { scroll-behavior: auto !important; transitio
 .variants, .pass-offer, .continue-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: 8px; }
 .legal a, .settings a, fieldset a { color: var(--focus); }
 details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+
+/* Conformité : âge, consentement, contact, équipe */
+.date-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr)); gap: 8px; }
+.date-row .select { flex-direction: column; align-items: stretch; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field input, .field textarea { font: inherit; background: var(--surfaceRaised); color: var(--text); border: 1px solid var(--textMuted); border-radius: 8px; padding: 8px; min-height: 44px; }
+.messages { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.messages li { background: var(--surface); border-radius: 12px; padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.msg-body { flex: 1 1 10rem; }
+.msg-actions { display: flex; gap: 6px; }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.compose { display: flex; flex-direction: column; gap: 8px; }
+.link { background: none; border: 0; color: var(--focus); font: inherit; font-weight: 700; text-decoration: underline; min-height: 44px; cursor: pointer; padding: 0; }

@@ -29,4 +29,12 @@ export const SCREENS: ScreenInfo[] = [
   { name: "pass-sheet", kind: "choice", purchase: true, usesCharacter: false },
   { name: "lives", kind: "choice", purchase: false, usesCharacter: false },
   { name: "toast", kind: "info", purchase: false, usesCharacter: false },
+  { name: "age-gate", kind: "screen", purchase: false, usesCharacter: false },
+  { name: "consent", kind: "choice", purchase: false, usesCharacter: false },
+  { name: "contact", kind: "screen", purchase: false, usesCharacter: false },
+  { name: "team", kind: "screen", purchase: false, usesCharacter: false },
+  { name: "report", kind: "choice", purchase: false, usesCharacter: false },
+  { name: "delete-account", kind: "choice", purchase: false, usesCharacter: false },
+  { name: "parental", kind: "info", purchase: false, usesCharacter: false },
+  { name: "profile", kind: "info", purchase: false, usesCharacter: false },
 ];

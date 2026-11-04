@@ -76,8 +76,8 @@ describe("[T-AGE-10] aucun texte n'incite un enfant à acheter ou à solliciter 
 });
 
 const DECLINE_WHITELIST: Record<string, string[]> = {
-  fr: ["Non merci", "Fermer", "Refuser", "Abandonner", "Plus tard", "Retour", "Annuler"],
-  en: ["No thanks", "Close", "Decline", "Give up", "Later", "Back", "Cancel"],
+  fr: ["Non merci", "Fermer", "Refuser", "Tout refuser", "Abandonner", "Plus tard", "Retour", "Annuler"],
+  en: ["No thanks", "Close", "Decline", "Refuse all", "Give up", "Later", "Back", "Cancel"],
 };
 
 describe("[T-COM-06] libellés de refus neutres (liste blanche)", () => {
