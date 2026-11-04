@@ -480,7 +480,7 @@ rows:
     ref: "Google Play User Data policy (Data safety)"
     nature: store
     exigence: "Formulaire « Sécurité des données » exact."
-    fonctionnalite: "Réponses générées depuis l'inventaire de données (data-inventory.yaml)."
+    fonctionnalite: "Réponses générées depuis l'inventaire de données (packages/legal/src/inventory.ts), annotations @collects dans le code."
     test: { id: T-STO-02, type: static, verif: "Le générateur produit les réponses ; un test échoue si un type de donnée collecté dans le code (annotation @collects) manque à l'inventaire." }
     livrable: 8
   - id: STO-03

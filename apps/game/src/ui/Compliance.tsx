@@ -69,6 +69,7 @@ export function ConsentScreen(props: { state: ComplianceState; onSave: (c: Parti
         {offered.map((p) => <li key={p}><strong>{t(`consent.purpose.${p}` as never)}</strong> — {t(`consent.purpose.${p}.desc` as never)}</li>)}
       </ul>
       <p class="small muted">{t("consent.refuseOk")}</p>
+      <p class="small"><a href={`legal/${getLocale()}/privacy.html`} target="_blank" rel="noopener" data-testid="consent-policy">{t("consent.policy")}</a></p>
       {custom ? (
         <fieldset data-testid="consent-custom">
           <legend>{t("consent.customize")}</legend>

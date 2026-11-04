@@ -12,7 +12,9 @@
     "test:e2e": "npm run test:e2e -w @helios/game",
     "build": "npm run build -w @helios/game",
     "dev": "npm run dev -w @helios/game",
-    "generate": "npm run generate -w @helios/levels --"
+    "generate": "npm run generate -w @helios/levels --",
+    "legal": "npm run build -w @helios/legal",
+    "legal:release": "npm run check:release -w @helios/legal"
   },
   "devDependencies": {
     "@types/node": "22.19.1",

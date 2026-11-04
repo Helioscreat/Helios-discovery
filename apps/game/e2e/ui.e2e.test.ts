@@ -912,7 +912,7 @@ describe("mesure, config distante, notifications et langues", () => {
     await page.getByRole("button", { name: "Paramètres" }).click();
     await page.getByRole("button", { name: "Nouveautés" }).click();
     const first = page.locator("[data-modal='changelog'] section").first();
-    expect(await first.getAttribute("data-version")).toBe("0.7.0");
+    expect(await first.getAttribute("data-version")).toBe("0.8.0");
     expect(await first.innerText()).toMatch(/sécurité et conformité/);
     await ctx.close();
   });
@@ -955,6 +955,39 @@ describe("mesure, config distante, notifications et langues", () => {
     await page.reload();
     await page.waitForSelector(".home");
     await page.getByRole("button", { name: "Instellingen" }).waitFor();
+    await ctx.close();
+  });
+});
+
+describe("documents juridiques", () => {
+  it("[T-ACC-03] Paramètres > Aide au jeu : six documents liés dans la langue du joueur, lisibles sans réseau tiers", async () => {
+    const requests: string[] = [];
+    const { page, ctx } = await phone(PHONES[0], undefined, { requests });
+    await page.getByRole("button", { name: "Paramètres" }).click();
+    const links = page.locator("[data-testid='legal-links'] a");
+    expect(await links.evaluateAll((as) => as.map((a) => a.getAttribute("href")))).toEqual(
+      ["privacy", "terms", "essentials", "sales", "notice", "accessibility"].map((d) => `legal/fr/${d}.html`),
+    );
+    const [doc] = await Promise.all([ctx.waitForEvent("page"), page.locator("[data-doc='accessibility']").click()]);
+    await doc.waitForLoadState();
+    expect(await doc.locator("h1").innerText()).toBe("Déclaration d'accessibilité");
+    expect(await doc.locator("#status").count()).toBe(1);
+    expect(sameHosts(requests).filter((o) => o !== `http://127.0.0.1:${PORT}`)).toEqual([]);
+    await ctx.close();
+  });
+
+  it("écran de consentement : lien vers la politique de confidentialité ; en néerlandais, la page néerlandaise", async () => {
+    const { page, ctx } = await phone(PHONES[0], { locale: "nl" }, { fresh: true });
+    const [y, m, d] = yearsAgo(30).split("-").map(Number);
+    await page.selectOption("select[name='day']", String(d));
+    await page.selectOption("select[name='month']", String(m));
+    await page.selectOption("select[name='year']", String(y));
+    await page.getByRole("button", { name: "Bevestigen" }).click();
+    const link = page.locator("[data-testid='consent-policy']");
+    expect(await link.getAttribute("href")).toBe("legal/nl/privacy.html");
+    const res = await page.request.get(new globalThis.URL("legal/nl/privacy.html", page.url()).href);
+    expect(res.status()).toBe(200);
+    expect(await res.text()).toContain("<h1>Privacybeleid</h1>");
     await ctx.close();
   });
 });

@@ -1,0 +1,14 @@
+{
+  "$comment": "Configuration de build des apps natives (Capacitor). targetAudience : 'teen' (13 ans et plus, hors programme Familles) ou 'children'. La CI (packages/legal, T-STO-03) refuse un SDK publicitaire non certifié Familles si targetAudience vaut 'children'. nativeSdks déclare les dépendances natives prévues ; à tenir à jour avec les fichiers Gradle et Podfile quand ils existeront.",
+  "appId": "com.helioscreat.heliosdiscovery",
+  "targetAudience": "teen",
+  "nativeSdks": [
+    { "id": "com.android.billingclient:billing", "kind": "billing", "platform": "android" },
+    { "id": "StoreKit", "kind": "billing", "platform": "ios" },
+    { "id": "com.google.android.gms:play-services-ads", "kind": "ads", "platform": "android" },
+    { "id": "Google-Mobile-Ads-SDK", "kind": "ads", "platform": "ios" },
+    { "id": "com.google.android.ump:user-messaging-platform", "kind": "consent", "platform": "android" },
+    { "id": "GoogleUserMessagingPlatform", "kind": "consent", "platform": "ios" },
+    { "id": "com.google.firebase:firebase-messaging", "kind": "push", "platform": "android" }
+  ]
+}

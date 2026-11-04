@@ -52,6 +52,7 @@ export class Service {
   createAccount(country: string): { id: string; token: string } {
     const id = randomUUID();
     const token = randomBytes(32).toString("hex");
+    // @collects account.id account.country
     this.db.prepare("INSERT INTO players (id, token_hash, created_at, country) VALUES (?, ?, ?, ?)").run(id, sha(token), this.cfg.clock(), (country || "FR").slice(0, 2).toUpperCase());
     return { id, token };
   }
@@ -82,6 +83,7 @@ export class Service {
     if (p.birth_month) throw new ApiError(409, "ageAlreadySet", "âge déjà déclaré : modification via le support");
     const age = ageFromBirth(birth, this.cfg.clock());
     if (age === null) throw new ApiError(400, "invalidBirth");
+    // @collects age.birthMonth
     this.db.prepare("UPDATE players SET birth_month = ?, age_set_at = ? WHERE id = ?").run(birth.slice(0, 7), this.cfg.clock(), p.id);
     return ageProfile(age, p.country);
   }
@@ -96,6 +98,7 @@ export class Service {
 
   setConsent(p: PlayerRow, choice: Partial<ConsentChoice>): ConsentChoice {
     const c = normalizeConsent(this.ageOf(p), choice);
+    // @collects consent.record
     this.db.prepare("INSERT INTO consents VALUES (?, ?, ?, ?, ?, ?)").run(p.id, this.cfg.clock(), CONSENT_NOTICE_VERSION, +c.analytics, +c.adsPersonalized, +c.adsNonPersonalized);
     return c;
   }
@@ -103,6 +106,7 @@ export class Service {
   setNickname(p: PlayerRow, nickname: string): string {
     const r = checkNickname(nickname);
     if (!r.ok) throw new ApiError(422, `nickname.${r.reason}`);
+    // @collects account.nickname
     this.db.prepare("UPDATE players SET nickname = ? WHERE id = ?").run(nickname.trim(), p.id);
     return nickname.trim();
   }
@@ -131,6 +135,7 @@ export class Service {
     const r = applyVerified(acc, v, this.cfg.clock());
     if (!r.ok) throw new ApiError(422, "receiptInvalid", r.reason);
     for (const e of r.account.ledger) {
+      // @collects purchase.history
       this.db.prepare("INSERT INTO ledger VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(order_id) DO UPDATE SET state = excluded.state").run(e.orderId, p.id, e.skuId, e.eurCents, e.at, e.state);
     }
     return { credited: r.credited, state: v.state };
@@ -138,6 +143,7 @@ export class Service {
 
   // ───────────── chat d'équipe ─────────────
   joinTeam(p: PlayerRow, teamId: string): void {
+    // @collects team.membership
     this.db.prepare("INSERT OR IGNORE INTO team_members VALUES (?, ?)").run(teamId, p.id);
   }
 
@@ -152,12 +158,14 @@ export class Service {
     const id = randomUUID();
     if (body.presetId !== undefined) {
       if (!(PRESET_MESSAGES as readonly string[]).includes(body.presetId)) throw new ApiError(400, "unknownPreset");
+      // @collects chat.message
       this.db.prepare("INSERT INTO messages (id, team_id, player_id, kind, body, at) VALUES (?, ?, ?, 'preset', ?, ?)").run(id, teamId, p.id, body.presetId, this.cfg.clock());
       return { id };
     }
     if (this.ageOf(p).chatRestricted) throw new ApiError(403, "freeTextRestricted", "texte libre réservé aux 16 ans et plus");
     const check = checkMessage(body.text ?? "");
     if (!check.ok) throw new ApiError(422, `message.${check.reason}`);
+    // @collects chat.message
     this.db.prepare("INSERT INTO messages (id, team_id, player_id, kind, body, at) VALUES (?, ?, ?, 'text', ?, ?)").run(id, teamId, p.id, (body.text ?? "").trim(), this.cfg.clock());
     return { id };
   }
@@ -172,6 +180,7 @@ export class Service {
   }
 
   block(p: PlayerRow, blockedId: string): void {
+    // @collects block.list
     this.db.prepare("INSERT OR IGNORE INTO blocks VALUES (?, ?)").run(p.id, blockedId);
   }
 
@@ -184,6 +193,7 @@ export class Service {
     if (!targetPlayer) throw new ApiError(404, "targetNotFound");
     const id = randomUUID();
     const at = this.cfg.clock();
+    // @collects report.content
     this.db.prepare("INSERT INTO reports VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'open')").run(id, p.id, body.targetType, body.targetId, targetPlayer, body.reason, (body.details ?? "").slice(0, 1000), at);
     this.notify(p.id, "reportReceived", { reportId: id, receivedAt: at });
     return { id, receivedAt: at };
@@ -204,6 +214,7 @@ export class Service {
     if (!rep) throw new ApiError(404, "reportNotFound");
     const id = randomUUID();
     const g = d.ground ?? { type: "tos" as const, clause: "CGU 0" };
+    // @collects moderation.decision
     this.db.prepare("INSERT INTO decisions VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").run(id, d.reportId, moderatorId, rep.target_player_id, d.restriction, d.facts, +d.automated, g.type, g.type === "tos" ? g.clause : g.law, this.cfg.clock());
     this.db.prepare("UPDATE reports SET status = 'decided' WHERE id = ?").run(d.reportId);
     if (d.restriction === "removeContent" && rep.target_type === "message") this.db.prepare("UPDATE messages SET removed = 1 WHERE id = ?").run(rep.target_id);
@@ -223,6 +234,7 @@ export class Service {
     if (others.length === 0) throw new ApiError(503, "noIndependentModerator");
     const assignedTo = others[Math.floor(Math.random() * others.length)];
     const id = randomUUID();
+    // @collects appeal.content
     this.db.prepare("INSERT INTO appeals VALUES (?, ?, ?, ?, ?, ?, 'open', NULL)").run(id, decisionId, p.id, text.slice(0, 2000), this.cfg.clock(), assignedTo);
     return { id, assignedTo };
   }
@@ -243,6 +255,7 @@ export class Service {
   }
 
   notify(playerId: string, kind: string, body: unknown): void {
+    // @collects inbox.notice
     this.db.prepare("INSERT INTO notifications VALUES (?, ?, ?, ?, ?)").run(randomUUID(), playerId, kind, JSON.stringify(body), this.cfg.clock());
   }
 
@@ -301,6 +314,7 @@ export class Service {
   contact(p: PlayerRow | null, body: { topic: string; message: string; email?: string; lang?: string }): { id: string } {
     if (!body.message || body.message.trim().length < 5) throw new ApiError(422, "messageRequired");
     const id = randomUUID();
+    // @collects support.message support.email
     this.db.prepare("INSERT INTO tickets VALUES (?, ?, ?, ?, ?, ?, ?)").run(id, p?.id ?? null, body.email ?? null, (body.topic || "other").slice(0, 40), body.message.slice(0, 4000), (body.lang || "fr").slice(0, 5), this.cfg.clock());
     return { id };
   }
@@ -325,6 +339,7 @@ export class Service {
     const now = this.cfg.clock();
     const dueAt = now + this.cfg.deletionDelayMs;
     this.db.prepare("UPDATE players SET locked = 1 WHERE id = ?").run(p.id);
+    // @collects rights.deletionRequest
     this.db.prepare("INSERT OR REPLACE INTO deletion_requests VALUES (?, ?, ?, NULL)").run(p.id, now, dueAt);
     return { dueAt };
   }

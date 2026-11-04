@@ -763,6 +763,9 @@ export function App(props: AppProps) {
   );
 }
 
+const LEGAL_DOCS = ["privacy", "terms", "essentials", "sales", "notice", "accessibility"] as const;
+export const legalUrl = (doc: string) => `legal/${getLocale()}/${doc}.html`;
+
 function Toggle(props: { label: string; checked: boolean; onChange: (v: boolean) => void; name: string }) {
   return (
     <label class="toggle">
@@ -835,6 +838,15 @@ function SettingsForm(props: { store: SettingsStore; value: Settings; protectedP
       <fieldset>
         <legend>{t("settings.section.help")}</legend>
         <Toggle name="hints" label={t("settings.hints")} checked={s.hints} onChange={(v) => up({ hints: v })} />
+        <h3 class="small">{t("legal.title")}</h3>
+        {/* Documents générés par packages/legal (une page par langue), servis avec le jeu et lisibles hors ligne. */}
+        <ul class="legal-links" data-testid="legal-links">
+          {LEGAL_DOCS.map((d) => (
+            <li key={d}>
+              <a href={legalUrl(d)} target="_blank" rel="noopener" data-doc={d}>{t(`legal.${d}` as never)}</a>
+            </li>
+          ))}
+        </ul>
       </fieldset>
     </div>
   );

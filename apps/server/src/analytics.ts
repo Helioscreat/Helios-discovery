@@ -34,6 +34,7 @@ export function validateEvent(name: string, data: Record<string, unknown>): stri
 }
 
 export function storeEvent(db: Db, playerId: string, name: string, data: Record<string, unknown>, at: number): void {
+  // @collects analytics.events
   db.prepare("INSERT INTO events VALUES (?, ?, ?, ?, ?)").run(randomUUID(), playerId, name, JSON.stringify(data), at);
 }
 

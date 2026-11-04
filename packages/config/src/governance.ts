@@ -58,6 +58,15 @@ export interface ReleaseNote {
 
 export const CHANGELOG: ReleaseNote[] = [
   {
+    version: "0.8.0",
+    date: "2026-11-04",
+    compliance: true,
+    notes: {
+      fr: ["Politique de confidentialité, conditions d'utilisation et de vente, mentions légales et déclaration d'accessibilité consultables dans le jeu, en 6 langues.", "« L'essentiel en 10 points » : les règles du jeu en version courte."],
+      en: ["Privacy policy, terms of use and of sale, legal notice and accessibility statement available in the game, in 6 languages.", "\"The essentials in 10 points\": the rules in a short version."],
+    },
+  },
+  {
     version: "0.7.0",
     date: "2026-11-04",
     compliance: true,
