@@ -10,6 +10,10 @@ export interface Profile {
   /** Boosters dont les 3 exemplaires offerts et le tutoriel ont déjà été donnés. */
   granted: Booster[];
   stars: Record<number, number>;
+  /** Nombre d'essais par niveau (sert uniquement à varier la suite des pièces qui tombent). */
+  attempts: Record<number, number>;
+  /** Échecs consécutifs par niveau, remis à zéro à la victoire (aide gratuite). */
+  fails: Record<number, number>;
 }
 
 export function newProfile(): Profile {
@@ -18,7 +22,31 @@ export function newProfile(): Profile {
     inventory: Object.fromEntries(ALL_BOOSTERS.map((b) => [b, 0])) as Record<Booster, number>,
     granted: [],
     stars: {},
+    attempts: {},
+    fails: {},
   };
+}
+
+/** Aide gratuite : un booster offert à chaque série de HELP_AFTER_FAILS échecs sur un même niveau. */
+export const HELP_AFTER_FAILS = 8;
+/** Ordre de préférence du booster offert (le plus utile d'abord), parmi ceux déjà débloqués. */
+const HELP_ORDER: Booster[] = ["bomb", "fireCross", "rainbow", "hammer", "shuffler"];
+
+/**
+ * Enregistre un échec. Renvoie le booster offert si la série atteint un multiple de HELP_AFTER_FAILS.
+ * Règle identique pour tous : elle ne dépend que des échecs sur ce niveau, jamais des dépenses (COM-07),
+ * et ne modifie pas le niveau (FAIR-01). Aucun booster n'est offert avant leur déblocage (niveau 8).
+ */
+export function recordFailure(p: Profile, level: number): Booster | null {
+  p.fails[level] = (p.fails[level] ?? 0) + 1;
+  if (p.fails[level] % HELP_AFTER_FAILS !== 0) return null;
+  const gift = HELP_ORDER.find((b) => p.granted.includes(b) && level >= BOOSTER_UNLOCK_LEVEL[b]) ?? null;
+  if (gift) p.inventory[gift]++;
+  return gift;
+}
+
+export function recordWin(p: Profile, level: number): void {
+  delete p.fails[level];
 }
 
 /**

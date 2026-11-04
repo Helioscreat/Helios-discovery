@@ -1,0 +1,46 @@
+{
+  "n": 126,
+  "version": 2,
+  "source": "handmade",
+  "difficulty": "medium",
+  "targetRate": 0.6,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    ". . . . D . . . .",
+    ". . . . . . . . .",
+    "k. . . . . . . . k.",
+    ". k. . . . . . k. .",
+    ". . X1 . . . X1 . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . ."
+  ],
+  "colors": 5,
+  "moves": 23,
+  "goals": [
+    {
+      "type": "drop",
+      "count": 3
+    },
+    {
+      "type": "clear",
+      "target": "chain",
+      "count": 4
+    }
+  ],
+  "drops": {
+    "total": 3,
+    "maxOnBoard": 2
+  },
+  "seed": "L126v2a0:6697c333",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.61,
+    "avgMovesLeft": 7.47,
+    "status": "ok"
+  }
+}

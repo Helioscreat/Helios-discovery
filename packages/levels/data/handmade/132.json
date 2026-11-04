@@ -1,0 +1,44 @@
+{
+  "n": 132,
+  "version": 2,
+  "source": "handmade",
+  "title": "Caisses sur la glace",
+  "difficulty": "easy",
+  "targetRate": 0.85,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    "i1. i1. i1. i1. i1. i1. i1. i1. i1.",
+    "i1. i1X1 i1. i1X1 i1. i1X1 i1. i1X1 i1.",
+    "i1. i1. i1. i1. i1. i1. i1. i1. i1.",
+    "i1. i1X1 i1. i1X1 i1. i1X1 i1. i1X1 i1.",
+    "i1. i1. i1. i1. i1. i1. i1. i1. i1.",
+    ". . . . . . . . .",
+    ". . . . . . . . ."
+  ],
+  "colors": 5,
+  "moves": 17,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "crate",
+      "count": 8
+    },
+    {
+      "type": "clear",
+      "target": "ice",
+      "count": 45
+    }
+  ],
+  "seed": "L132v2a0:8741cede",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.895,
+    "avgMovesLeft": 4.51,
+    "status": "ok"
+  }
+}

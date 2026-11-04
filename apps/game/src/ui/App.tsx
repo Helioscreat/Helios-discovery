@@ -3,14 +3,25 @@ import {
 } from "@helios/core";
 import { useEffect, useLayoutEffect, useMemo, useState } from "preact/hooks";
 import type { Feedback } from "../feedback";
-import { DEMO_LEVEL_COUNT, difficultyOf, levelSpec } from "../game/levels";
-import { grantUnlocks, saveProfile, type Profile } from "../game/profile";
+import { difficultyOf, levelCount, levelFile, levelSpec, loadGeneratedLevels } from "../game/levels";
+import { grantUnlocks, recordFailure, recordWin, saveProfile, type Profile } from "../game/profile";
 import { GameSession } from "../game/session";
-import { CATALOGS, getLocale, setLocale, t, type Locale } from "../i18n";
+import { CATALOGS, DATE_LOCALE, getLocale, NATIVE_NAMES, setLocale, t, type Locale } from "../i18n";
 import type { BoardScene } from "../render/BoardScene";
 import { TEXT_SCALES, type Settings, type SettingsStore } from "../settings";
 import { BoardHost } from "./BoardHost";
-import { BoosterGlyph, DualChoice, Modal, PieceIcon } from "./components";
+import { BoosterGlyph, DualChoice, Modal, ObstacleIcon, PieceIcon } from "./components";
+import { IslandScreen, LivesModal, PassScreen, PassSheet, Price, PurchaseSheet, PurchasesSettings, RewardsScreen, ShopScreen, SubscriptionSheet, TopBar } from "./Meta";
+import { continueGame } from "@helios/core";
+import {
+  addXp, buyPass, canPlay, claim, claimQuest, doTask, claimSubscriptionPerks, COIN_PRICES, COIN_REWARDS, continueOffer, dailyQuests, login,
+  progressQuests, refillLivesWithCoins, skuById, spendCoins, spinWheel, tierOf, WHEEL, winXp, type AgeBand, type Sku,
+} from "@helios/economy";
+import { currentSeason, endLevel, grant, saveMeta, type MetaState, type Shop } from "../game/meta";
+import { categoriesFor, CHANGELOG, DEFAULT_CONFIG, DEFAULT_PREFS, resolveConfig, type ResolvedConfig } from "@helios/config";
+import type { ConsentChoice } from "@helios/compliance";
+import { Analytics, applyBirth, applyConsent, nextOnboardingStep, saveCompliance, type Api, type ComplianceState } from "../game/compliance";
+import { AgeGate, ConsentScreen, ContactScreen, DeleteAccountModal, ParentalModal, PrivacySettings, ReportModal, TeamScreen } from "./Compliance";
 
 type Overlay =
   | { kind: "none" }
@@ -19,12 +30,27 @@ type Overlay =
   | { kind: "settings" }
   | { kind: "quit" }
   | { kind: "end-win" }
-  | { kind: "end-fail" };
+  | { kind: "end-fail"; gift: Booster | null }
+  | { kind: "purchase"; skuId: string }
+  | { kind: "subscription"; skuId: string }
+  | { kind: "pass-sheet"; tier: "premium" | "premiumPlus" }
+  | { kind: "lives"; level: number }
+  | { kind: "toast"; text: string }
+  | { kind: "consent-manage" }
+  | { kind: "delete"; done: string }
+  | { kind: "parental" }
+  | { kind: "report"; target: { type: "message" | "profile"; id: string } }
+  | { kind: "changelog" };
 
 export interface AppProps {
   settings: SettingsStore;
   feedback: Feedback;
   profile: Profile;
+  meta: MetaState;
+  shop: Shop;
+  clock: () => number;
+  api: Api;
+  compliance: ComplianceState;
   /** Crochets de test (activés par ?test=1) : exposent l'état sans passer par le canvas. */
   testHooks?: (api: TestApi) => void;
 }
@@ -40,7 +66,14 @@ export interface TestApi {
   hint: () => { from: number; to: number } | null;
   mutate: (fn: (st: GameState) => void) => void;
   booster: (b: InGameBooster, at?: number) => Promise<boolean>;
+  setAge: (a: AgeBand) => void;
+  meta: () => MetaState;
+  goto: (s: Screen) => void;
+  compliance: () => ComplianceState;
+  analyticsSent: () => number;
 }
+
+type Screen = "home" | "game" | "shop" | "pass" | "rewards" | "island" | "contact" | "team";
 
 function useSettings(store: SettingsStore): Settings {
   const [s, set] = useState(store.value);
@@ -56,8 +89,16 @@ function GoalList(props: { state: GameState; compact?: boolean }) {
         const total = g.type === "score" ? g.target : g.count;
         return (
           <li key={k}>
-            {g.type === "collect" ? <PieceIcon color={g.color} /> : null}
-            <span>{g.type === "collect" ? t("goal.collect", { name: t(`piece.${g.color}` as never), done, count: total }) : t("goal.score", { done, count: total })}</span>
+            {g.type === "collect" ? <PieceIcon color={g.color} /> : g.type === "clear" ? <ObstacleIcon kind={g.target} /> : g.type === "drop" ? <ObstacleIcon kind="drop" /> : null}
+            <span>
+              {g.type === "collect"
+                ? t("goal.collect", { name: t(`piece.${g.color}` as never), done, count: total })
+                : g.type === "clear"
+                  ? t(`goal.clear.${g.target}` as never, { done, count: total })
+                  : g.type === "drop"
+                    ? t("goal.drop", { done, count: total })
+                    : t("goal.score", { done, count: total })}
+            </span>
           </li>
         );
       })}
@@ -65,9 +106,90 @@ function GoalList(props: { state: GameState; compact?: boolean }) {
   );
 }
 
+const PAGE = 30;
+
 export function App(props: AppProps) {
   const settings = useSettings(props.settings);
-  const [screen, setScreen] = useState<"home" | "game">("home");
+  const [screen, setScreen] = useState<Screen>("home");
+  const meta = props.meta;
+  const shop = props.shop;
+  const [now, setNow] = useState(props.clock());
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [wheelResult, setWheelResult] = useState("");
+  const [comp, setCompState] = useState<ComplianceState>(props.compliance);
+  const [ageError, setAgeError] = useState("");
+  const api = props.api;
+  const compRef = useMemo(() => ({ current: props.compliance }), []);
+  const analytics = useMemo(() => new Analytics(api, () => compRef.current), []);
+  const setComp = (c: ComplianceState) => {
+    compRef.current = c;
+    saveCompliance(c);
+    if (meta.age !== c.age.band) {
+      meta.age = c.age.band;
+      saveMeta(meta);
+    }
+    setCompState(c);
+  };
+  // Compte pseudonyme et reprise d'un compte dont le cache local a été effacé (l'âge déjà déclaré est récupéré).
+  useEffect(() => {
+    if (!api.online) return;
+    void api.ensureAccount(compRef.current).then((c) => api.restore(c)).then(setComp).catch(() => undefined);
+  }, []);
+  const step = nextOnboardingStep(comp);
+  // Config distante du pays du joueur (appliquée sans mise à jour de l'application).
+  const [rc, setRc] = useState<ResolvedConfig>(() => resolveConfig(DEFAULT_CONFIG, props.compliance.country));
+  useEffect(() => {
+    if (api.online) void api.config(compRef.current.country).then(setRc).catch(() => undefined);
+  }, []);
+  // Durée de session (mesure d'audience consentie) : envoyée quand le jeu passe en arrière-plan.
+  useEffect(() => {
+    let start = props.clock();
+    const onVis = () => {
+      if (document.visibilityState === "hidden") analytics.track("session_length", { seconds: Math.round((props.clock() - start) / 1000) });
+      else start = props.clock();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
+
+  const submitAge = async (birth: string) => {
+    const next = applyBirth(comp, birth, props.clock());
+    if (!next) return setAgeError(t("age.invalid"));
+    if (api.online && comp.account) {
+      try {
+        await api.setAge(comp, birth);
+      } catch (e) {
+        // Âge déjà déclaré pour ce compte (409) : on reprend la tranche connue du serveur, sans nouvelle déclaration.
+        if ((e as { status?: number }).status === 409) return setComp(await api.restore({ ...comp, ageSet: false }));
+        return setAgeError(t("privacy.error"));
+      }
+    }
+    setAgeError("");
+    setComp(next);
+  };
+
+  const saveConsent = (choice: Partial<ConsentChoice>) => {
+    const next = applyConsent(compRef.current, choice);
+    setComp(next);
+    if (api.online && next.account) void api.setConsent(next).catch(() => undefined);
+    setOverlay({ kind: "none" });
+  };
+
+  const deleteAccount = async () => {
+    try {
+      const r = api.online && comp.account ? await api.deleteAccount(comp) : { dueAt: props.clock() };
+      setOverlay({ kind: "delete", done: t("delete.done", { date: new Date(r.dueAt).toLocaleDateString(DATE_LOCALE[getLocale()]) }) });
+      // Données locales effacées immédiatement ; au prochain lancement, nouveau compte.
+      try {
+        for (const k of Object.keys(localStorage)) if (k.startsWith("helios.")) localStorage.removeItem(k);
+      } catch {
+        /* stockage indisponible */
+      }
+    } catch {
+      setOverlay({ kind: "delete", done: t("privacy.error") });
+    }
+  };
   const [overlay, setOverlay] = useState<Overlay>({ kind: "none" });
   const [session, setSession] = useState<GameSession | null>(null);
   const [scene, setScene] = useState<BoardScene | null>(null);
@@ -88,14 +210,46 @@ export function App(props: AppProps) {
   }, [settings]);
 
   useEffect(() => props.feedback.onCaption((text) => { setCaption(text); setAnnounce(text); }), []);
+  useEffect(() => { void loadGeneratedLevels().then(refresh); }, []);
+  const [page, setPage] = useState(() => Math.floor((profile.levelReached - 1) / PAGE));
   useEffect(() => {
     if (!caption) return;
     const id = setTimeout(() => setCaption(""), 1600);
     return () => clearTimeout(id);
   }, [caption]);
 
-  /** Choix d'un niveau : boosters débloqués (3 offerts + tutoriel), puis écran de début de niveau. */
+  // Horloge, prix du store, connexion du jour, quêtes, avantages d'abonnement.
+  useEffect(() => {
+    const id = setInterval(() => setNow(props.clock()), 30_000);
+    void shop.loadPrices().then(refresh);
+    const t0 = props.clock();
+    const l = login(meta.free, t0);
+    meta.free = dailyQuests(l.state, t0, meta.playerSeed);
+    if (l.reward) grant(meta, profile, l.reward, t0);
+    const sub = meta.account.wallet.subscription;
+    if (sub) {
+      const before = meta.account.wallet;
+      const after = claimSubscriptionPerks(before, skuById(sub.skuId), t0);
+      if (after !== before) {
+        meta.account = { ...meta.account, wallet: { ...after, boosters: before.boosters } };
+        grant(meta, profile, { boosters: skuById(sub.skuId).dailyPerks?.boosters }, t0);
+      }
+    }
+    persist();
+    return () => clearInterval(id);
+  }, []);
+
+  const persist = () => {
+    saveMeta(meta);
+    saveProfile(profile);
+  };
+
+  /** Choix d'un niveau : une vie est nécessaire ; boosters débloqués (3 offerts + tutoriel), puis écran de début. */
   const chooseLevel = (n: number) => {
+    if (!canPlay(meta.account.wallet, props.clock())) {
+      setOverlay({ kind: "lives", level: n });
+      return;
+    }
     const fresh = grantUnlocks(profile, n);
     saveProfile(profile);
     setKit(false); // case jamais pré-cochée
@@ -104,6 +258,10 @@ export function App(props: AppProps) {
 
   const startLevel = (n: number, useKit: boolean) => {
     const s = new GameSession(n, profile, useKit);
+    analytics.track("level_start", { n, boosters: useKit ? 1 : 0 });
+    s.subscribe((o) => {
+      for (const e of o.events) if (e.type === "booster") analytics.track("booster_use", { n, booster: e.booster });
+    });
     saveProfile(profile);
     setSession(s);
     setScreen("game");
@@ -115,12 +273,28 @@ export function App(props: AppProps) {
     if (!session) return;
     if (session.state.status === "won") {
       const n = session.level;
-      profile.levelReached = Math.max(profile.levelReached, Math.min(DEMO_LEVEL_COUNT, n + 1));
-      profile.stars[n] = Math.max(profile.stars[n] ?? 0, session.stars());
-      saveProfile(profile);
+      const t0 = props.clock();
+      const stars = session.stars();
+      profile.levelReached = Math.max(profile.levelReached, Math.min(levelCount(), n + 1));
+      // Étoiles de l'île : seulement le gain par rapport au meilleur résultat déjà obtenu sur ce niveau.
+      const gainedStars = Math.max(0, stars - (profile.stars[n] ?? 0));
+      profile.stars[n] = Math.max(profile.stars[n] ?? 0, stars);
+      meta.island = { ...meta.island, stars: meta.island.stars + gainedStars };
+      recordWin(profile, n);
+      endLevel(meta, "won", t0);
+      grant(meta, profile, { coins: COIN_REWARDS.winBase + COIN_REWARDS.perStar * stars }, t0);
+      const tierBefore = tierOf(meta.season.xp);
+      meta.season = addXp(currentSeason(t0), meta.season, winXp(difficultyOf(n), stars, meta.season.pass), t0);
+      if (tierOf(meta.season.xp) > tierBefore) analytics.track("season_tier", { tier: tierOf(meta.season.xp) });
+      meta.free = progressQuests(progressQuests(meta.free, "wins", 1), "collect", session.state.progress.reduce((a, x, k) => a + (session.state.goals[k].type === "collect" ? x : 0), 0));
+      persist();
+      analytics.track("level_win", { n, stars, movesLeft: session.movesAtWin });
       setOverlay({ kind: "end-win" });
     } else if (session.state.status === "lost") {
-      setOverlay({ kind: "end-fail" });
+      const gift = recordFailure(profile, session.level);
+      analytics.track("level_fail", { n: session.level });
+      persist();
+      setOverlay({ kind: "end-fail", gift });
     }
   };
 
@@ -128,6 +302,72 @@ export function App(props: AppProps) {
     setOverlay({ kind: "none" });
     setSession(null);
     setScreen("home");
+    setNow(props.clock());
+  };
+
+  /** Fin d'une partie perdue sans continuer : la vie est consommée à ce moment (ECO-01). */
+  const concede = (then: () => void) => {
+    endLevel(meta, "lost", props.clock());
+    persist();
+    then();
+  };
+
+  /** Quitter en cours de partie : gratuit avant le premier coup, sinon compte comme une défaite. */
+  const quitLevel = () => {
+    if (session && session.state.status === "playing") endLevel(meta, session.state.moveCount > 0 ? "quitAfterMoves" : "quitBeforeFirstMove", props.clock());
+    persist();
+    leaveGame();
+  };
+
+  /** +5 coups (pièces ou achat) : même grille, la partie reprend. */
+  const continueLevel = async (how: "coins" | "paid") => {
+    if (!session) return;
+    if (how === "coins") {
+      const w = spendCoins(meta.account.wallet, COIN_PRICES.extraMoves);
+      if (!w) return;
+      meta.account = { ...meta.account, wallet: w };
+    } else {
+      setBusy(true);
+      const r = await shop.buy(meta, profile, skuById("extra_moves"));
+      setBusy(false);
+      if (!r.ok) {
+        setMsg(t(`purchase.result.${r.reason}` as never));
+        return;
+      }
+      analytics.track("purchase", { sku: "extra_moves", eurCents: skuById("extra_moves").referenceEurCents });
+    }
+    const resumed = continueGame(session.state, 5);
+    if (!resumed) return;
+    session.state = resumed;
+    persist();
+    setMsg("");
+    setOverlay({ kind: "none" });
+    scene?.resync();
+    refresh();
+  };
+
+  /** Achat depuis une fiche : passe et abonnement mettent à jour l'état correspondant. */
+  const pay = async (skuId: string) => {
+    const sku = skuById(skuId);
+    setBusy(true);
+    setMsg("");
+    const r = await shop.buy(meta, profile, sku);
+    setBusy(false);
+    if (!r.ok) {
+      setMsg(t(`purchase.result.${r.reason}` as never));
+      return;
+    }
+    if (sku.kind === "seasonPass") meta.season = buyPass(meta.season, sku.passTier!);
+    analytics.track("purchase", { sku: sku.id, eurCents: sku.referenceEurCents });
+    persist();
+    setOverlay({ kind: "toast", text: t("purchase.result.ok") });
+    refresh();
+  };
+
+  const openSku = (s: Sku) => {
+    setMsg("");
+    if (s.kind === "subscription") setOverlay({ kind: "subscription", skuId: s.id });
+    else setOverlay({ kind: "purchase", skuId: s.id });
   };
 
   const pickBooster = (b: InGameBooster) => {
@@ -163,19 +403,97 @@ export function App(props: AppProps) {
       await scene.animate(out.events);
       return true;
     },
+    setAge: (a) => {
+      meta.age = a;
+      const c = { ...compRef.current, age: { ...compRef.current.age, band: a } };
+      compRef.current = c;
+      saveCompliance(c);
+      persist();
+      refresh();
+    },
+    meta: () => meta,
+    goto: (sc) => setScreen(sc),
+    compliance: () => compRef.current,
+    analyticsSent: () => analytics.sent,
   });
 
   const st = session?.state;
+  if (step !== "done") {
+    return (
+      <div class="app" data-screen={step === "age" ? "age-gate" : "consent"}>
+        {step === "age" ? <AgeGate nowYear={new Date(props.clock()).getUTCFullYear()} error={ageError} onSubmit={(b) => void submitAge(b)} /> : <ConsentScreen state={comp} onSave={saveConsent} />}
+      </div>
+    );
+  }
   return (
     <div class="app" data-screen={screen}>
+      {screen !== "game" ? <TopBar meta={meta} now={now} /> : null}
+      {screen === "contact" && <ContactScreen api={api} state={comp} onBack={() => setScreen("home")} />}
+      {screen === "team" && <TeamScreen api={api} state={comp} team="aerine-1" onReport={(target) => setOverlay({ kind: "report", target })} onBack={() => setScreen("home")} />}
+      {screen === "shop" && <ShopScreen meta={meta} shop={shop} disabled={rc.monetization.disabledSkus} onOpen={openSku} onBack={() => setScreen("home")} />}
+      {screen === "pass" && (
+        <PassScreen
+          lateRule={rc.monetization.lateSeasonPurchase}
+          meta={meta}
+          now={now}
+          shop={shop}
+          onClaim={(r) => { meta.season = claim(meta.season, r); grant(meta, profile, r.contents, props.clock()); persist(); refresh(); }}
+          onOpenSheet={(tier) => { setMsg(""); setOverlay({ kind: "pass-sheet", tier }); }}
+          onBack={() => setScreen("home")}
+        />
+      )}
+      {screen === "rewards" && (
+        <RewardsScreen
+          meta={meta}
+          now={now}
+          result={wheelResult}
+          onSpin={() => {
+            const r = spinWheel(meta.free, props.clock(), meta.playerSeed);
+            if (!r) return;
+            meta.free = r.state;
+            grant(meta, profile, r.contents, props.clock());
+            setWheelResult(t("rewards.won", { x: t(WHEEL[r.index].labelKey as never) }));
+            persist();
+            refresh();
+          }}
+          onClaimQuest={(id) => {
+            const r = claimQuest(meta.free, id);
+            if (!r) return;
+            meta.free = r.state;
+            grant(meta, profile, r.contents, props.clock());
+            persist();
+            refresh();
+          }}
+          onBack={() => setScreen("home")}
+        />
+      )}
+      {screen === "island" && (
+        <IslandScreen
+          meta={meta}
+          hasPremium={meta.season.pass !== "none"}
+          onDo={(taskId, v) => {
+            const next = doTask(meta.island, taskId, v, meta.season.pass !== "none");
+            if (!next) return;
+            meta.island = next;
+            persist();
+            refresh();
+          }}
+          onBack={() => setScreen("home")}
+        />
+      )}
       {screen === "home" && (
         <main class="home">
           <header class="home-header">
             <h1>{t("app.title")}</h1>
             <p class="muted">{t("home.subtitle")}</p>
           </header>
+          <nav class="pager" aria-label={t("home.levels")}>
+            <button type="button" class="btn small" disabled={page === 0} onClick={() => setPage(page - 1)}>{t("home.prev")}</button>
+            <span>{t("home.range", { a: page * PAGE + 1, b: Math.min(levelCount(), (page + 1) * PAGE) })}</span>
+            <button type="button" class="btn small" disabled={(page + 1) * PAGE >= levelCount()} onClick={() => setPage(page + 1)}>{t("home.next")}</button>
+          </nav>
           <section class="level-grid" aria-label={t("home.levels")}>
-            {Array.from({ length: DEMO_LEVEL_COUNT }, (_, k) => k + 1).map((n) => {
+            {Array.from({ length: Math.min(PAGE, levelCount() - page * PAGE) }, (_, k) => page * PAGE + k + 1).map((n) => {
               const locked = n > profile.levelReached;
               const d = difficultyOf(n);
               return (
@@ -194,6 +512,13 @@ export function App(props: AppProps) {
               );
             })}
           </section>
+          <nav class="meta-nav" aria-label={t("home.menu")}>
+            <button type="button" class="btn small" onClick={() => setScreen("island")}>{t("home.island")}</button>
+            <button type="button" class="btn small" onClick={() => setScreen("rewards")}>{t("home.rewards")}</button>
+            <button type="button" class="btn small" onClick={() => setScreen("pass")}>{t("home.pass")}</button>
+            <button type="button" class="btn small" onClick={() => setScreen("shop")}>{t("home.shop")}</button>
+            <button type="button" class="btn small" onClick={() => setScreen("team")}>{t("home.team")}</button>
+          </nav>
           <nav class="bottom-bar">
             <button type="button" class="btn" onClick={() => setOverlay({ kind: "settings" })}>{t("home.settings")}</button>
             <button type="button" class="btn" onClick={() => chooseLevel(profile.levelReached)}>{t("home.play", { n: profile.levelReached })}</button>
@@ -294,12 +619,14 @@ export function App(props: AppProps) {
       {overlay.kind === "level-start" && (() => {
         const n = overlay.level;
         const spec = levelSpec(n);
+        const file = levelFile(n);
         const d = difficultyOf(n);
         const kitLocked = n < BOOSTER_UNLOCK_LEVEL.starterKit && !profile.granted.includes("starterKit");
         const preview: GameState = { ...({} as GameState), goals: spec.goals, progress: spec.goals.map(() => 0) };
         return (
           <Modal name="level-start" title={t("level.start.title", { n })} onEscape={() => setOverlay({ kind: "none" })}>
             {d !== "normal" ? <p class={`badge ${d}`}>{t(d === "hard" ? "level.badge.hard" : "level.badge.veryHard")}</p> : null}
+            {file.tutorial ? <p class="tutorial-text" data-testid="level-tutorial">{t(`tutorial.level.${file.tutorial}` as never)}</p> : null}
             <h3>{t("level.start.goals")}</h3>
             <GoalList state={preview} />
             <p>{t("level.start.moves", { n: spec.moves })}</p>
@@ -319,7 +646,7 @@ export function App(props: AppProps) {
       {overlay.kind === "quit" && (
         <Modal name="quit" title={t("quit.title")} onEscape={() => setOverlay({ kind: "none" })}>
           <p>{t("quit.body")}</p>
-          <DualChoice accept={t("quit.confirm")} decline={t("decline.cancel")} onAccept={leaveGame} onDecline={() => setOverlay({ kind: "none" })} />
+          <DualChoice accept={t("quit.confirm")} decline={t("decline.cancel")} onAccept={quitLevel} onDecline={() => setOverlay({ kind: "none" })} />
         </Modal>
       )}
 
@@ -335,19 +662,109 @@ export function App(props: AppProps) {
         <Modal name="end-fail" title={t("end.fail.title")} onEscape={leaveGame}>
           <p>{t("end.fail.remaining")}</p>
           <GoalList state={session.state} />
-          <DualChoice accept={t("end.fail.retry")} decline={t("decline.giveUp")} onAccept={() => chooseLevel(session.level)} onDecline={leaveGame} />
+          {overlay.gift ? (
+            <p class="tutorial-text" data-testid="help-gift">{t("help.gift", { name: t(`booster.${overlay.gift}` as never) })}</p>
+          ) : null}
+          {(() => {
+            // « +5 coups » : prix fixe, identique à chaque tentative ; option payante jamais proposée à un joueur protégé (AGE-06).
+            const offer = continueOffer(meta.age, meta.account.wallet.coins);
+            return (
+              <div class="continue-options" data-testid="continue-options">
+                {offer.coins !== null ? (
+                  <button type="button" class="btn" data-testid="continue-coins" onClick={() => void continueLevel("coins")}>{t("continue.coins", { n: offer.coins })}</button>
+                ) : null}
+                {offer.skuId ? (
+                  <button type="button" class="btn" data-testid="continue-paid" disabled={busy} onClick={() => void continueLevel("paid")}>
+                    {t("continue.paid")} · <Price value={shop.price(offer.skuId)} />
+                  </button>
+                ) : null}
+              </div>
+            );
+          })()}
+          {msg ? <p class="notice" role="status">{msg}</p> : null}
+          <DualChoice accept={t("end.fail.retry")} decline={t("decline.giveUp")} onAccept={() => concede(() => chooseLevel(session.level))} onDecline={() => concede(leaveGame)} />
+        </Modal>
+      )}
+
+      {overlay.kind === "purchase" && (
+        <PurchaseSheet sku={skuById(overlay.skuId)} price={shop.price(overlay.skuId)} platform={shop.store.platform} busy={busy} message={msg} onPay={() => void pay(overlay.skuId)} onCancel={() => setOverlay({ kind: "none" })} />
+      )}
+      {overlay.kind === "subscription" && (
+        <SubscriptionSheet sku={skuById(overlay.skuId)} price={shop.price(overlay.skuId)} platform={shop.store.platform} busy={busy} message={msg} onPay={() => void pay(overlay.skuId)} onCancel={() => setOverlay({ kind: "none" })} />
+      )}
+      {overlay.kind === "pass-sheet" && (
+        <PassSheet
+          meta={meta}
+          now={now}
+          tier={overlay.tier}
+          price={shop.price(overlay.tier === "premium" ? "pass_premium" : "pass_premium_plus")}
+          platform={shop.store.platform}
+          busy={busy}
+          message={msg}
+          onPay={() => void pay(overlay.tier === "premium" ? "pass_premium" : "pass_premium_plus")}
+          onCancel={() => setOverlay({ kind: "none" })}
+        />
+      )}
+      {overlay.kind === "lives" && (
+        <LivesModal
+          meta={meta}
+          now={now}
+          featured={rc.monetization.featuredOffers}
+          onRefill={() => {
+            const w = refillLivesWithCoins(meta.account.wallet, props.clock());
+            if (!w) return;
+            meta.account = { ...meta.account, wallet: w };
+            persist();
+            chooseLevel(overlay.level);
+          }}
+          onShop={() => { setOverlay({ kind: "none" }); setScreen("shop"); }}
+          onClose={() => setOverlay({ kind: "none" })}
+        />
+      )}
+      {overlay.kind === "changelog" && (
+        <Modal name="changelog" title={t("changelog.title")} onEscape={() => setOverlay({ kind: "settings" })}>
+          {CHANGELOG.map((r) => (
+            <section key={r.version} data-version={r.version}>
+              <h3>{r.version} · {r.date}{r.compliance ? ` · ${t("changelog.compliance")}` : ""}</h3>
+              {/* Notes de version rédigées en français et en anglais ; les autres langues affichent l'anglais, balisé comme tel. */}
+              <ul class="small" lang={getLocale() === "fr" ? "fr" : "en"}>{r.notes[getLocale() === "fr" ? "fr" : "en"].map((x) => <li key={x}>{x}</li>)}</ul>
+            </section>
+          ))}
+          <div class="single-choice"><button type="button" class="btn" onClick={() => setOverlay({ kind: "settings" })}>{t("decline.close")}</button></div>
+        </Modal>
+      )}
+      {overlay.kind === "consent-manage" && <ConsentScreen state={comp} onSave={saveConsent} asModal onClose={() => setOverlay({ kind: "settings" })} />}
+      {overlay.kind === "delete" && <DeleteAccountModal done={overlay.done} onConfirm={() => void (overlay.done ? location.reload() : deleteAccount())} onCancel={() => setOverlay(overlay.done ? { kind: "none" } : { kind: "settings" })} />}
+      {overlay.kind === "parental" && <ParentalModal onClose={() => setOverlay({ kind: "settings" })} />}
+      {overlay.kind === "report" && <ReportModal target={overlay.target} api={api} state={comp} onClose={() => setOverlay({ kind: "none" })} />}
+      {overlay.kind === "toast" && (
+        <Modal name="toast" title={overlay.text} onEscape={() => setOverlay({ kind: "none" })}>
+          <div class="single-choice"><button type="button" class="btn" onClick={() => setOverlay({ kind: "none" })}>{t("decline.close")}</button></div>
         </Modal>
       )}
 
       {overlay.kind === "settings" && (
         <Modal name="settings" title={t("settings.title")} onEscape={() => setOverlay({ kind: "none" })}>
-          <SettingsForm store={props.settings} value={settings} />
+          <SettingsForm store={props.settings} value={settings} protectedPlayer={meta.age !== "adult"} />
+          <div class="single-choice"><button type="button" class="btn small" onClick={() => setOverlay({ kind: "changelog" })}>{t("changelog.open")}</button></div>
+          <PurchasesSettings meta={meta} platform={shop.store.platform} />
+          <PrivacySettings
+            state={comp}
+            api={api}
+            onManageConsent={() => setOverlay({ kind: "consent-manage" })}
+            onDelete={() => setOverlay({ kind: "delete", done: "" })}
+            onContact={() => { setOverlay({ kind: "none" }); setScreen("contact"); }}
+            onParental={() => setOverlay({ kind: "parental" })}
+          />
           <div class="single-choice"><button type="button" class="btn" onClick={() => setOverlay({ kind: "none" })}>{t("decline.close")}</button></div>
         </Modal>
       )}
     </div>
   );
 }
+
+const LEGAL_DOCS = ["privacy", "terms", "essentials", "sales", "notice", "accessibility"] as const;
+export const legalUrl = (doc: string) => `legal/${getLocale()}/${doc}.html`;
 
 function Toggle(props: { label: string; checked: boolean; onChange: (v: boolean) => void; name: string }) {
   return (
@@ -358,11 +775,32 @@ function Toggle(props: { label: string; checked: boolean; onChange: (v: boolean)
   );
 }
 
-function SettingsForm(props: { store: SettingsStore; value: Settings }) {
+function SettingsForm(props: { store: SettingsStore; value: Settings; protectedPlayer: boolean }) {
   const s = props.value;
   const up = (p: Partial<Settings>) => props.store.update(p);
+  const n = s.notifications ?? DEFAULT_PREFS;
   return (
     <div class="settings">
+      <fieldset data-testid="notification-settings">
+        <legend>{t("notif.title")}</legend>
+        <p class="small">{t("notif.explain")}</p>
+        <Toggle
+          name="notifOptIn"
+          label={t("notif.optIn")}
+          checked={n.optIn}
+          onChange={(v) => {
+            up({ notifications: { ...n, optIn: v } });
+            // Permission système demandée seulement après l'explication et l'accord dans le jeu.
+            if (v && typeof Notification !== "undefined" && Notification.permission === "default") void Notification.requestPermission().catch(() => undefined);
+          }}
+        />
+        {n.optIn
+          ? categoriesFor(props.protectedPlayer).map((c) => (
+              <Toggle key={c} name={`notif-${c}`} label={t(`notif.cat.${c}` as never)} checked={n.categories[c]} onChange={(v) => up({ notifications: { ...n, categories: { ...n.categories, [c]: v } } })} />
+            ))
+          : null}
+        <p class="small muted">{t("notif.rules")}</p>
+      </fieldset>
       <fieldset>
         <legend>{t("settings.section.audio")}</legend>
         <Toggle name="sound" label={t("settings.sound")} checked={s.sound} onChange={(v) => up({ sound: v })} />
@@ -393,13 +831,22 @@ function SettingsForm(props: { store: SettingsStore; value: Settings }) {
               up({ locale: l });
             }}
           >
-            {(Object.keys(CATALOGS) as Locale[]).map((l) => <option key={l} value={l}>{l === "fr" ? "Français" : "English"}</option>)}
+            {(Object.keys(CATALOGS) as Locale[]).map((l) => <option key={l} value={l} lang={l}>{NATIVE_NAMES[l]}</option>)}
           </select>
         </label>
       </fieldset>
       <fieldset>
         <legend>{t("settings.section.help")}</legend>
         <Toggle name="hints" label={t("settings.hints")} checked={s.hints} onChange={(v) => up({ hints: v })} />
+        <h3 class="small">{t("legal.title")}</h3>
+        {/* Documents générés par packages/legal (une page par langue), servis avec le jeu et lisibles hors ligne. */}
+        <ul class="legal-links" data-testid="legal-links">
+          {LEGAL_DOCS.map((d) => (
+            <li key={d}>
+              <a href={legalUrl(d)} target="_blank" rel="noopener" data-doc={d}>{t(`legal.${d}` as never)}</a>
+            </li>
+          ))}
+        </ul>
       </fieldset>
     </div>
   );

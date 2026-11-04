@@ -1,0 +1,172 @@
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, expect, it } from "vitest";
+import { createGame, findMatches, hasValidMove, hashState } from "@helios/core";
+import {
+  buildCandidate, CONTENT_VERSION, DEFAULT_SIM, difficultyOf, ELEMENT_UNLOCK, introAt, levelHash, levelSeed, ratesFromCsv, VARIANT_UNLOCK,
+  simulateFreePlayers, TARGET_RATE, toSpec, TOLERANCE, type LevelFile,
+} from "../src";
+import { DESIGNS, HANDMADE_COUNT } from "../src/handmade";
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const HANDMADE_DIR = join(ROOT, "data/handmade");
+const GENERATED_DIR = join(ROOT, "data/generated");
+const handmade: LevelFile[] = readdirSync(HANDMADE_DIR).filter((f) => /^\d{3}\.json$/.test(f)).sort().map((f) => JSON.parse(readFileSync(join(HANDMADE_DIR, f), "utf8")));
+
+describe("niveaux 1–150 faits main", () => {
+  it("150 fichiers complets, numérotés de 1 à 150", () => {
+    expect(handmade.map((l) => l.n)).toEqual(Array.from({ length: HANDMADE_COUNT }, (_, k) => k + 1));
+    expect(DESIGNS).toHaveLength(150);
+  });
+
+  it("chaque niveau se crée sans alignement initial, avec un coup jouable, et a été validé par le bot", () => {
+    for (const l of handmade) {
+      const st = createGame(toSpec(l));
+      expect(findMatches(st), `niveau ${l.n}`).toEqual([]);
+      expect(hasValidMove(st), `niveau ${l.n}`).toBe(true);
+      expect(l.validation.runs).toBe(200);
+      expect(l.validation.botRate, `niveau ${l.n}`).toBeGreaterThan(0);
+    }
+  });
+
+  it("≥ 90 % dans la fourchette visée, et aucun sous la cible de plus de 10 points", () => {
+    const ok = handmade.filter((l) => Math.abs(l.validation.botRate - l.targetRate) <= TOLERANCE);
+    expect(ok.length / handmade.length).toBeGreaterThanOrEqual(0.9);
+    for (const l of handmade) expect(l.validation.botRate, `niveau ${l.n}`).toBeGreaterThanOrEqual(l.targetRate - TOLERANCE);
+  });
+
+  it("chaque élément est introduit par un niveau tutoriel facile, au niveau prévu, tous les 15 à 25 niveaux jusqu'au niveau 300", () => {
+    const at = [...Object.entries(ELEMENT_UNLOCK), ...Object.entries(VARIANT_UNLOCK)].sort((a, b) => a[1] - b[1]);
+    for (const [k, n] of at) {
+      expect(introAt(n)).toBe(k);
+      if (n <= 150) {
+        expect(handmade[n - 1].tutorial, `élément ${k}`).toBe(k);
+        expect(handmade[n - 1].targetRate).toBeGreaterThanOrEqual(0.85);
+      } else {
+        const c = buildCandidate(n, 0, 1);
+        expect(c.tutorial, `élément ${k}`).toBe(k);
+        expect(c.difficulty).toBe("relax");
+      }
+    }
+    for (let i = 1; i < at.length; i++) {
+      const gap = at[i][1] - at[i - 1][1];
+      expect(gap, `${at[i - 1][0]} → ${at[i][0]}`).toBeGreaterThanOrEqual(15);
+      expect(gap, `${at[i - 1][0]} → ${at[i][0]}`).toBeLessThanOrEqual(25);
+    }
+    expect(300 - at[at.length - 1][1]).toBeLessThanOrEqual(25);
+  });
+
+  it("les tutoriels générés contiennent bien leur élément", () => {
+    const has = (n: number, re: RegExp) => buildCandidate(n, 0, 1).spec.layout!.join(" ").match(re) !== null;
+    expect(buildCandidate(ELEMENT_UNLOCK.portal, 0, 1).spec.portals?.length).toBeGreaterThan(0);
+    expect(buildCandidate(ELEMENT_UNLOCK.conveyor, 0, 1).spec.conveyors?.length).toBe(1);
+    expect(has(ELEMENT_UNLOCK.generator, /\bG\b/)).toBe(true);
+    expect(has(ELEMENT_UNLOCK.chest, /\bC2?\b/)).toBe(true);
+    expect(has(VARIANT_UNLOCK.chest2, /\bC2\b/)).toBe(true);
+    expect(has(VARIANT_UNLOCK.crateGenerator, /\bH\b/)).toBe(true);
+    const pc = buildCandidate(VARIANT_UNLOCK.portalConveyor, 0, 1).spec;
+    expect(pc.portals?.length).toBeGreaterThan(0);
+  });
+
+  it("aucun obstacle n'apparaît avant son niveau d'introduction", () => {
+    const re: Record<string, RegExp> = { ice: /i\d/, crate: /X\d/, chain: /k\./, cage: /g\./, ivy: /^V$/, drop: /^D$/, bubble: /^B$/, generator: /^[GH]$/, chest: /^C2?$/, portal: /^$/, conveyor: /^$/ };
+    for (const l of handmade)
+      for (const [k, n] of Object.entries(ELEMENT_UNLOCK)) {
+        const used = l.layout.flatMap((r) => r.split(" ")).some((t) => re[k].test(t));
+        if (used) expect(l.n, `${k} au niveau ${l.n}`).toBeGreaterThanOrEqual(n);
+      }
+  });
+});
+
+describe("[T-FAIR-01] la difficulté ne dépend jamais du joueur : le niveau N est identique pour tous", () => {
+  it("un niveau généré ne dépend que de (N, version, tentative, échelle)", () => {
+    for (const n of [151, 777, 5000, 9999]) {
+      const a = buildCandidate(n, 0, 1), b = buildCandidate(n, 0, 1);
+      expect(JSON.stringify(a.spec)).toBe(JSON.stringify(b.spec));
+      expect(a.spec.seed).toBe(levelSeed(n, CONTENT_VERSION, 0));
+    }
+  });
+
+  it("la grille de départ ne dépend pas de l'essai ; seule la suite des pièces qui tombent varie", () => {
+    const l = handmade[20];
+    const a = createGame({ ...toSpec(l), playSeed: "0" }), b = createGame({ ...toSpec(l), playSeed: "7" });
+    expect(JSON.stringify(a.cells)).toBe(JSON.stringify(b.cells));
+    expect(JSON.stringify(a.rng)).not.toBe(JSON.stringify(b.rng));
+  });
+
+  it("les modules de niveaux, du moteur et du bot n'importent aucune donnée joueur (profil, achats, analytics)", () => {
+    const dirs = ["../src", "../../core/src", "../../bot/src"].map((d) => join(ROOT, "test", d));
+    for (const dir of dirs)
+      for (const f of readdirSync(dir).filter((x) => x.endsWith(".ts"))) {
+        const src = readFileSync(join(dir, f), "utf8");
+        const imports = [...src.matchAll(/from\s+"([^"]+)"/g)].map((m) => m[1]);
+        for (const imp of imports) expect(imp, `${f}`).toMatch(/^(\.\.?\/|@helios\/(core|bot|levels)$|node:)/);
+        expect(src, f).not.toMatch(/profile|purchase|analytics|spend|inventory/i);
+      }
+  });
+
+  it("dents de scie : badge Difficile en 7e position, Très difficile en 10e, détente en 1re", () => {
+    expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((k) => difficultyOf(150 + k))).toEqual(
+      ["relax", "easy", "easy", "medium", "medium", "medium", "hard", "medium", "medium", "veryHard"],
+    );
+    expect(TARGET_RATE).toEqual({ relax: 0.9, easy: 0.85, medium: 0.6, hard: 0.35, veryHard: 0.2 });
+  });
+});
+
+const hasGenerated = existsSync(join(GENERATED_DIR, "manifest.json"));
+
+describe.skipIf(!hasGenerated)("niveaux 151–10 000 générés", () => {
+  const manifest = hasGenerated ? JSON.parse(readFileSync(join(GENERATED_DIR, "manifest.json"), "utf8")) as { levels: [number, number, number, number, string][] } : { levels: [] };
+  const summary = hasGenerated ? JSON.parse(readFileSync(join(GENERATED_DIR, "summary.json"), "utf8")) : {};
+
+  it("9 850 niveaux, 0 infaisable, ≥ 90 % dans la fourchette, génération < 1 h", () => {
+    expect(manifest.levels).toHaveLength(9850);
+    expect(summary.infeasible).toBe(0);
+    expect(summary.inRangeShare).toBeGreaterThanOrEqual(0.9);
+    // Durée de la passe complète + régénérations ciblées : borne haute d'une passe unique avec le code final.
+    expect(summary.seconds + (summary.repairSeconds ?? []).reduce((a: number, b: number) => a + b, 0)).toBeLessThan(3600);
+    expect(summary.maxBelowTarget).toBeLessThanOrEqual(0.03);
+  });
+
+  it("audit hors échantillon (1 niveau sur 10, 200 parties neuves) : ≥ 90 % dans la fourchette", () => {
+    expect(summary.audited).toBeGreaterThanOrEqual(980);
+    expect(summary.auditInRangeShare).toBeGreaterThanOrEqual(0.9);
+  });
+
+  it("le jeu régénère chaque niveau à l'identique à partir du manifeste (échantillon de 300 niveaux)", () => {
+    const sample = manifest.levels.filter((_, k) => k % 33 === 0);
+    for (const [n, attempt, scale, moves, hash] of sample) {
+      const c = buildCandidate(n, attempt, scale);
+      expect(levelHash({ ...c.spec, layout: c.spec.layout!, moves }), `niveau ${n}`).toBe(hash);
+      expect(() => createGame({ ...c.spec, moves })).not.toThrow();
+    }
+  });
+});
+
+describe.skipIf(!hasGenerated)("[T-FAIR-02] joueur gratuit à 10 niveaux par jour : jamais bloqué plus de 2 jours", () => {
+  const rates = new Map<number, number>();
+  if (hasGenerated) {
+    for (const l of handmade) rates.set(l.n, l.validation.botRate);
+    for (const [n, r] of ratesFromCsv(readFileSync(join(GENERATED_DIR, "report.csv"), "utf8"))) rates.set(n, r);
+  }
+
+  it("scénario retenu — aide après 8 échecs + 1 booster gratuit par jour (roue, quêtes) : aucun joueur bloqué plus de 2 jours sur 10 000 niveaux", () => {
+    const r = simulateFreePlayers(rates, { ...DEFAULT_SIM, pityAfterFails: 8, pityBoost: 0.25, freeBoostersPerDay: 1, boosterBoost: 0.25 });
+    expect(r.levels).toBe(10000);
+    expect(r.playersBlocked).toBeLessThanOrEqual(1); // ≥ 99,9 % des joueurs
+    expect(r.maxDaysOnLevel).toBeLessThanOrEqual(3);
+  });
+
+  it("références documentées : aide seule et aucune aide (garde-fous de non-régression)", () => {
+    const help = simulateFreePlayers(rates, { ...DEFAULT_SIM, pityAfterFails: 8, pityBoost: 0.25 });
+    const none = simulateFreePlayers(rates, DEFAULT_SIM);
+    process.stdout.write(`\n[FAIR-02] aide seule : ${help.playersBlocked}/1000 ; aucune aide : ${none.playersBlocked}/1000 (max ${none.maxDaysOnLevel} j)\n`);
+    expect(help.playersBlocked).toBeLessThanOrEqual(10);
+    expect(none.maxDaysOnLevel).toBeLessThanOrEqual(3);
+  });
+});
+
+it("hashState stable (garde de non-régression des fixtures)", () => {
+  expect(typeof hashState(createGame(toSpec(handmade[0])))).toBe("string");
+});

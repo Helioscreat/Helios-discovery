@@ -1,0 +1,18 @@
+{
+  "name": "@helios/legal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p .",
+    "build": "node scripts/build.mjs",
+    "check:release": "node scripts/build.mjs --check --strict"
+  },
+  "dependencies": {
+    "@helios/compliance": "0.1.0",
+    "@helios/config": "0.1.0",
+    "@helios/economy": "0.1.0"
+  }
+}

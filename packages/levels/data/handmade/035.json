@@ -1,0 +1,43 @@
+{
+  "n": 35,
+  "version": 2,
+  "source": "handmade",
+  "difficulty": "medium",
+  "targetRate": 0.6,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    "X1 . X1 . X1 . X1 . X1",
+    ". . . . . . . . .",
+    "X1 . X1 . X1 . X1 . X1",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . ."
+  ],
+  "colors": 5,
+  "moves": 13,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "crate",
+      "count": 10
+    },
+    {
+      "type": "collect",
+      "color": 3,
+      "count": 41
+    }
+  ],
+  "seed": "L35v2a3:dcea4a89",
+  "attempt": 3,
+  "scale": 2.03125,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.665,
+    "avgMovesLeft": 2.49,
+    "status": "ok"
+  }
+}

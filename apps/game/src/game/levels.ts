@@ -1,33 +1,78 @@
 import type { LevelSpec } from "@helios/core";
+import { buildCandidate, CONTENT_VERSION, levelHash, toSpec, type LevelFile } from "@helios/levels";
 
 /**
- * NIVEAUX PROVISOIRES pour tester l'interface. Ils seront remplacés au livrable 4
- * par les niveaux 1–150 faits main et le générateur validé par le bot.
- * Le niveau N est identique pour tous les joueurs (FAIR-01) : il ne dépend que de N.
+ * Niveaux du jeu.
+ *  - 1–150 : fichiers JSON faits main (packages/levels/data/handmade), inclus dans le build.
+ *  - 151+  : régénérés à l'identique à partir du manifeste (tentative, échelle, coups, empreinte) produit
+ *            par `generate --validate`. Le manifeste est chargé à la demande pour alléger le démarrage.
+ * Le niveau N ne dépend que de N et de la version de contenu : jamais du joueur (FAIR-01).
  */
-export const DEMO_LEVEL_COUNT = 45;
+const handmade = import.meta.glob<LevelFile>("../../../../packages/levels/data/handmade/[0-9][0-9][0-9].json", { eager: true, import: "default" });
+const manifestLoaders = import.meta.glob<{ version: number; from: number; to: number; levels: [number, number, number, number, string][] }>(
+  "../../../../packages/levels/data/generated/manifest.json",
+  { import: "default" },
+);
 
-const MASKS: (string[] | undefined)[] = [
-  undefined,
-  ["#.......#", ".........", ".........", ".........", "....#....", ".........", ".........", ".........", "#.......#"],
-  ["..#####..", ".........", ".........", ".........", ".........", ".........", ".........", ".........", "..#####.."],
-];
+const HANDMADE: LevelFile[] = Object.values(handmade).sort((a, b) => a.n - b.n);
+export const HANDMADE_COUNT = HANDMADE.length;
+
+let generated: Map<number, [number, number, number, number, string]> | null = null;
+let generatedTo = 0;
+
+/** Charge le manifeste des niveaux générés (sans effet s'il est absent du build). */
+export async function loadGeneratedLevels(): Promise<void> {
+  const loader = Object.values(manifestLoaders)[0];
+  if (!loader || generated) return;
+  const m = await loader();
+  generated = new Map(m.levels.map((e) => [e[0], e]));
+  generatedTo = m.to;
+}
+
+export function levelCount(): number {
+  return Math.max(HANDMADE_COUNT, generatedTo);
+}
+
+const cache = new Map<number, LevelFile>();
+
+export function levelFile(n: number): LevelFile {
+  const hit = cache.get(n);
+  if (hit) return hit;
+  let file: LevelFile;
+  if (n <= HANDMADE_COUNT) file = HANDMADE[n - 1];
+  else {
+    const e = generated?.get(n);
+    if (!e) throw new Error(`niveau ${n} indisponible`);
+    const [, attempt, scale, moves, hash] = e;
+    const cand = buildCandidate(n, attempt, scale);
+    file = {
+      n, version: CONTENT_VERSION, source: "generated", difficulty: cand.difficulty, targetRate: 0,
+      width: cand.spec.width, height: cand.spec.height, layout: cand.spec.layout!, colors: cand.spec.colors, moves,
+      goals: cand.spec.goals, ...(cand.spec.drops ? { drops: cand.spec.drops } : {}),
+      ...(cand.spec.portals ? { portals: cand.spec.portals } : {}), ...(cand.spec.conveyors ? { conveyors: cand.spec.conveyors } : {}),
+      ...(cand.tutorial ? { tutorial: cand.tutorial } : {}),
+      seed: cand.spec.seed, attempt, scale,
+      validation: { runs: 0, botRate: 0, avgMovesLeft: 0, status: "ok" },
+    };
+    if (levelHash(file) !== hash) console.error(`niveau ${n} : empreinte différente du niveau validé (version de contenu ?)`);
+  }
+  cache.set(n, file);
+  return file;
+}
 
 export type Difficulty = "normal" | "hard" | "veryHard";
 
+/** Badge affiché : Difficile ou Très difficile (cahier des charges §4). */
 export function difficultyOf(n: number): Difficulty {
-  const k = ((n - 1) % 10) + 1;
-  return k === 7 ? "hard" : k === 10 ? "veryHard" : "normal";
+  if (n > levelCount()) return "normal";
+  const d = levelFile(n).difficulty;
+  return d === "hard" ? "hard" : d === "veryHard" ? "veryHard" : "normal";
 }
 
-export function levelSpec(n: number): LevelSpec {
-  const mask = n <= 3 ? undefined : MASKS[n % MASKS.length];
-  const colors = n <= 10 ? 4 : n <= 30 ? 5 : 6;
-  const diff = difficultyOf(n);
-  const moves = diff === "veryHard" ? 18 : diff === "hard" ? 20 : 24;
-  const goals: LevelSpec["goals"] =
-    n % 3 === 0
-      ? [{ type: "score", target: 2500 + n * 60 }]
-      : [{ type: "collect", color: n % colors, count: 18 + n }, ...(n > 15 ? [{ type: "collect" as const, color: (n + 2) % colors, count: 12 + n }] : [])];
-  return { width: 9, height: 9, mask, colors, moves, goals, seed: `demo-${n}:v0` };
+/**
+ * Spécification jouable du niveau N. `attempt` (numéro d'essai sur ce niveau) ne change que la suite
+ * des pièces qui tombent, jamais la grille de départ ni les objectifs.
+ */
+export function levelSpec(n: number, attempt = 0): LevelSpec {
+  return { ...toSpec(levelFile(n)), playSeed: String(attempt) };
 }

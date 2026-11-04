@@ -1,4 +1,4 @@
-import { cloneState } from "./board";
+import { cloneState, isFreeNormal } from "./board";
 import { crossLines, squareAround } from "./effects";
 import { forceShuffle } from "./moves";
 import { cascadeLoop, Phase } from "./resolve";
@@ -72,7 +72,7 @@ export function applyBooster(state: GameState, booster: InGameBooster, target?: 
     case "rainbow": {
       const p = st.cells[t]!;
       // Sur un Prisme (sans couleur) : la couleur la plus présente.
-      const color = p.special === "prism" ? phase.dominantColor() : p.color;
+      const color = p.special === "prism" || p.color < 0 ? phase.dominantColor() : p.color;
       phase.hit(t);
       if (color >= 0) phase.hitAll(phase.cellsOfColor(color));
       break;
@@ -104,7 +104,7 @@ export function applyStarterKit(state: GameState): BoosterResult {
   const specials = ["rocketH", "bomb", "prism"] as const;
   for (const sp of specials) {
     const normal: Pos[] = [];
-    for (let i = 0; i < st.cells.length; i++) if (st.cells[i]?.special === null) normal.push(i);
+    for (let i = 0; i < st.cells.length; i++) if (isFreeNormal(st.cells[i])) normal.push(i);
     if (normal.length === 0) break;
     const i = pick(st.rng, normal);
     const p = st.cells[i]!;

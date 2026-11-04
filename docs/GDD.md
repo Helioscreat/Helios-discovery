@@ -152,65 +152,36 @@ ligne > carré 2×2 > 3 en ligne.
 
 **Objectifs :** score, collecte de couleurs, gel, objets à faire descendre, pièces à libérer, et objectifs mixtes (2 ou 3 types).
 
-**Introduction des obstacles :** chaque obstacle arrive par un niveau tutoriel dédié, à une grille simple et généreuse en coups.
+**Introduction des obstacles :** chaque obstacle arrive par un niveau tutoriel dédié, toujours en position détente ou facile (taux visé 95 %).
 
 | Niveau | Élément | Règle |
 |---|---|---|
-| 8 | Booster Marteau | — |
-| 12 | Booster Bombe | — |
-| 16 | Gel (1 à 3 couches) | Un alignement dessus enlève une couche |
-| 18 | Booster Arc-en-ciel | — |
-| 25 | Booster Croix de feu | — |
-| 32 | Booster Mélangeur | — |
-| 34 | Caisses (1 à 3 PV) | Dégât adjacent |
-| 40 | Kit de départ | — |
-| 52 | Chaînes | La pièce enchaînée ne bouge pas. Un alignement libère la chaîne |
-| 70 | Bulles | Elles flottent vers le haut et se crèvent par dégât adjacent |
-| 90 | Cages | Contiennent une pièce à libérer |
-| 110 | Lierre | Se propage d'une case par tour sans dégât |
-| 130 | Portails | Téléportent la gravité |
-| 150 | Tapis roulants | Décalent après chaque coup |
-| 170 | Générateurs | Produisent un objet ou un obstacle |
-| 190 | Coffres à clé | La clé se collecte, puis on ouvre le coffre |
-| 200–300 | Nouveaux objectifs mixtes et variantes | Gel sous caisse, lierre en cage… |
+| 2–6 | Fusée, Libellule, Bombe, Prisme, combos | Tutoriels des spéciales |
+| 8, 12, 18, 25, 32, 40 | Boosters | Tutoriel et 3 exemplaires offerts |
+| 13 | Gel (1 à 3 couches) | Un alignement ou une explosion sur la case enlève une couche |
+| 33 | Caisses (1 à 3 PV) | Fixes ; abîmées par un alignement voisin ou une explosion ; les cases en dessous se remplissent en diagonale |
+| 52 | Chaînes | La pièce s'aligne mais ne bouge pas ; un alignement qui l'inclut brise la chaîne |
+| 71 | Graines de lumière (objets à faire descendre) | Indestructibles ; sortent par le bas |
+| 92 | Cages | La pièce ne bouge pas et ne s'aligne pas ; un alignement voisin ouvre la cage |
+| 112 | Lierre | Gagne une case par coup sans lierre détruit ; jamais sur une case d'apparition, ni sous 50 % de pièces libres |
+| 131 | Bulles | Fixes, 1 PV ; montent d'une case après chaque coup |
+| 152 | Portails | Relient deux zones séparées par du vide |
+| 172 | Tapis roulants | Le contenu de la boucle avance d'une case après chaque coup |
+| 191 | Générateurs | Indestructibles ; une bulle tous les 3 coups |
+| 212 | Coffres à clé | Une pièce à clé effacée ouvre un coffre |
+| 233, 254, 275 | Variantes | Coffres à 2 serrures, générateurs de caisses, portails + tapis |
 
-L'écart entre deux nouveautés est de 15 à 25 niveaux, comme demandé. Au-delà du niveau 300, il n'y
-a plus que des combinaisons inédites.
+L'écart entre deux nouveautés est de 19 à 21 niveaux jusqu'au niveau 275, conforme à la fourchette de 15 à 25. Au-delà, il n'y a plus que des combinaisons inédites.
 
----
+## 6. Difficulté et générateur (livrable 4, implémenté)
 
-## 6. Difficulté et générateur (spécification du livrable 4)
+Voir `packages/levels/README.md` pour le détail.
 
-- **Niveaux 1–150 :** JSON écrits à la main, avec schéma validé (zod).
-- **Niveaux 151–10 000 :** `seed = fnv1a64(N ‖ contentVersion)`. Les paramètres sont dérivés de N :
-  - forme de grille ;
-  - nombre de couleurs (4 → 6) ;
-  - jeu d'obstacles débloqués ;
-  - densité ;
-  - objectif ;
-  - coups.
-- **Fond de difficulté :** `D(N) = min(1, ln(1 + N/40) / ln(1 + 2000/40))`. La courbe est plate après N = 2000.
-- **Dents de scie par bloc de 10 :**
-
-| Position dans le bloc | Profil | Taux visé (bot, 1 essai, sans booster) |
-|---|---|---|
-| 1 | Détente | 90 % |
-| 2–3 | Facile | 85 % |
-| 4–6 | Moyen | 60 % |
-| 7 | Difficile (badge) | 35 % |
-| 8–9 | Moyen | 60 % |
-| 10 | Très difficile (badge) | 20 % |
-
-  J'interprète « puis un niveau détente » comme la position 1 du bloc suivant.
-- **Validation :** 200 parties par niveau avec le bot glouton. Le Monte-Carlo est réservé aux niveaux à ±12 points de la cible, ou dont le taux est inférieur à 5 %.
-  - Hors cible de ±10 points : on ajuste les coups (recherche dichotomique) et on régénère.
-  - Un niveau sans aucune victoire du bot Monte-Carlo est déclaré infaisable et rejeté.
-- **Équité (FAIR-01) :** le chargeur de niveau a pour signature `(N, contentVersion) → Level`.
-  Aucun paramètre joueur n'y entre. C'est vérifié par un test de propriété et par l'analyse statique des imports.
-- **CLI :** `generate --from 151 --to 10000 --validate` produit `levels/*.json` et `report.csv`
-  (N, type, taux_bot, coups_restants_moyens, statut). L'exécution est parallèle (worker_threads).
-
----
+- **Niveaux 1–150 :** conçus à la main dans `packages/levels/src/handmade.ts` (grilles dessinées, objectifs et couleurs choisis niveau par niveau). Seul le nombre de coups est calibré par le bot. Les JSON sont dans `data/handmade/`.
+- **Niveaux 151–10 000 :** `seed = hash(N, version, tentative)`. La forme, les couleurs, les objectifs et les obstacles sont dérivés de N et d'un fond de difficulté logarithmique plafonné à N = 2000.
+- **Règle d'équité (FAIR-01) :** la grille de départ est identique pour tous. Seule la suite des pièces qui tombent varie d'un essai à l'autre, selon le numéro d'essai. Elle ne dépend jamais du profil ni des dépenses.
+- **Calibrage :** 200 parties de bot par niveau. On retient le plus petit nombre de coups dont le taux de réussite atteint la cible (borne basse). Si le taux sort de ±10 points, l'échelle des objectifs est ajustée et le niveau régénéré. Un niveau sur dix est contrôlé sur 200 parties neuves.
+- **Critère FAIR-02 et tension du cahier des charges :** voir le compte rendu du livrable 4 (aide gratuite après plusieurs échecs, à décider).
 
 ## 7. Économie (sans monnaie premium)
 

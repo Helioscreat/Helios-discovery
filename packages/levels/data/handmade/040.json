@@ -1,0 +1,39 @@
+{
+  "n": 40,
+  "version": 2,
+  "source": "handmade",
+  "title": "Le Kit de départ",
+  "difficulty": "veryHard",
+  "targetRate": 0.2,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    "X3 . . . . . . . X3",
+    ". X3 X2 . . . X2 X3 .",
+    ". . X3 X2 . X2 X3 . .",
+    ". . . X2 X3 X2 . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . ."
+  ],
+  "colors": 5,
+  "moves": 13,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "crate",
+      "count": 13
+    }
+  ],
+  "seed": "L40v2a0:491a6304",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.29,
+    "avgMovesLeft": 1.29,
+    "status": "ok"
+  }
+}

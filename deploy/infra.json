@@ -1,0 +1,9 @@
+{
+  "_comment": "Description déclarative de l'infrastructure de production (à traduire en Terraform pour le fournisseur retenu). Toutes les ressources sont en région UE.",
+  "provider": "scaleway",
+  "resources": [
+    { "kind": "database", "engine": "postgresql-16", "region": "fr-par", "encryptionAtRest": true, "backupRetentionDays": 30 },
+    { "kind": "container", "name": "helios-api", "region": "fr-par", "env": ["DB_URL", "ALLOWED_ORIGINS", "MODERATORS", "CONTACT_EMAIL"] },
+    { "kind": "objectStorage", "name": "helios-backups", "region": "fr-par", "lifecycleDays": 30 }
+  ]
+}

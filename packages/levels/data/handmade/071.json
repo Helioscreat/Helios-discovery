@@ -1,0 +1,42 @@
+{
+  "n": 71,
+  "version": 2,
+  "source": "handmade",
+  "title": "Les Graines de lumière",
+  "tutorial": "drop",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . D . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 16,
+  "goals": [
+    {
+      "type": "drop",
+      "count": 2
+    }
+  ],
+  "drops": {
+    "total": 2,
+    "maxOnBoard": 2
+  },
+  "seed": "L71v2a0:6ecc62f8",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.955,
+    "avgMovesLeft": 7.93,
+    "status": "ok",
+    "auditRate": 0.955
+  }
+}

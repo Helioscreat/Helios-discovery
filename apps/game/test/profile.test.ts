@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { applyMove, getHint, hashState } from "@helios/core";
 import { difficultyOf, levelSpec } from "../src/game/levels";
-import { grantUnlocks, newProfile } from "../src/game/profile";
+import { grantUnlocks, HELP_AFTER_FAILS, newProfile, recordFailure, recordWin } from "../src/game/profile";
 import { GameSession } from "../src/game/session";
 
 describe("déblocage des boosters et exemplaires offerts", () => {
@@ -53,11 +53,42 @@ describe("session de jeu", () => {
     expect(hashState(next)).toBe(hashState(applyMove(b, getHint(b)!).state));
   });
 
-  it("niveaux de démonstration : badges Difficile (7) et Très difficile (10) dans chaque bloc de 10", () => {
-    expect(difficultyOf(7)).toBe("hard");
+  it("niveaux réels : badges Difficile (7e) et Très difficile (10e) de chaque bloc, parcours d'accueil sans badge", () => {
+    expect(difficultyOf(7)).toBe("normal");
     expect(difficultyOf(17)).toBe("hard");
-    expect(difficultyOf(10)).toBe("veryHard");
-    expect(difficultyOf(11)).toBe("normal");
-    expect(levelSpec(10).moves).toBeLessThan(levelSpec(11).moves);
+    expect(difficultyOf(20)).toBe("veryHard");
+    expect(difficultyOf(21)).toBe("normal");
+    expect(levelSpec(13).layout?.join(" ")).toMatch(/i1/);
+  });
+
+  it("l'essai change la suite des pièces, pas la grille de départ", () => {
+    const a = levelSpec(30, 0), b = levelSpec(30, 1);
+    expect(a.layout).toEqual(b.layout);
+    expect(a.playSeed).not.toBe(b.playSeed);
+  });
+});
+
+describe("aide gratuite après échecs répétés", () => {
+  it("un booster offert à chaque série de 8 échecs sur un même niveau, remise à zéro à la victoire", () => {
+    const p = newProfile();
+    grantUnlocks(p, 30);
+    const before = p.inventory.bomb;
+    for (let k = 1; k < HELP_AFTER_FAILS; k++) expect(recordFailure(p, 30)).toBeNull();
+    expect(recordFailure(p, 30)).toBe("bomb");
+    expect(p.inventory.bomb).toBe(before + 1);
+    recordWin(p, 30);
+    expect(p.fails[30]).toBeUndefined();
+  });
+
+  it("identique quel que soit le profil (dépenses, inventaire) ; rien avant le déblocage des boosters", () => {
+    const rich = newProfile(); grantUnlocks(rich, 40); rich.inventory.bomb = 99;
+    const poor = newProfile(); grantUnlocks(poor, 40);
+    let a = null, b = null;
+    for (let k = 0; k < 8; k++) { a = recordFailure(rich, 40); b = recordFailure(poor, 40); }
+    expect(a).toBe(b);
+    const early = newProfile();
+    let g = null;
+    for (let k = 0; k < 8; k++) g = recordFailure(early, 5);
+    expect(g).toBeNull();
   });
 });

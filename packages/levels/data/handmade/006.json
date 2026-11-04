@@ -1,0 +1,37 @@
+{
+  "n": 6,
+  "version": 2,
+  "source": "handmade",
+  "title": "Combos",
+  "tutorial": "combo",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . a- b| . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 12,
+  "goals": [
+    {
+      "type": "score",
+      "target": 4000
+    }
+  ],
+  "seed": "L6v2a0:cacfe2ce",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.985,
+    "avgMovesLeft": 6.78,
+    "status": "ok"
+  }
+}

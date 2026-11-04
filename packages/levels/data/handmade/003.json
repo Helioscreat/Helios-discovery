@@ -1,0 +1,38 @@
+{
+  "n": 3,
+  "version": 2,
+  "source": "handmade",
+  "title": "La Libellule",
+  "tutorial": "dragonfly",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . b b . . .",
+    ". . b . . . .",
+    ". . . b . . .",
+    ". . . . . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 10,
+  "goals": [
+    {
+      "type": "collect",
+      "color": 1,
+      "count": 30
+    }
+  ],
+  "seed": "L3v2a0:5489bd45",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.985,
+    "avgMovesLeft": 4.57,
+    "status": "ok"
+  }
+}

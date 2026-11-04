@@ -1,0 +1,38 @@
+{
+  "n": 8,
+  "version": 2,
+  "source": "handmade",
+  "title": "Le Marteau",
+  "difficulty": "relax",
+  "targetRate": 0.92,
+  "width": 8,
+  "height": 8,
+  "layout": [
+    ". . . . . . . .",
+    ". . . . . . . .",
+    ". . . . . . . .",
+    ". . . . . . . .",
+    ". . . . . . . .",
+    ". . . . . . . .",
+    ". . . . . . . .",
+    ". . . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 10,
+  "goals": [
+    {
+      "type": "collect",
+      "color": 2,
+      "count": 30
+    }
+  ],
+  "seed": "L8v2a0:cc28ac8c",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 1,
+    "avgMovesLeft": 6.29,
+    "status": "ok"
+  }
+}

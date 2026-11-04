@@ -36,10 +36,11 @@ npm test             # depuis la racine du dépôt
 npm run typecheck
 ```
 
-74 tests :
+93 tests :
 - formes d'alignement et priorités ;
 - effet de chaque spéciale et réactions en chaîne ;
 - les 11 combos et les 6 boosters (dont le Kit de départ) ;
+- les 6 obstacles (gel, caisses, chaînes, cages, lierre, objets à faire descendre), la gravité avec glissement en diagonale et 200 parties aléatoires avec obstacles ;
 - règles d'échange ;
 - gravité avec trous, mélange automatique, indice ;
 - victoire, bonus de fin, défaite, objectifs ;
@@ -49,4 +50,4 @@ npm run typecheck
 
 ## Performance mesurée
 
-Environ 2 500 coups par seconde sur un cœur, en choisissant chaque coup par l'indice glouton (qui évalue tous les coups possibles). Ce débit ne suffit pas encore pour le livrable 4 (voir le compte rendu du livrable 2).
+Environ 10 000 coups par seconde sur un cœur (Node 22, hors environnement de test), en choisissant chaque coup par l'indice glouton. C'est quatre fois plus qu'au livrable 2. Deux optimisations y contribuent : l'évaluation locale des coups candidats, et la gravité appliquée en une passe par colonne.

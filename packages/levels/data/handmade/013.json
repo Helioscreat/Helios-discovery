@@ -1,0 +1,38 @@
+{
+  "n": 13,
+  "version": 2,
+  "source": "handmade",
+  "title": "Le Gel",
+  "tutorial": "ice",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". i1. i1. i1. i1. i1. .",
+    ". i1. i1. i1. i1. i1. .",
+    ". i1. i1. i1. i1. i1. .",
+    ". . . . . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 10,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "ice",
+      "count": 15
+    }
+  ],
+  "seed": "L13v2a0:b80565e4",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 1,
+    "avgMovesLeft": 5.04,
+    "status": "ok"
+  }
+}

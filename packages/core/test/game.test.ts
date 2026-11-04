@@ -233,7 +233,7 @@ describe("performance (budget du générateur, livrable 4)", () => {
     }
     const secs = Number(process.hrtime.bigint() - t0) / 1e9;
     const rate = Math.round(moves / secs);
-    console.log(`débit : ${rate} coups/s (indice glouton inclus), ${moves} coups en ${secs.toFixed(2)} s`);
+    process.stdout.write(`\n[perf] débit : ${rate} coups/s (indice glouton inclus), ${moves} coups en ${secs.toFixed(2)} s\n`);
     expect(rate).toBeGreaterThan(300);
   });
 });

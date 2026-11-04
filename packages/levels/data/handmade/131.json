@@ -1,0 +1,39 @@
+{
+  "n": 131,
+  "version": 2,
+  "source": "handmade",
+  "title": "Les Bulles",
+  "tutorial": "bubble",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". B . . . B .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 12,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "bubble",
+      "count": 2
+    }
+  ],
+  "seed": "L131v2a0:d5ce65e3",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 1,
+    "avgMovesLeft": 8.88,
+    "status": "ok",
+    "auditRate": 1
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "n": 25,
+  "version": 2,
+  "source": "handmade",
+  "title": "La Croix de feu",
+  "difficulty": "medium",
+  "targetRate": 0.6,
+  "width": 9,
+  "height": 9,
+  "layout": [
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . .",
+    ". . . . . . . . ."
+  ],
+  "colors": 5,
+  "moves": 12,
+  "goals": [
+    {
+      "type": "collect",
+      "color": 0,
+      "count": 36
+    }
+  ],
+  "seed": "L25v2a0:361eef81",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 0.685,
+    "avgMovesLeft": 2.87,
+    "status": "ok"
+  }
+}

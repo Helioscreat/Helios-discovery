@@ -26,7 +26,10 @@ export class GameSession {
 
   constructor(level: number, readonly profile: Profile, useStarterKit: boolean) {
     this.level = level;
-    this.state = createGame(levelSpec(level));
+    // Numéro d'essai : ne change que la suite des pièces qui tombent (jamais la grille ni les objectifs).
+    const attempt = profile.attempts[level] ?? 0;
+    profile.attempts[level] = attempt + 1;
+    this.state = createGame(levelSpec(level, attempt));
     if (useStarterKit && consume(profile, "starterKit")) {
       this.state = applyStarterKit(this.state).state;
     }

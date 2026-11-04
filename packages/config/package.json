@@ -1,0 +1,9 @@
+{
+  "name": "@helios/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": { "test": "vitest run", "typecheck": "tsc --noEmit -p ." },
+  "dependencies": { "@helios/compliance": "0.1.0", "@helios/economy": "0.1.0" }
+}

@@ -1,3 +1,4 @@
+import { DEFAULT_PREFS, type NotificationPrefs } from "@helios/config";
 import type { Locale } from "./i18n";
 
 export interface Settings {
@@ -9,6 +10,8 @@ export interface Settings {
   hints: boolean;
   textScale: 100 | 125 | 150;
   locale: Locale | null;
+  /** Notifications : opt-in, désactivées par défaut, par catégorie. */
+  notifications: NotificationPrefs;
 }
 
 export const TEXT_SCALES = [100, 125, 150] as const;
@@ -23,6 +26,7 @@ export function defaultSettings(prefersReducedMotion: boolean): Settings {
     hints: true,
     textScale: 100,
     locale: null,
+    notifications: DEFAULT_PREFS,
   };
 }
 

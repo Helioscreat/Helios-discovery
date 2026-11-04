@@ -1,20 +1,37 @@
-import { areAdjacent, cloneState, MAX_SIZE } from "./board";
+import { areAdjacent, cloneState, isFreeNormal, isPiece, MAX_SIZE, neighbors4, parseToken } from "./board";
 import { crossLines, crossCells, rectCells, squareAround, tripleLines } from "./effects";
 import { findMatches } from "./match";
 import { ensurePlayable, hasValidMove, isValidSwap, safeColor } from "./moves";
-import { cascadeLoop, Phase } from "./resolve";
+import { cascadeLoop, isSpawner, Phase } from "./resolve";
+import { riseBubbles, rotateConveyors, runGenerators } from "./elements";
+import { registerSettle } from "./moves";
+
+// Après une libération de grille : gravité, apparition, puis résolution des alignements éventuels.
+registerSettle((st, ev) => { cascadeLoop(st, ev, 1); });
 import { nextInt, pick, seedRng } from "./rng";
-import type { AreaSpecial, ComboKind, GameEvent, GameState, Goal, Move, MoveResult, Piece, Pos } from "./types";
+import type { AreaSpecial, ComboKind, DropConfig, GameEvent, GameState, Goal, Move, MoveResult, Piece, Pos } from "./types";
 
 export interface LevelSpec {
   width: number;
   height: number;
-  /** Lignes de '.' (active) et '#' (inactive). Absent = grille pleine. */
+  /** Lignes de '.' (active) et '#' (inactive). Ignoré si `layout` est fourni. */
   mask?: string[];
+  /** Grille case par case (notation de `parseToken`) : obstacles, gel, verrous, couleurs imposées. */
+  layout?: string[];
   colors: number;
   moves: number;
   goals: Goal[];
   seed: string;
+  drops?: Omit<DropConfig, "spawned">;
+  /** Portails [entrée, sortie] et boucles de tapis roulants (index de cases). */
+  portals?: [Pos, Pos][];
+  conveyors?: Pos[][];
+  /**
+   * Graine de l'essai. La grille de départ ne dépend que de `seed` (identique pour tous) ;
+   * la suite des pièces qui tombent dépend de `seed` + `playSeed`. Absent = suite dérivée de `seed` seul.
+   * Le jeu passe un numéro d'essai ; il ne dépend jamais du profil ni des dépenses du joueur (FAIR-01).
+   */
+  playSeed?: string;
 }
 
 export const MAX_FILL_ATTEMPTS = 1000;
@@ -24,9 +41,13 @@ export function createGame(spec: LevelSpec): GameState {
   const { width, height } = spec;
   if (width < 3 || height < 3 || width > MAX_SIZE || height > MAX_SIZE) throw new Error("taille de grille hors [3, 9]");
   if (spec.colors < 4 || spec.colors > 6) throw new Error("nombre de couleurs hors [4, 6]");
-  const mask: boolean[] = [];
-  for (let y = 0; y < height; y++)
-    for (let x = 0; x < width; x++) mask.push(spec.mask ? spec.mask[y]?.[x] === "." : true);
+  const tokens = spec.layout
+    ? spec.layout.map((r) => r.trim().split(/\s+/))
+    : Array.from({ length: height }, (_, y) => Array.from({ length: width }, (_, x) => (spec.mask && spec.mask[y]?.[x] !== "." ? "#" : ".")));
+  if (tokens.length !== height || tokens.some((r) => r.length !== width)) throw new Error("layout incohérent avec la taille");
+  const cellsSpec = tokens.flat().map(parseToken);
+  const mask = cellsSpec.map((c) => c.active);
+  const ice = cellsSpec.map((c) => c.ice);
 
   const st: GameState = {
     version: 1,
@@ -44,15 +65,32 @@ export function createGame(spec: LevelSpec): GameState {
     progress: spec.goals.map(() => 0),
     status: "playing",
   };
+  if (ice.some((v) => v > 0)) st.ice = ice;
+  const initialDrops = cellsSpec.filter((c) => c.content !== null && c.content !== "random" && c.content.kind === "drop").length;
+  if (spec.drops) st.drops = { ...spec.drops, spawned: initialDrops };
+  if (spec.portals?.length) st.portals = spec.portals.map(([a, b]) => [a, b] as [Pos, Pos]);
+  if (spec.conveyors?.length) st.conveyors = spec.conveyors.map((l) => l.slice());
+  if (cellsSpec.some((c) => c.content !== null && c.content !== "random" && c.content.kind === "chest")) st.keys = 0;
+
   for (let attempt = 0; attempt < MAX_FILL_ATTEMPTS; attempt++) {
     st.nextId = 1;
     for (let i = 0; i < st.cells.length; i++) {
+      const c = cellsSpec[i];
       st.cells[i] = null;
-      if (mask[i]) st.cells[i] = { id: st.nextId++, color: safeColor(st, i), special: null };
+      if (c.content === null) continue;
+      if (c.content === "random") st.cells[i] = { id: st.nextId++, color: safeColor(st, i), special: null };
+      else {
+        const p: Piece = { id: st.nextId++, ...c.content };
+        if (p.color === -2) p.color = safeColor(st, i); // pièce verrouillée de couleur aléatoire
+        st.cells[i] = p;
+      }
     }
-    if (hasValidMove(st)) return st;
+    if (findMatches(st).length === 0 && hasValidMove(st)) {
+      if (spec.playSeed !== undefined) st.rng = seedRng(`${spec.seed}|play|${spec.playSeed}`);
+      return st;
+    }
   }
-  throw new Error("aucun remplissage jouable pour ce masque");
+  throw new Error("aucun remplissage jouable pour ce layout");
 }
 
 /** Version pure : l'état d'entrée n'est jamais modifié. */
@@ -75,6 +113,7 @@ export function applyMoveInPlace(st: GameState, move: Move): { events: GameEvent
   if (!st.mask[from] || !st.mask[to] || st.cells[from] === null || st.cells[to] === null) return reject("empty");
   if (!isValidSwap(st, from, to)) return reject("noMatch");
 
+  const ivyBefore = countIvy(st);
   // La pièce déplacée arrive en `to` ; les effets de combo sont centrés sur `to`.
   const moved = st.cells[from]!;
   st.cells[from] = st.cells[to];
@@ -89,6 +128,7 @@ export function applyMoveInPlace(st: GameState, move: Move): { events: GameEvent
 
   st.movesLeft--;
   st.moveCount++;
+  endOfTurn(st, ev, ivyBefore);
   if (goalsDone(st)) {
     runBonus(st, ev);
     st.status = "won";
@@ -104,6 +144,50 @@ export function applyMoveInPlace(st: GameState, move: Move): { events: GameEvent
 
 export function goalsDone(st: GameState): boolean {
   return st.goals.every((g, k) => st.progress[k] >= (g.type === "score" ? g.target : g.count));
+}
+
+/** Effets de fin de coup, dans l'ordre : tapis roulants, montée des bulles, générateurs, lierre. */
+export function endOfTurn(st: GameState, ev: GameEvent[], ivyBefore: number): void {
+  let c = 1;
+  if (rotateConveyors(st, ev)) c = cascadeLoop(st, ev, c);
+  if (riseBubbles(st, ev)) c = cascadeLoop(st, ev, c);
+  runGenerators(st, ev);
+  if (ivyBefore > 0 && countIvy(st) >= ivyBefore) spreadIvy(st, ev);
+}
+
+export function countIvy(st: GameState): number {
+  let n = 0;
+  for (const p of st.cells) if (p?.kind === "ivy") n++;
+  return n;
+}
+
+/** Part minimale de pièces libres que le lierre doit laisser sur la grille. */
+export const IVY_MIN_FREE_SHARE = 0.5;
+
+/**
+ * Le lierre gagne une case voisine (pièce normale libre, sans gel) si aucun lierre n'a été détruit pendant le coup.
+ * Il ne pousse jamais sur une case d'apparition (la grille ne doit pas pouvoir se tarir) et s'arrête
+ * quand les pièces libres tomberaient sous la moitié des cases actives.
+ */
+export function spreadIvy(st: GameState, ev: GameEvent[]): void {
+  let active = 0, free = 0;
+  for (let i = 0; i < st.cells.length; i++) {
+    if (!st.mask[i]) continue;
+    active++;
+    if (isFreeNormal(st.cells[i])) free++;
+  }
+  if (free - 1 < active * IVY_MIN_FREE_SHARE) return;
+  const candidates = new Set<Pos>();
+  for (let i = 0; i < st.cells.length; i++) {
+    if (st.cells[i]?.kind !== "ivy") continue;
+    for (const nb of neighbors4(st, i))
+      if (isFreeNormal(st.cells[nb]) && !st.cells[nb]!.key && !(st.ice && st.ice[nb] > 0) && !isSpawner(st, nb)) candidates.add(nb);
+  }
+  if (candidates.size === 0) return;
+  const target = pick(st.rng, [...candidates].sort((a, b) => a - b));
+  const id = st.nextId++;
+  st.cells[target] = { id, color: -1, special: null, kind: "ivy", hp: 1 };
+  ev.push({ type: "ivySpread", at: target, id });
 }
 
 const kindOf = (p: Piece) => (p.special === "rocketH" || p.special === "rocketV" ? "rocket" : p.special);
@@ -178,7 +262,7 @@ export function runBonus(st: GameState, ev: GameEvent[]): void {
   const changed: Pos[] = [];
   for (let k = 0; k < n; k++) {
     const normal: Pos[] = [];
-    for (let i = 0; i < st.cells.length; i++) if (st.cells[i]?.special === null) normal.push(i);
+    for (let i = 0; i < st.cells.length; i++) if (isFreeNormal(st.cells[i])) normal.push(i);
     if (normal.length === 0) break;
     const i = pick(st.rng, normal);
     st.cells[i]!.special = nextInt(st.rng, 2) === 0 ? "rocketH" : "rocketV";
@@ -188,7 +272,10 @@ export function runBonus(st: GameState, ev: GameEvent[]): void {
 
   let cascade = 1;
   for (let round = 0; round < MAX_BONUS_ROUNDS; round++) {
-    const specials = rectCells(st, 0, 0, st.width - 1, st.height - 1).filter((i) => st.cells[i]?.special != null);
+    const specials = rectCells(st, 0, 0, st.width - 1, st.height - 1).filter((i) => {
+      const p = st.cells[i];
+      return isPiece(p) && p.special !== null && !p.lock;
+    });
     if (specials.length === 0) return;
     const phase = new Phase(st, ev, cascade);
     phase.hitAll(specials);
@@ -203,4 +290,17 @@ export function stabilize(st: GameState): GameEvent[] {
   const ev: GameEvent[] = [];
   cascadeLoop(st, ev, 0);
   return ev;
+}
+
+/**
+ * Continuer après un échec (« +5 coups », payé ou en pièces) : la partie reprend avec `moves` coups,
+ * sur la même grille. Refusé si la partie n'est pas perdue.
+ */
+export function continueGame(state: GameState, moves: number): GameState | null {
+  if (state.status !== "lost" || moves <= 0) return null;
+  const st = cloneState(state);
+  st.status = "playing";
+  st.movesLeft = moves;
+  ensurePlayable(st, []);
+  return st;
 }

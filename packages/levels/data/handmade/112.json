@@ -1,0 +1,38 @@
+{
+  "n": 112,
+  "version": 2,
+  "source": "handmade",
+  "title": "Le Lierre",
+  "tutorial": "ivy",
+  "difficulty": "relax",
+  "targetRate": 0.95,
+  "width": 7,
+  "height": 7,
+  "layout": [
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . . . . .",
+    ". . . V . . .",
+    ". . . . . . ."
+  ],
+  "colors": 4,
+  "moves": 12,
+  "goals": [
+    {
+      "type": "clear",
+      "target": "ivy",
+      "count": 1
+    }
+  ],
+  "seed": "L112v2a0:b492acac",
+  "attempt": 0,
+  "scale": 1,
+  "validation": {
+    "runs": 200,
+    "botRate": 1,
+    "avgMovesLeft": 10.81,
+    "status": "ok"
+  }
+}
