@@ -6,9 +6,23 @@
   "scripts": {
     "matrix": "node tools/check-matrix.mjs",
     "matrix:coverage": "node tools/check-matrix.mjs --coverage",
-    "matrix:strict": "node tools/check-matrix.mjs --coverage --strict"
+    "matrix:strict": "node tools/check-matrix.mjs --coverage --strict",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test:e2e": "npm run test:e2e -w @helios/game",
+    "build": "npm run build -w @helios/game",
+    "dev": "npm run dev -w @helios/game"
   },
   "devDependencies": {
-    "yaml": "^2.9.1"
-  }
+    "@types/node": "22.19.1",
+    "typescript": "5.9.3",
+    "vite": "7.3.7",
+    "vitest": "4.1.12",
+    "yaml": "2.9.1",
+    "playwright-core": "1.63.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ]
 }
