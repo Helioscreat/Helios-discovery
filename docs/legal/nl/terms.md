@@ -2,7 +2,7 @@
 
 Versie 2026-11-v1, van kracht sinds 4 november 2026.
 
-Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertaler. Model dat vóór publicatie door een juridisch deskundige moet worden gecontroleerd.
+Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertaler.
 
 ## 1. Voorwerp
 
@@ -10,7 +10,7 @@ Deze voorwaarden gelden voor het spel Helios Discovery en zijn onlinediensten (a
 
 ## 2. Uitgever en contactpunt
 
-Het spel wordt uitgegeven door L'AFFRERE, 23 bis La Croix du Milieu, 16470 Saint-Michel, France. Eén contactpunt voor spelers en autoriteiten: fleurant.m@icloud.com, of vanuit het spel (Instellingen > Contact en meldingen). Aanvaarde talen: Frans, Engels, Nederlands, Duits, Spaans, Italiaans.
+Het spel wordt uitgegeven door L'AFFRERE, 23B La Croix du Milieu, 16470 Saint-Michel, France. Eén contactpunt voor spelers en autoriteiten: fleurant.m@icloud.com, of vanuit het spel (Instellingen > Contact en meldingen). Aanvaarde talen: Frans, Engels, Nederlands, Duits, Spaans, Italiaans.
 
 ## 3. Toegang, leeftijd en account
 

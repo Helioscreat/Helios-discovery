@@ -2,7 +2,7 @@
 
 Versión 2026-11-v1, vigente desde el 4 de noviembre de 2026.
 
-Traducción del original francés; todavía no la ha revisado un traductor jurídico. Modelo que debe validar un profesional del derecho antes de su publicación.
+Traducción del original francés; todavía no la ha revisado un traductor jurídico.
 
 ## 1. Ámbito
 

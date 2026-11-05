@@ -2,7 +2,7 @@
 
 Version 2026-11-v1, gültig seit 4. November 2026.
 
-Übersetzung des französischen Originals; noch nicht von einer juristischen Übersetzerin oder einem juristischen Übersetzer geprüft. Vorlage, die vor der Veröffentlichung von einer Rechtsfachperson geprüft werden muss.
+Übersetzung des französischen Originals; noch nicht von einer juristischen Übersetzerin oder einem juristischen Übersetzer geprüft.
 
 ## Kurz gesagt
 
@@ -13,7 +13,7 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 
 ## 1. Verantwortlicher
 
-L'AFFRERE (SAS), 23 bis La Croix du Milieu, 16470 Saint-Michel, France, gibt Helios Discovery heraus und entscheidet über die Verwendung deiner Daten. Kontakt: fleurant.m@icloud.com.
+L'AFFRERE (SAS), 23B La Croix du Milieu, 16470 Saint-Michel, France, gibt Helios Discovery heraus und entscheidet über die Verwendung deiner Daten. Kontakt: fleurant.m@icloud.com.
 
 Wir haben keinen Datenschutzbeauftragten benannt. Jede Frage zu deinen Daten geht an dieselbe Adresse und wird innerhalb eines Monats beantwortet.
 

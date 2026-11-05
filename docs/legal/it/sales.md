@@ -2,7 +2,7 @@
 
 Versione 2026-11-v1, in vigore dal 4 novembre 2026.
 
-Traduzione dell'originale francese; non ancora rivista da un traduttore giuridico. Modello da far convalidare da un professionista del diritto prima della pubblicazione.
+Traduzione dell'originale francese; non ancora rivista da un traduttore giuridico.
 
 ## 1. Ambito
 

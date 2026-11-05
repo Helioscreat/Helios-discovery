@@ -2,7 +2,7 @@
 
 Versión 2026-11-v1, vigente desde el 4 de noviembre de 2026.
 
-Traducción del original francés; todavía no la ha revisado un traductor jurídico. Modelo que debe validar un profesional del derecho antes de su publicación.
+Traducción del original francés; todavía no la ha revisado un traductor jurídico.
 
 ## En resumen
 
@@ -13,7 +13,7 @@ Traducción del original francés; todavía no la ha revisado un traductor jurí
 
 ## 1. Responsable del tratamiento
 
-L'AFFRERE (SAS), 23 bis La Croix du Milieu, 16470 Saint-Michel, France, edita Helios Discovery y decide cómo se usan tus datos. Contacto: fleurant.m@icloud.com.
+L'AFFRERE (SAS), 23B La Croix du Milieu, 16470 Saint-Michel, France, edita Helios Discovery y decide cómo se usan tus datos. Contacto: fleurant.m@icloud.com.
 
 No hemos designado delegado de protección de datos. Cualquier pregunta sobre tus datos llega a la misma dirección y recibe respuesta en un plazo de un mes.
 

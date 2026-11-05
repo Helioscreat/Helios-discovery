@@ -2,7 +2,7 @@
 
 Version 2026-11-v1, in force since November 4, 2026.
 
-Translation of the French original; it has not yet been reviewed by a legal translator. Template to be validated by a legal professional before publication.
+Translation of the French original; it has not yet been reviewed by a legal translator.
 
 Here are the rules in short. The full text is in the terms of use.
 

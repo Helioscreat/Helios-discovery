@@ -73,7 +73,7 @@ const pub = () => ({
 });
 
 function header(l: Locale, title: string): Block[] {
-  return [{ h: 1, text: title }, { p: phrase(l, "meta.version", { label: LEGAL_VERSION.label, date: date(l, LEGAL_VERSION.date) }) }, { p: `${phrase(l, "meta.translation")} ${phrase(l, "meta.review")}` }];
+  return [{ h: 1, text: title }, { p: phrase(l, "meta.version", { label: LEGAL_VERSION.label, date: date(l, LEGAL_VERSION.date) }) }, { p: phrase(l, "meta.translation") }];
 }
 
 function retentionCell(l: Locale, t: (typeof TREATMENTS)[number]): string {

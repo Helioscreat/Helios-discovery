@@ -2,19 +2,19 @@
 
 Versión 2026-11-v1, vigente desde el 4 de noviembre de 2026.
 
-Traducción del original francés; todavía no la ha revisado un traductor jurídico. Modelo que debe validar un profesional del derecho antes de su publicación.
+Traducción del original francés; todavía no la ha revisado un traductor jurídico.
 
 ## Editor
 
 |  |  |
 |---|---|
 | Razón social | L'AFFRERE |
-| Forma jurídica y capital | SAS, ⟦À COMPLÉTER : capital social⟧ |
-| Domicilio social | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
-| Inscripción registral | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
-| Número SIREN | ⟦À COMPLÉTER : SIREN⟧ |
-| NIF-IVA intracomunitario | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
-| Director o directora de la publicación | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président ou la présidente de la SAS)⟧ |
+| Forma jurídica y capital | SAS, 1 000 € |
+| Domicilio social | 23B La Croix du Milieu, 16470 Saint-Michel, France |
+| Inscripción registral | RCS Angoulême 990 851 503 |
+| Número SIREN | 990 851 503 |
+| NIF-IVA intracomunitario | FR94990851503 |
+| Director o directora de la publicación | Jérémy FLEURANT |
 | Correo electrónico | fleurant.m@icloud.com |
 | Teléfono | ⟦À COMPLÉTER : téléphone⟧ |
 

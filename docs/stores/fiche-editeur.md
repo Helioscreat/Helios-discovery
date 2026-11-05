@@ -5,11 +5,11 @@
 | Champ du store | Valeur |
 |---|---|
 | Nom ou raison sociale | L'AFFRERE |
-| Adresse | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
+| Adresse | 23B La Croix du Milieu, 16470 Saint-Michel, France |
 | E-mail | fleurant.m@icloud.com |
 | Téléphone | ⟦À COMPLÉTER : téléphone⟧ |
-| Numéro d'immatriculation | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ ; SIREN ⟦À COMPLÉTER : SIREN⟧ |
-| TVA | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
+| Numéro d'immatriculation | RCS Angoulême 990 851 503 ; SIREN 990 851 503 |
+| TVA | FR94990851503 |
 
 ## Preuves à archiver (contrôle manuel T-DSA-06)
 

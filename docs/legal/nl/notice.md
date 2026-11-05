@@ -2,19 +2,19 @@
 
 Versie 2026-11-v1, van kracht sinds 4 november 2026.
 
-Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertaler. Model dat vóór publicatie door een juridisch deskundige moet worden gecontroleerd.
+Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertaler.
 
 ## Uitgever
 
 |  |  |
 |---|---|
 | Bedrijfsnaam | L'AFFRERE |
-| Rechtsvorm en kapitaal | SAS, ⟦À COMPLÉTER : capital social⟧ |
-| Maatschappelijke zetel | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
-| Inschrijving | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
-| SIREN-nummer | ⟦À COMPLÉTER : SIREN⟧ |
-| Btw-nummer | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
-| Verantwoordelijke uitgever | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président ou la présidente de la SAS)⟧ |
+| Rechtsvorm en kapitaal | SAS, 1 000 € |
+| Maatschappelijke zetel | 23B La Croix du Milieu, 16470 Saint-Michel, France |
+| Inschrijving | RCS Angoulême 990 851 503 |
+| SIREN-nummer | 990 851 503 |
+| Btw-nummer | FR94990851503 |
+| Verantwoordelijke uitgever | Jérémy FLEURANT |
 | E-mail | fleurant.m@icloud.com |
 | Telefoon | ⟦À COMPLÉTER : téléphone⟧ |
 

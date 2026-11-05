@@ -2,7 +2,7 @@
 
 Version 2026-11-v1, in force since November 4, 2026.
 
-Translation of the French original; it has not yet been reviewed by a legal translator. Template to be validated by a legal professional before publication.
+Translation of the French original; it has not yet been reviewed by a legal translator.
 
 ## 1. Purpose
 
@@ -10,7 +10,7 @@ These terms apply to the game Helios Discovery and its online services (account,
 
 ## 2. Publisher and contact point
 
-The game is published by L'AFFRERE, 23 bis La Croix du Milieu, 16470 Saint-Michel, France. Single contact point for players and authorities: fleurant.m@icloud.com, or from the game (Settings > Contact and reports). Accepted languages: French, English, Dutch, German, Spanish, Italian.
+The game is published by L'AFFRERE, 23B La Croix du Milieu, 16470 Saint-Michel, France. Single contact point for players and authorities: fleurant.m@icloud.com, or from the game (Settings > Contact and reports). Accepted languages: French, English, Dutch, German, Spanish, Italian.
 
 ## 3. Access, age and account
 

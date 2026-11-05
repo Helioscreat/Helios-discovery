@@ -2,19 +2,19 @@
 
 Version 2026-11-v1, gültig seit 4. November 2026.
 
-Übersetzung des französischen Originals; noch nicht von einer juristischen Übersetzerin oder einem juristischen Übersetzer geprüft. Vorlage, die vor der Veröffentlichung von einer Rechtsfachperson geprüft werden muss.
+Übersetzung des französischen Originals; noch nicht von einer juristischen Übersetzerin oder einem juristischen Übersetzer geprüft.
 
 ## Anbieter
 
 |  |  |
 |---|---|
 | Firma | L'AFFRERE |
-| Rechtsform und Stammkapital | SAS, ⟦À COMPLÉTER : capital social⟧ |
-| Sitz | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
-| Handelsregister | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
-| SIREN-Nummer | ⟦À COMPLÉTER : SIREN⟧ |
-| USt-IdNr. | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
-| Verantwortlich für den Inhalt | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président ou la présidente de la SAS)⟧ |
+| Rechtsform und Stammkapital | SAS, 1 000 € |
+| Sitz | 23B La Croix du Milieu, 16470 Saint-Michel, France |
+| Handelsregister | RCS Angoulême 990 851 503 |
+| SIREN-Nummer | 990 851 503 |
+| USt-IdNr. | FR94990851503 |
+| Verantwortlich für den Inhalt | Jérémy FLEURANT |
 | E-Mail | fleurant.m@icloud.com |
 | Telefon | ⟦À COMPLÉTER : téléphone⟧ |
 

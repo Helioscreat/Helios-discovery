@@ -2,7 +2,7 @@
 
 Version 2026-11-v1, en vigueur depuis le 4 novembre 2026.
 
-Version originale du document. Modèle à faire valider par un professionnel du droit avant publication.
+Version originale du document.
 
 Voici les règles en bref. Le texte complet se trouve dans les conditions d'utilisation.
 

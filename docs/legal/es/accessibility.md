@@ -2,7 +2,7 @@
 
 Versión 2026-11-v1, vigente desde el 4 de noviembre de 2026.
 
-Traducción del original francés; todavía no la ha revisado un traductor jurídico. Modelo que debe validar un profesional del derecho antes de su publicación.
+Traducción del original francés; todavía no la ha revisado un traductor jurídico.
 
 L'AFFRERE quiere que Helios Discovery sea accesible para todos, más allá de lo que la ley exige a una microempresa (Directiva (UE) 2019/882, art. 4(5)).
 

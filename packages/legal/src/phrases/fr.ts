@@ -6,7 +6,6 @@
 export const fr = {
   "lang.name": "Français",
   "meta.version": "Version {label}, en vigueur depuis le {date}.",
-  "meta.review": "Modèle à faire valider par un professionnel du droit avant publication.",
   "meta.translation": "Version originale du document.",
   "unit.days": "{n} jours",
   "unit.months": "{n} mois",

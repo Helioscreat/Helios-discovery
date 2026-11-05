@@ -4,7 +4,6 @@ import type { PhraseKey } from "./fr";
 export const nl: Record<PhraseKey, string> = {
   "lang.name": "Nederlands",
   "meta.version": "Versie {label}, van kracht sinds {date}.",
-  "meta.review": "Model dat vóór publicatie door een juridisch deskundige moet worden gecontroleerd.",
   "meta.translation": "Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertaler.",
   "unit.days": "{n} dagen",
   "unit.months": "{n} maanden",

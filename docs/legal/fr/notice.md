@@ -2,19 +2,19 @@
 
 Version 2026-11-v1, en vigueur depuis le 4 novembre 2026.
 
-Version originale du document. Modèle à faire valider par un professionnel du droit avant publication.
+Version originale du document.
 
 ## Éditeur
 
 |  |  |
 |---|---|
 | Raison sociale | L'AFFRERE |
-| Forme et capital | SAS, ⟦À COMPLÉTER : capital social⟧ |
-| Siège | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
-| Immatriculation | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
-| SIREN | ⟦À COMPLÉTER : SIREN⟧ |
-| TVA intracommunautaire | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
-| Directeur ou directrice de la publication | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président ou la présidente de la SAS)⟧ |
+| Forme et capital | SAS, 1 000 € |
+| Siège | 23B La Croix du Milieu, 16470 Saint-Michel, France |
+| Immatriculation | RCS Angoulême 990 851 503 |
+| SIREN | 990 851 503 |
+| TVA intracommunautaire | FR94990851503 |
+| Directeur ou directrice de la publication | Jérémy FLEURANT |
 | E-mail | fleurant.m@icloud.com |
 | Téléphone | ⟦À COMPLÉTER : téléphone⟧ |
 

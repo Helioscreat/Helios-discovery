@@ -34,12 +34,14 @@ export interface Publisher {
 export const PUBLISHER: Publisher = {
   name: "L'AFFRERE",
   legalForm: "SAS",
-  capital: todo("capital social"),
-  address: "23 bis La Croix du Milieu, 16470 Saint-Michel, France",
-  registry: todo("RCS (ville et numéro)"),
-  siren: todo("SIREN"),
-  vat: todo("numéro de TVA intracommunautaire"),
-  director: todo("directeur ou directrice de la publication (le président ou la présidente de la SAS)"),
+  capital: "1 000 €",
+  address: "23B La Croix du Milieu, 16470 Saint-Michel, France",
+  registry: "RCS Angoulême 990 851 503",
+  siren: "990 851 503",
+  /** Calculé depuis le SIREN (clé FR) ; à confirmer sur l'avis de situation ou auprès du SIE. */
+  vat: "FR94990851503",
+  /** Président de la SAS (Kbis du 05/09/2025). */
+  director: "Jérémy FLEURANT",
   email: "fleurant.m@icloud.com",
   phone: todo("téléphone"),
   /** GitHub Pages du dépôt (publié par .github/workflows/pages.yml) ; à remplacer par le domaine de l'éditeur s'il en a un. */

@@ -2,7 +2,7 @@
 
 Versie 2026-11-v1, van kracht sinds 4 november 2026.
 
-Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertaler. Model dat vóór publicatie door een juridisch deskundige moet worden gecontroleerd.
+Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertaler.
 
 ## In het kort
 
@@ -13,7 +13,7 @@ Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertal
 
 ## 1. Verwerkingsverantwoordelijke
 
-L'AFFRERE (SAS), 23 bis La Croix du Milieu, 16470 Saint-Michel, France, geeft Helios Discovery uit en beslist hoe je gegevens worden gebruikt. Contact: fleurant.m@icloud.com.
+L'AFFRERE (SAS), 23B La Croix du Milieu, 16470 Saint-Michel, France, geeft Helios Discovery uit en beslist hoe je gegevens worden gebruikt. Contact: fleurant.m@icloud.com.
 
 We hebben geen functionaris voor gegevensbescherming aangesteld. Elke vraag over je gegevens komt op hetzelfde adres binnen en krijgt binnen een maand antwoord.
 

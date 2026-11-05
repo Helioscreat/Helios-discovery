@@ -2,19 +2,19 @@
 
 Version 2026-11-v1, in force since November 4, 2026.
 
-Translation of the French original; it has not yet been reviewed by a legal translator. Template to be validated by a legal professional before publication.
+Translation of the French original; it has not yet been reviewed by a legal translator.
 
 ## Publisher
 
 |  |  |
 |---|---|
 | Company name | L'AFFRERE |
-| Legal form and share capital | SAS, ⟦À COMPLÉTER : capital social⟧ |
-| Registered office | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
-| Registration | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
-| SIREN number | ⟦À COMPLÉTER : SIREN⟧ |
-| EU VAT number | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
-| Publication director | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président ou la présidente de la SAS)⟧ |
+| Legal form and share capital | SAS, 1 000 € |
+| Registered office | 23B La Croix du Milieu, 16470 Saint-Michel, France |
+| Registration | RCS Angoulême 990 851 503 |
+| SIREN number | 990 851 503 |
+| EU VAT number | FR94990851503 |
+| Publication director | Jérémy FLEURANT |
 | E-mail | fleurant.m@icloud.com |
 | Telephone | ⟦À COMPLÉTER : téléphone⟧ |
 

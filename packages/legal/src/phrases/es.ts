@@ -4,7 +4,6 @@ import type { PhraseKey } from "./fr";
 export const es: Record<PhraseKey, string> = {
   "lang.name": "Español",
   "meta.version": "Versión {label}, vigente desde el {date}.",
-  "meta.review": "Modelo que debe validar un profesional del derecho antes de su publicación.",
   "meta.translation": "Traducción del original francés; todavía no la ha revisado un traductor jurídico.",
   "unit.days": "{n} días",
   "unit.months": "{n} meses",

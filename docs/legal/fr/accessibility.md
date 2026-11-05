@@ -2,7 +2,7 @@
 
 Version 2026-11-v1, en vigueur depuis le 4 novembre 2026.
 
-Version originale du document. Modèle à faire valider par un professionnel du droit avant publication.
+Version originale du document.
 
 L'AFFRERE veut rendre Helios Discovery accessible à tous, au-delà de ce qu'exige la loi pour une micro-entreprise (directive (UE) 2019/882, art. 4(5)).
 

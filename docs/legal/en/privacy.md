@@ -2,7 +2,7 @@
 
 Version 2026-11-v1, in force since November 4, 2026.
 
-Translation of the French original; it has not yet been reviewed by a legal translator. Template to be validated by a legal professional before publication.
+Translation of the French original; it has not yet been reviewed by a legal translator.
 
 ## In short
 
@@ -13,7 +13,7 @@ Translation of the French original; it has not yet been reviewed by a legal tran
 
 ## 1. Controller
 
-L'AFFRERE (SAS), 23 bis La Croix du Milieu, 16470 Saint-Michel, France, publishes Helios Discovery and decides how your data is used. Contact: fleurant.m@icloud.com.
+L'AFFRERE (SAS), 23B La Croix du Milieu, 16470 Saint-Michel, France, publishes Helios Discovery and decides how your data is used. Contact: fleurant.m@icloud.com.
 
 We have not appointed a data protection officer. Any question about your data goes to the same address and is answered within one month.
 

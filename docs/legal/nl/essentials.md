@@ -2,7 +2,7 @@
 
 Versie 2026-11-v1, van kracht sinds 4 november 2026.
 
-Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertaler. Model dat vóór publicatie door een juridisch deskundige moet worden gecontroleerd.
+Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertaler.
 
 Dit zijn de regels in het kort. De volledige tekst staat in de gebruiksvoorwaarden.
 

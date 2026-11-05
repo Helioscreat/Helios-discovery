@@ -2,7 +2,7 @@
 
 Version 2026-11-v1, gültig seit 4. November 2026.
 
-Übersetzung des französischen Originals; noch nicht von einer juristischen Übersetzerin oder einem juristischen Übersetzer geprüft. Vorlage, die vor der Veröffentlichung von einer Rechtsfachperson geprüft werden muss.
+Übersetzung des französischen Originals; noch nicht von einer juristischen Übersetzerin oder einem juristischen Übersetzer geprüft.
 
 ## 1. Geltungsbereich
 
