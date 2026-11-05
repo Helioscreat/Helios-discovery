@@ -45,6 +45,7 @@ jobs:
           echo "Manifeste : $M"
           grep -o 'uses-permission[^>]*android:name="[^"]*"' "$M" | sort -u
           if grep -Eq 'ACCESS_(FINE|COARSE)_LOCATION' "$M"; then echo "::error::permission de localisation dans l'APK"; exit 1; fi
+          if grep -q 'ACCESS_ADSERVICES_TOPICS' "$M"; then echo "::error::API Topics présente dans l'APK"; exit 1; fi
       - uses: actions/upload-artifact@v4
         with:
           name: helios-discovery-debug-apk

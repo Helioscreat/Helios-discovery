@@ -41,9 +41,10 @@ describe("projets natifs (Capacitor)", () => {
     expect(plist).toMatch(/<key>GADDelayAppMeasurementInit<\/key>\s*<true\/>/);
   });
 
-  it("Android : seule la permission Internet ; pas de sauvegarde cloud des données du jeu", () => {
-    const perms = [...manifest.matchAll(/<uses-permission android:name="([^"]+)"/g)].map((m) => m[1]);
+  it("Android : seule la permission Internet déclarée par le jeu ; API Topics retirée du SDK ; pas de sauvegarde cloud", () => {
+    const perms = [...manifest.matchAll(/<uses-permission android:name="([^"]+)"\s*\/>/g)].map((m) => m[1]);
     expect(perms).toEqual(["android.permission.INTERNET"]);
+    expect(manifest).toMatch(/ACCESS_ADSERVICES_TOPICS" tools:node="remove"/);
     expect(manifest).toContain('android:allowBackup="false"');
   });
 

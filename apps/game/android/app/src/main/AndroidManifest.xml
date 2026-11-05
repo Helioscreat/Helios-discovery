@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="false"
@@ -50,4 +51,7 @@
 
     <!-- Aucune permission de localisation, de contacts, de caméra ni de micro (inventaire des données, test « aucune position précise »). -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Retirée du manifeste fusionné : l'API Topics (Privacy Sandbox) déduit des centres d'intérêt pour cibler la
+         publicité. Le jeu compte des mineurs et sa politique de confidentialité ne prévoit pas ce traitement. -->
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_TOPICS" tools:node="remove" />
 </manifest>
