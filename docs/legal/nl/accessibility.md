@@ -36,4 +36,4 @@ Als je geen toegang hebt tot een inhoud of functie, schrijf ons dan op fleurant.
 
 ## Beroep
 
-Als ons antwoord je niet bevredigt, kun je je wenden tot de markttoezichtautoriteit voor toegankelijkheid in je land: ⟦À COMPLÉTER : autorité compétente en France pour l'accessibilité des services (à vérifier dans la loi de transposition)⟧.
+Als ons antwoord je niet bevredigt, kun je je wenden tot de markttoezichtautoriteit voor toegankelijkheid in je land: Direction générale de la concurrence, de la consommation et de la répression des fraudes (DGCCRF), https://signal.conso.gouv.fr.

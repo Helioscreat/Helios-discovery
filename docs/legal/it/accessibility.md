@@ -36,4 +36,4 @@ Se non riesci ad accedere a un contenuto o a una funzione, scrivici a fleurant.m
 
 ## Ricorso
 
-Se la nostra risposta non ti soddisfa, puoi rivolgerti all'autorità di vigilanza del mercato competente per l'accessibilità nel tuo paese: ⟦À COMPLÉTER : autorité compétente en France pour l'accessibilité des services (à vérifier dans la loi de transposition)⟧.
+Se la nostra risposta non ti soddisfa, puoi rivolgerti all'autorità di vigilanza del mercato competente per l'accessibilità nel tuo paese: Direction générale de la concurrence, de la consommation et de la répression des fraudes (DGCCRF), https://signal.conso.gouv.fr.

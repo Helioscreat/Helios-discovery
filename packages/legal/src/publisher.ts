@@ -43,15 +43,15 @@ export const PUBLISHER: Publisher = {
   /** Président de la SAS (Kbis du 05/09/2025). */
   director: "Jérémy FLEURANT",
   email: "fleurant.m@icloud.com",
-  phone: todo("téléphone"),
+  phone: "+33 6 16 08 52 61",
   /** GitHub Pages du dépôt (publié par .github/workflows/pages.yml) ; à remplacer par le domaine de l'éditeur s'il en a un. */
   website: "https://helioscreat.github.io/Helios-discovery",
   /** Langues acceptées par le point de contact (DSA art. 12), identiques à celles du serveur. */
   contactLanguages: ["fr", "en", "nl", "de", "es", "it"],
   mediator: { name: todo("médiateur de la consommation"), url: todo("site du médiateur"), address: todo("adresse du médiateur") },
-  host: { name: "Scaleway SAS", address: "8 rue de la Ville l'Évêque, 75008 Paris, France", phone: todo("téléphone de l'hébergeur (à vérifier)") },
+  host: { name: "Scaleway SAS", address: "8 rue de la Ville l'Évêque, 75008 Paris, France", phone: "+33 1 84 13 00 00" },
   supervisor: { name: "Commission nationale de l'informatique et des libertés (CNIL)", url: "https://www.cnil.fr/fr/plaintes" },
-  accessibilityAuthority: todo("autorité compétente en France pour l'accessibilité des services (à vérifier dans la loi de transposition)"),
+  accessibilityAuthority: "Direction générale de la concurrence, de la consommation et de la répression des fraudes (DGCCRF), https://signal.conso.gouv.fr",
   size: "micro",
 };
 

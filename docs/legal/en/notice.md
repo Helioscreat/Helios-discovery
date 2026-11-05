@@ -16,7 +16,7 @@ Translation of the French original; it has not yet been reviewed by a legal tran
 | EU VAT number | FR94990851503 |
 | Publication director | Jérémy FLEURANT |
 | E-mail | fleurant.m@icloud.com |
-| Telephone | ⟦À COMPLÉTER : téléphone⟧ |
+| Telephone | +33 6 16 08 52 61 |
 
 ## Host
 
@@ -24,7 +24,7 @@ Translation of the French original; it has not yet been reviewed by a legal tran
 |---|---|
 | Name | Scaleway SAS |
 | Address | 8 rue de la Ville l'Évêque, 75008 Paris, France |
-| Telephone | ⟦À COMPLÉTER : téléphone de l'hébergeur (à vérifier)⟧ |
+| Telephone | +33 1 84 13 00 00 |
 
 ## Contact point (DSA art. 11 and 12)
 

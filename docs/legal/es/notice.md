@@ -16,7 +16,7 @@ Traducción del original francés; todavía no la ha revisado un traductor jurí
 | NIF-IVA intracomunitario | FR94990851503 |
 | Director o directora de la publicación | Jérémy FLEURANT |
 | Correo electrónico | fleurant.m@icloud.com |
-| Teléfono | ⟦À COMPLÉTER : téléphone⟧ |
+| Teléfono | +33 6 16 08 52 61 |
 
 ## Alojamiento
 
@@ -24,7 +24,7 @@ Traducción del original francés; todavía no la ha revisado un traductor jurí
 |---|---|
 | Nombre | Scaleway SAS |
 | Dirección | 8 rue de la Ville l'Évêque, 75008 Paris, France |
-| Teléfono | ⟦À COMPLÉTER : téléphone de l'hébergeur (à vérifier)⟧ |
+| Teléfono | +33 1 84 13 00 00 |
 
 ## Punto de contacto (DSA art. 11 y 12)
 

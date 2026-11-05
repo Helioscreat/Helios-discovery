@@ -16,7 +16,7 @@ Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertal
 | Btw-nummer | FR94990851503 |
 | Verantwoordelijke uitgever | Jérémy FLEURANT |
 | E-mail | fleurant.m@icloud.com |
-| Telefoon | ⟦À COMPLÉTER : téléphone⟧ |
+| Telefoon | +33 6 16 08 52 61 |
 
 ## Hostingprovider
 
@@ -24,7 +24,7 @@ Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertal
 |---|---|
 | Naam | Scaleway SAS |
 | Adres | 8 rue de la Ville l'Évêque, 75008 Paris, France |
-| Telefoon | ⟦À COMPLÉTER : téléphone de l'hébergeur (à vérifier)⟧ |
+| Telefoon | +33 1 84 13 00 00 |
 
 ## Contactpunt (DSA art. 11 en 12)
 

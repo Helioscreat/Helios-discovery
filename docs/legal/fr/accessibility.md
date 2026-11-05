@@ -36,4 +36,4 @@ Si tu ne peux pas accéder à un contenu ou à une fonction, écris-nous à fleu
 
 ## Recours
 
-Si notre réponse ne te satisfait pas, tu peux saisir l'autorité de surveillance du marché de ton pays chargée de l'accessibilité : ⟦À COMPLÉTER : autorité compétente en France pour l'accessibilité des services (à vérifier dans la loi de transposition)⟧.
+Si notre réponse ne te satisfait pas, tu peux saisir l'autorité de surveillance du marché de ton pays chargée de l'accessibilité : Direction générale de la concurrence, de la consommation et de la répression des fraudes (DGCCRF), https://signal.conso.gouv.fr.

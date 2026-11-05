@@ -36,4 +36,4 @@ Wenn du auf einen Inhalt oder eine Funktion nicht zugreifen kannst, schreib uns 
 
 ## Rechtsbehelf
 
-Wenn dich unsere Antwort nicht zufriedenstellt, kannst du dich an die für Barrierefreiheit zuständige Marktüberwachungsbehörde deines Landes wenden: ⟦À COMPLÉTER : autorité compétente en France pour l'accessibilité des services (à vérifier dans la loi de transposition)⟧.
+Wenn dich unsere Antwort nicht zufriedenstellt, kannst du dich an die für Barrierefreiheit zuständige Marktüberwachungsbehörde deines Landes wenden: Direction générale de la concurrence, de la consommation et de la répression des fraudes (DGCCRF), https://signal.conso.gouv.fr.

@@ -16,7 +16,7 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 | USt-IdNr. | FR94990851503 |
 | Verantwortlich für den Inhalt | Jérémy FLEURANT |
 | E-Mail | fleurant.m@icloud.com |
-| Telefon | ⟦À COMPLÉTER : téléphone⟧ |
+| Telefon | +33 6 16 08 52 61 |
 
 ## Hosting
 
@@ -24,7 +24,7 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 |---|---|
 | Name | Scaleway SAS |
 | Adresse | 8 rue de la Ville l'Évêque, 75008 Paris, France |
-| Telefon | ⟦À COMPLÉTER : téléphone de l'hébergeur (à vérifier)⟧ |
+| Telefon | +33 1 84 13 00 00 |
 
 ## Kontaktstelle (DSA Art. 11 und 12)
 

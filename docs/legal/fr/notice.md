@@ -16,7 +16,7 @@ Version originale du document.
 | TVA intracommunautaire | FR94990851503 |
 | Directeur ou directrice de la publication | Jérémy FLEURANT |
 | E-mail | fleurant.m@icloud.com |
-| Téléphone | ⟦À COMPLÉTER : téléphone⟧ |
+| Téléphone | +33 6 16 08 52 61 |
 
 ## Hébergeur
 
@@ -24,7 +24,7 @@ Version originale du document.
 |---|---|
 | Nom | Scaleway SAS |
 | Adresse | 8 rue de la Ville l'Évêque, 75008 Paris, France |
-| Téléphone | ⟦À COMPLÉTER : téléphone de l'hébergeur (à vérifier)⟧ |
+| Téléphone | +33 1 84 13 00 00 |
 
 ## Point de contact (DSA art. 11 et 12)
 

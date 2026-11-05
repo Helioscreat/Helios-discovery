@@ -36,4 +36,4 @@ If you cannot access a content or a feature, write to us at fleurant.m@icloud.co
 
 ## Redress
 
-If our answer does not satisfy you, you can contact the market surveillance authority in charge of accessibility in your country: ⟦À COMPLÉTER : autorité compétente en France pour l'accessibilité des services (à vérifier dans la loi de transposition)⟧.
+If our answer does not satisfy you, you can contact the market surveillance authority in charge of accessibility in your country: Direction générale de la concurrence, de la consommation et de la répression des fraudes (DGCCRF), https://signal.conso.gouv.fr.
