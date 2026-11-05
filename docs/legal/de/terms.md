@@ -78,4 +78,4 @@ Das Spiel, seine Grafiken, Texte, Töne und Figuren sind geschützt. Du darfst s
 
 ## 15. Anwendbares Recht und Streitigkeiten
 
-Diese Bedingungen unterliegen französischem Recht. Wenn du in einem anderen EU-Land wohnst, behältst du den Schutz der zwingenden Vorschriften deines Landes. Bei einem Streit kontaktiere uns zuerst; danach kannst du kostenlos die Verbraucherschlichtungsstelle anrufen (⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : site du médiateur⟧) oder das zuständige Gericht.
+Diese Bedingungen unterliegen französischem Recht. Wenn du in einem anderen EU-Land wohnst, behältst du den Schutz der zwingenden Vorschriften deines Landes. Bei einem Streit kontaktiere uns zuerst; danach kannst du kostenlos die Verbraucherschlichtungsstelle anrufen (CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice, https://www.cm2c.net) oder das zuständige Gericht.

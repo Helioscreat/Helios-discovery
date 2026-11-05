@@ -217,7 +217,7 @@ export const de: Record<PhraseKey, string> = {
   "sales.conformity.title": "10. Gesetzliche Gewährleistung",
   "sales.conformity.body": "Für digitale Inhalte gilt die gesetzliche Gewährleistung (Richtlinie (EU) 2019/770; französisches Verbrauchergesetzbuch Art. L224-25-12 ff.). Funktioniert ein gekaufter Inhalt nicht, schreib an die Kontaktstelle: Wir stellen ihn wieder her oder erstatten dir den Preis.",
   "sales.claims.title": "11. Beschwerden und Schlichtung",
-  "sales.claims.body": "Für Beschwerden erreichst du uns unter {email}. Finden wir keine Lösung, kannst du kostenlos die Verbraucherschlichtungsstelle anrufen: {mediator}, {mediatorAddress}, {mediatorUrl}.",
+  "sales.claims.body": "Für Beschwerden schreib uns zuerst an {email}. Wird deine schriftliche Beschwerde nicht gelöst oder bleibt sie unbeantwortet, kannst du kostenlos die Verbraucherschlichtungsstelle anrufen, der {name} angeschlossen ist (französisches Verbrauchergesetzbuch Art. L611-1 ff.): {mediator}, {mediatorAddress}, {mediatorUrl}. Die Anrufung muss innerhalb eines Jahres nach deiner schriftlichen Beschwerde erfolgen. Sie erfolgt online unter {mediatorForm} unter Angabe der SIREN-Nummer von {name} ({siren}). Die Schlichtung findet auf Französisch statt.",
   "sales.law.title": "12. Anwendbares Recht",
   "sales.law.body": "Diese Bedingungen unterliegen französischem Recht, ohne dir den Schutz der zwingenden Vorschriften des EU-Landes zu entziehen, in dem du wohnst.",
   "notice.title": "Impressum",

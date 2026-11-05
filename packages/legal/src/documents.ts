@@ -70,6 +70,8 @@ const pub = () => ({
   mediator: PUBLISHER.mediator.name,
   mediatorUrl: PUBLISHER.mediator.url,
   mediatorAddress: PUBLISHER.mediator.address,
+  mediatorForm: PUBLISHER.mediator.form,
+  siren: PUBLISHER.siren,
 });
 
 function header(l: Locale, title: string): Block[] {

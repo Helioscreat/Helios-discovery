@@ -78,4 +78,4 @@ We inform you in the game of any significant change at least 30 days before it a
 
 ## 15. Governing law and disputes
 
-These terms are governed by French law. If you live in another EU country, you keep the protection of the mandatory rules of your country. In case of dispute, contact us first; you may then use the consumer mediator free of charge (⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : site du médiateur⟧) or go to the competent court.
+These terms are governed by French law. If you live in another EU country, you keep the protection of the mandatory rules of your country. In case of dispute, contact us first; you may then use the consumer mediator free of charge (CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice, https://www.cm2c.net) or go to the competent court.

@@ -61,7 +61,7 @@ Disfrutas de la garantía legal de conformidad de los contenidos digitales (Dire
 
 ## 11. Reclamaciones y mediación
 
-Para cualquier reclamación, escríbenos a fleurant.m@icloud.com. Si no encontramos solución, puedes acudir gratuitamente al mediador de consumo: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
+Para cualquier reclamación, escríbenos primero a fleurant.m@icloud.com. Si tu reclamación escrita no se resuelve o queda sin respuesta, puedes acudir gratuitamente al mediador de consumo al que está adherida L'AFFRERE (Código de consumo francés, art. L611-1 y siguientes): CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice, 49 rue de Ponthieu, 75008 Paris, France, https://www.cm2c.net. La solicitud debe presentarse en el plazo de un año desde tu reclamación escrita. Se hace en línea en https://www.cm2c.net/declarer-un-litige.php, indicando el número SIREN de L'AFFRERE (990 851 503). La mediación se desarrolla en francés.
 
 ## 12. Ley aplicable
 

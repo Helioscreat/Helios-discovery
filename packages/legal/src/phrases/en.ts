@@ -217,7 +217,7 @@ export const en: Record<PhraseKey, string> = {
   "sales.conformity.title": "10. Legal guarantee of conformity",
   "sales.conformity.body": "You benefit from the legal guarantee of conformity for digital content (Directive (EU) 2019/770; French Consumer Code art. L224-25-12 et seq.). If a purchased content does not work, write to the contact point: we restore it or, failing that, refund you.",
   "sales.claims.title": "11. Complaints and mediation",
-  "sales.claims.body": "For any complaint, contact us at {email}. If we cannot find a solution, you may refer the matter free of charge to the consumer mediator: {mediator}, {mediatorAddress}, {mediatorUrl}.",
+  "sales.claims.body": "For any complaint, first write to us at {email}. If your written complaint is not resolved or remains unanswered, you may refer the matter free of charge to the consumer mediator to which {name} belongs (French Consumer Code, art. L611-1 et seq.): {mediator}, {mediatorAddress}, {mediatorUrl}. The referral must be made within one year of your written complaint. It is made online at {mediatorForm}, quoting the SIREN number of {name} ({siren}). Mediation is conducted in French.",
   "sales.law.title": "12. Governing law",
   "sales.law.body": "These terms are governed by French law, without depriving you of the protection of the mandatory rules of the EU country where you live.",
   "notice.title": "Legal notice",

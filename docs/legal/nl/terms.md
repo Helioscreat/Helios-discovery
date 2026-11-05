@@ -78,4 +78,4 @@ We informeren je in het spel over elke belangrijke wijziging, minstens 30 dagen 
 
 ## 15. Toepasselijk recht en geschillen
 
-Deze voorwaarden vallen onder het Franse recht. Als je in een ander EU-land woont, behoud je de bescherming van de dwingende regels van je land. Neem bij een geschil eerst contact met ons op; daarna kun je gratis een beroep doen op de consumentenbemiddelaar (⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : site du médiateur⟧) of naar de bevoegde rechter stappen.
+Deze voorwaarden vallen onder het Franse recht. Als je in een ander EU-land woont, behoud je de bescherming van de dwingende regels van je land. Neem bij een geschil eerst contact met ons op; daarna kun je gratis een beroep doen op de consumentenbemiddelaar (CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice, https://www.cm2c.net) of naar de bevoegde rechter stappen.

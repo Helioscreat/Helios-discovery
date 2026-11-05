@@ -217,7 +217,7 @@ export const es: Record<PhraseKey, string> = {
   "sales.conformity.title": "10. Garantía legal de conformidad",
   "sales.conformity.body": "Disfrutas de la garantía legal de conformidad de los contenidos digitales (Directiva (UE) 2019/770; Código de consumo francés art. L224-25-12 y siguientes). Si un contenido comprado no funciona, escribe al punto de contacto: lo restablecemos o, si no es posible, te lo reembolsamos.",
   "sales.claims.title": "11. Reclamaciones y mediación",
-  "sales.claims.body": "Para cualquier reclamación, escríbenos a {email}. Si no encontramos solución, puedes acudir gratuitamente al mediador de consumo: {mediator}, {mediatorAddress}, {mediatorUrl}.",
+  "sales.claims.body": "Para cualquier reclamación, escríbenos primero a {email}. Si tu reclamación escrita no se resuelve o queda sin respuesta, puedes acudir gratuitamente al mediador de consumo al que está adherida {name} (Código de consumo francés, art. L611-1 y siguientes): {mediator}, {mediatorAddress}, {mediatorUrl}. La solicitud debe presentarse en el plazo de un año desde tu reclamación escrita. Se hace en línea en {mediatorForm}, indicando el número SIREN de {name} ({siren}). La mediación se desarrolla en francés.",
   "sales.law.title": "12. Ley aplicable",
   "sales.law.body": "Estas condiciones se rigen por el derecho francés, sin privarte de la protección de las normas imperativas del país de la Unión donde resides.",
   "notice.title": "Aviso legal",

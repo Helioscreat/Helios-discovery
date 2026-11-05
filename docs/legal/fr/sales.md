@@ -61,7 +61,7 @@ Tu bénéficies de la garantie légale de conformité des contenus numériques (
 
 ## 11. Réclamations et médiation
 
-Pour toute réclamation, contacte-nous à fleurant.m@icloud.com. Si nous ne trouvons pas de solution, tu peux saisir gratuitement le médiateur de la consommation : ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
+Pour toute réclamation, écris-nous d'abord à fleurant.m@icloud.com. Si ta réclamation écrite n'est pas résolue ou reste sans réponse, tu peux saisir gratuitement le médiateur de la consommation dont relève L'AFFRERE (Code de la consommation, art. L611-1 et suivants) : CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice, 49 rue de Ponthieu, 75008 Paris, France, https://www.cm2c.net. La saisine doit intervenir dans un délai d'un an à compter de ta réclamation écrite. Elle se fait en ligne sur https://www.cm2c.net/declarer-un-litige.php, en indiquant le numéro SIREN de L'AFFRERE (990 851 503). La médiation se déroule en français.
 
 ## 12. Droit applicable
 

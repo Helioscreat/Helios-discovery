@@ -78,4 +78,4 @@ Te informamos en el juego de cualquier cambio importante al menos 30 días antes
 
 ## 15. Ley aplicable y litigios
 
-Estas condiciones se rigen por el derecho francés. Si resides en otro país de la Unión, conservas la protección de las normas imperativas de tu país. En caso de litigio, contacta primero con nosotros; después puedes acudir gratuitamente al mediador de consumo (⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : site du médiateur⟧) o al tribunal competente.
+Estas condiciones se rigen por el derecho francés. Si resides en otro país de la Unión, conservas la protección de las normas imperativas de tu país. En caso de litigio, contacta primero con nosotros; después puedes acudir gratuitamente al mediador de consumo (CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice, https://www.cm2c.net) o al tribunal competente.

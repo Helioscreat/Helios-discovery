@@ -219,7 +219,7 @@ export const fr = {
   "sales.conformity.title": "10. Garantie légale de conformité",
   "sales.conformity.body": "Tu bénéficies de la garantie légale de conformité des contenus numériques (directive (UE) 2019/770 ; Code de la consommation art. L224-25-12 et suivants). Si un contenu acheté ne fonctionne pas, écris au point de contact : nous le rétablissons, ou, à défaut, nous te remboursons.",
   "sales.claims.title": "11. Réclamations et médiation",
-  "sales.claims.body": "Pour toute réclamation, contacte-nous à {email}. Si nous ne trouvons pas de solution, tu peux saisir gratuitement le médiateur de la consommation : {mediator}, {mediatorAddress}, {mediatorUrl}.",
+  "sales.claims.body": "Pour toute réclamation, écris-nous d'abord à {email}. Si ta réclamation écrite n'est pas résolue ou reste sans réponse, tu peux saisir gratuitement le médiateur de la consommation dont relève {name} (Code de la consommation, art. L611-1 et suivants) : {mediator}, {mediatorAddress}, {mediatorUrl}. La saisine doit intervenir dans un délai d'un an à compter de ta réclamation écrite. Elle se fait en ligne sur {mediatorForm}, en indiquant le numéro SIREN de {name} ({siren}). La médiation se déroule en français.",
   "sales.law.title": "12. Droit applicable",
   "sales.law.body": "Ces conditions sont soumises au droit français, sans te priver de la protection des règles impératives du pays de l'Union où tu résides.",
   "notice.title": "Mentions légales",

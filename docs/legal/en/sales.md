@@ -61,7 +61,7 @@ You benefit from the legal guarantee of conformity for digital content (Directiv
 
 ## 11. Complaints and mediation
 
-For any complaint, contact us at fleurant.m@icloud.com. If we cannot find a solution, you may refer the matter free of charge to the consumer mediator: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
+For any complaint, first write to us at fleurant.m@icloud.com. If your written complaint is not resolved or remains unanswered, you may refer the matter free of charge to the consumer mediator to which L'AFFRERE belongs (French Consumer Code, art. L611-1 et seq.): CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice, 49 rue de Ponthieu, 75008 Paris, France, https://www.cm2c.net. The referral must be made within one year of your written complaint. It is made online at https://www.cm2c.net/declarer-un-litige.php, quoting the SIREN number of L'AFFRERE (990 851 503). Mediation is conducted in French.
 
 ## 12. Governing law
 

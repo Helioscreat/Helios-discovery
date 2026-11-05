@@ -217,7 +217,7 @@ export const nl: Record<PhraseKey, string> = {
   "sales.conformity.title": "10. Wettelijke conformiteitsgarantie",
   "sales.conformity.body": "Je geniet de wettelijke conformiteitsgarantie voor digitale inhoud (richtlijn (EU) 2019/770; Franse consumentenwet art. L224-25-12 en volgende). Als gekochte inhoud niet werkt, schrijf dan naar het contactpunt: we herstellen ze of, als dat niet lukt, betalen we je terug.",
   "sales.claims.title": "11. Klachten en bemiddeling",
-  "sales.claims.body": "Voor elke klacht kun je ons bereiken op {email}. Als we geen oplossing vinden, kun je gratis de consumentenbemiddelaar inschakelen: {mediator}, {mediatorAddress}, {mediatorUrl}.",
+  "sales.claims.body": "Voor elke klacht schrijf je ons eerst op {email}. Als je schriftelijke klacht niet is opgelost of onbeantwoord blijft, kun je gratis de consumentenbemiddelaar inschakelen waarbij {name} is aangesloten (Franse consumentenwet, art. L611-1 en volgende): {mediator}, {mediatorAddress}, {mediatorUrl}. Dat moet binnen een jaar na je schriftelijke klacht gebeuren. Het verzoek gaat online via {mediatorForm}, met vermelding van het SIREN-nummer van {name} ({siren}). De bemiddeling verloopt in het Frans.",
   "sales.law.title": "12. Toepasselijk recht",
   "sales.law.body": "Deze voorwaarden vallen onder het Franse recht, zonder je de bescherming te ontnemen van de dwingende regels van het EU-land waar je woont.",
   "notice.title": "Wettelijke vermeldingen",
