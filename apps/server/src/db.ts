@@ -124,6 +124,8 @@ export type Db = DatabaseSync;
 export function openDb(path = ":memory:"): Db {
   const db = new DatabaseSync(path);
   db.exec("PRAGMA journal_mode = WAL;");
+  // Requêtes concurrentes (tâches périodiques, sauvegarde) : attendre le verrou plutôt qu'échouer.
+  db.exec("PRAGMA busy_timeout = 5000;");
   db.exec(SCHEMA);
   return db;
 }
