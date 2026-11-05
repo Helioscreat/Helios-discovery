@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import config from "../capacitor.config";
 import { AD_UNITS } from "../src/game/ads";
+import { CATALOGS } from "../src/i18n";
 
 const GAME = join(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p: string) => readFileSync(join(GAME, p), "utf8");
@@ -66,5 +67,15 @@ describe("projets natifs (Capacitor)", () => {
     expect(pbx).toMatch(/\/\* PrivacyInfo\.xcprivacy \*\/ = \{isa = PBXFileReference;/);
     expect(pbx).toMatch(/\/\* PrivacyInfo\.xcprivacy in Resources \*\/ = \{isa = PBXBuildFile;/);
     expect(read("ios/App/App/PrivacyInfo.xcprivacy")).toContain("NSPrivacyTracking");
+  });
+
+  it("iOS : texte ATT traduit dans les 6 langues depuis les catalogues du jeu, fichiers déclarés dans Xcode", () => {
+    for (const l of ["fr", "en", "nl", "de", "es", "it"] as const) {
+      const strings = read(`ios/App/App/${l}.lproj/InfoPlist.strings`);
+      expect(strings, l).toContain(`"NSUserTrackingUsageDescription" = ${JSON.stringify(CATALOGS[l]["native.att"])};`);
+      expect(pbx, l).toContain(`path = ${l}.lproj/InfoPlist.strings;`);
+    }
+    expect(plistValue("NSUserTrackingUsageDescription")).toBe(CATALOGS.fr["native.att"]);
+    expect(pbx).toMatch(/\/\* InfoPlist\.strings in Resources \*\/ = \{isa = PBXBuildFile;/);
   });
 });

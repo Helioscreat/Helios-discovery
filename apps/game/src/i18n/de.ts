@@ -381,6 +381,7 @@ export const de: Record<MessageKey, string> = {
   "settings.textScale": "Textgröße",
   "settings.textScale.option": "{n} %",
   "settings.language": "Sprache",
+  "native.att": "Diese Erlaubnis dient nur dazu, in freiwilligen Belohnungsvideos passende Werbung anzuzeigen. Das Spiel bleibt vollständig spielbar, wenn du ablehnst.",
   "legal.title": "Rechtliches",
   "legal.privacy": "Datenschutzerklärung",
   "legal.terms": "Nutzungsbedingungen",

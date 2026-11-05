@@ -1,0 +1,33 @@
+# Production : serveur de l'éditeur + Caddy (HTTPS automatique, Let's Encrypt), sur une seule machine en région UE.
+# Sur la machine :  cd /opt/helios && docker compose --env-file server.env up -d
+# server.env (chmod 600, jamais dans le dépôt) : voir docs/deploiement-serveur.md.
+services:
+  api:
+    image: ghcr.io/helioscreat/helios-discovery-server:latest
+    restart: unless-stopped
+    env_file: server.env
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "8787"
+      DB_PATH: /data/helios.db
+      BACKUP_DIR: /data/backups
+    volumes:
+      - /srv/helios/data:/data
+    expose:
+      - "8787"
+    stop_grace_period: 15s
+
+  caddy:
+    image: caddy:2.10.2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      API_DOMAIN: ${API_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - /srv/helios/caddy:/data
+    depends_on:
+      - api

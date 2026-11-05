@@ -381,6 +381,7 @@ export const it: Record<MessageKey, string> = {
   "settings.textScale": "Dimensione del testo",
   "settings.textScale.option": "{n} %",
   "settings.language": "Lingua",
+  "native.att": "Questa autorizzazione serve solo a mostrare annunci adatti nei video con ricompensa facoltativi. Il gioco resta interamente giocabile se rifiuti.",
   "legal.title": "Informazioni legali",
   "legal.privacy": "Informativa sulla privacy",
   "legal.terms": "Condizioni d'uso",

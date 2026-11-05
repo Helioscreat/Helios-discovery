@@ -29,6 +29,10 @@ PORT=8787 ALLOWED_ORIGINS=https://jeu.example DB_PATH=/data/helios.db MODERATORS
 
 Chaque table du schéma est classée dans `PERSONAL_TABLES`, `PSEUDONYMIZED_TABLES` ou `TECHNICAL_TABLES`. Un test échoue si une nouvelle table n'est pas classée. L'export et l'effacement s'appuient sur ce même classement.
 
+## Déploiement
+
+Image Docker publiée par GitHub Actions (`ghcr.io/helioscreat/helios-discovery-server`), déployée avec `deploy/docker-compose.yml` (serveur + Caddy pour le HTTPS). Marche à suivre : `docs/deploiement-serveur.md`. Sauvegardes quotidiennes (`BACKUP_DIR`), conservées 30 jours ; arrêt propre sur SIGTERM.
+
 ## Avant la production
 
 - **Vérification des reçus :** `src/stores.ts` interroge la Google Play Developer API (compte de service) et l'App Store Server API (clé d'achats intégrés). Chaque reçu doit appartenir au compte qui l'envoie ; il n'est crédité qu'une fois ; les achats Google sont acquittés par le serveur juste après le crédit. Variables (dans un coffre de secrets) :
@@ -36,7 +40,7 @@ Chaque table du schéma est classée dans `PERSONAL_TABLES`, `PSEUDONYMIZED_TABL
   - `APPLE_ISSUER_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY` (ou `APPLE_PRIVATE_KEY_FILE`), `APPLE_BUNDLE_ID` ;
   - avec `NODE_ENV=production`, les reçus simulés sont toujours refusés.
   La création des produits et des accès est décrite dans `docs/stores/produits.md`. Remboursements : Google, tâche horaire sur l'API des achats annulés ; Apple, `POST /v1/stores/apple/notifications` (notifications V2), relues auprès de l'App Store Server API avant tout effet. Le jeu lit `GET /v1/me/purchases` au lancement et retire le contenu remboursé.
-- **Base de données :** utiliser PostgreSQL managé en région UE, avec chiffrement au repos et sauvegardes conservées 30 jours au plus. Les sauvegardes doivent respecter la même échéance d'effacement.
+- **Base de données :** au lancement, SQLite sur un volume chiffré, une seule instance. Passer à PostgreSQL managé en région UE avant d'ajouter un second serveur. Les sauvegardes respectent la même échéance d'effacement (30 jours).
 - **Modération :** gérer les clés des modérateurs (`MODERATORS`) dans un coffre de secrets. Le back-office se branche sur les routes `/v1/moderation/*`.
 - **Durées de conservation et purge :** la purge tourne chaque jour (`runRetentionJob`). Les durées viennent de `RETENTION` (`@helios/config`), la même source que la politique de confidentialité (GDPR-09).
 - **Clés d'administration :** `ADMIN_KEYS` dans un coffre de secrets ; en production, placer `/admin` et `/v1/admin/*` derrière un accès réseau restreint (VPN ou liste d'adresses).
