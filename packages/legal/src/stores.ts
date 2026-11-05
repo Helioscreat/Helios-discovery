@@ -211,12 +211,14 @@ export function storeProducts(): Doc {
         "Google Cloud : créer un compte de service dans un projet lié à Play Console et activer l'API Google Play Android Developer.",
         "Play Console > Utilisateurs et autorisations : inviter l'adresse du compte de service avec les droits « Afficher les données financières » et « Gérer les commandes et les abonnements », pour l'application Helios Discovery.",
         "Créer une clé JSON pour ce compte de service et la placer dans le coffre de secrets du serveur (variable GOOGLE_PLAY_SERVICE_ACCOUNT_JSON). Ne jamais la mettre dans le dépôt.",
+        "Remboursements : aucun réglage. Le serveur interroge chaque heure l'API des achats annulés (voidedpurchases) avec ce même compte de service.",
       ] },
       { h: 2, text: "App Store : accès du serveur" },
       { ul: [
         "App Store Connect > Accords, taxes et banques : signer l'accord des apps payantes et renseigner la fiscalité et le compte bancaire.",
         "App Store Connect > Utilisateurs et accès > Intégrations > Achats intégrés : générer une clé ; noter l'identifiant de la clé (APPLE_KEY_ID) et l'identifiant de l'émetteur (APPLE_ISSUER_ID).",
         "Placer le fichier .p8 dans le coffre de secrets du serveur (APPLE_PRIVATE_KEY). Il ne se télécharge qu'une fois.",
+        "App Store Connect > App > Informations sur l'app > Notifications du serveur App Store : version 2, URL de production et de Sandbox = adresse du serveur suivie de /v1/stores/apple/notifications. Chaque notification est relue auprès de l'API d'Apple avant d'avoir un effet.",
       ] },
       { h: 2, text: "Recette" },
       { ul: [

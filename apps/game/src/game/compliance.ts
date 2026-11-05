@@ -128,6 +128,7 @@ export class Api {
   post = (c: ComplianceState, team: string, body: { presetId?: string; text?: string }) => this.call<{ id: string }>("POST", `/v1/teams/${team}/messages`, c.account!.token, body);
   block = (c: ComplianceState, playerId: string) => this.call("POST", "/v1/blocks", c.account!.token, { playerId });
   report = (c: ComplianceState, body: { targetType: "message" | "profile"; targetId: string; reason: string; details: string }) => this.call<{ id: string; receivedAt: number }>("POST", "/v1/reports", c.account!.token, body);
+  myPurchases = (c: ComplianceState) => this.call<{ purchases: { orderId: string; skuId: string; state: "credited" | "refunded" }[] }>("GET", "/v1/me/purchases", c.account!.token);
   authorizePurchase = (c: ComplianceState, skuId: string) => this.call<{ allowed: boolean; reason?: string }>("POST", "/v1/purchases/authorize", c.account!.token, { skuId });
   verifyPurchase = (c: ComplianceState, receipt: Receipt) => this.call<{ credited: boolean; state: string; purchase: VerifiedPurchase }>("POST", "/v1/purchases/verify", c.account!.token, { receipt });
   event = (c: ComplianceState, name: string, data: Record<string, unknown>) => this.call("POST", "/v1/events", c.account!.token, { name, data });

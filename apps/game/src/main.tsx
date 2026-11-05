@@ -5,6 +5,7 @@ import { loadMeta, Shop } from "./game/meta";
 import { Api, detectCountry, loadCompliance } from "./game/compliance";
 import { choosePlatform } from "./game/ump";
 import { NativeStore } from "./game/nativeStore";
+import { CapacitorRewarded, NoRewarded, TestRewarded } from "./game/ads";
 import { Capacitor } from "@capacitor/core";
 import { detectLocale, setLocale } from "./i18n";
 import { loadSettings, SettingsStore } from "./settings";
@@ -42,7 +43,13 @@ meta.age = compliance.age.band;
 // Crochets de test : uniquement avec ?test=1 (tests d'interface automatisés).
 const testMode = new URLSearchParams(location.search).get("test") === "1";
 const consentPlatform = choosePlatform(testMode, params.get("ump") === "form");
+const rewardedAds =
+  nativePlatform === "android" || nativePlatform === "ios"
+    ? new CapacitorRewarded(nativePlatform, import.meta.env.VITE_ADS_TESTING === "1")
+    : testMode
+      ? new TestRewarded(params.get("ad") === "dismiss" ? "dismissed" : "rewarded")
+      : new NoRewarded();
 render(
-  <App settings={settings} feedback={feedback} profile={profile} meta={meta} shop={shop} clock={clock} api={api} compliance={compliance} consentPlatform={consentPlatform} testHooks={testMode ? (api) => (window.__helios = api) : undefined} />,
+  <App settings={settings} feedback={feedback} profile={profile} meta={meta} shop={shop} clock={clock} api={api} compliance={compliance} consentPlatform={consentPlatform} rewardedAds={rewardedAds} testHooks={testMode ? (api) => (window.__helios = api) : undefined} />,
   document.getElementById("root")!,
 );

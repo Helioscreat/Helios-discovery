@@ -23,5 +23,7 @@ const server = createApi(svc, { allowedOrigins: (env.ALLOWED_ORIGINS ?? "").spli
 server.listen(Number(env.PORT ?? 8787), env.HOST ?? "127.0.0.1", () => console.log(`API sur http://${env.HOST ?? "127.0.0.1"}:${env.PORT ?? 8787}`));
 // Effacements arrivés à échéance : une fois par heure.
 setInterval(() => svc.runDeletionJob(), 3_600_000).unref();
+// Remboursements Google (API des achats annulés) : une fois par heure.
+setInterval(() => void svc.runRefundJob().catch((e) => console.error("remboursements :", (e as Error).message)), 3_600_000).unref();
 // Durées de conservation : purge quotidienne.
 setInterval(() => svc.runRetentionJob(), 86_400_000).unref();

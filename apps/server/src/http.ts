@@ -23,6 +23,9 @@ export function createApi(svc: Service, opts: { allowedOrigins: string[] }): Ser
   route("POST", "/v1/me/delete", ({ token }) => svc.requestDeletion(auth(token)));
   route("POST", "/v1/purchases/authorize", ({ token, body }) => svc.authorizePurchase(auth(token), String(body.skuId)));
   route("POST", "/v1/purchases/verify", ({ token, body }) => svc.verifyPurchase(auth(token), body.receipt as never));
+  route("GET", "/v1/me/purchases", ({ token }) => ({ purchases: svc.purchasesOf(auth(token)) }));
+  // Notifications du serveur App Store (V2) : sans authentification, mais relues auprès de l'API d'Apple avant tout effet.
+  route("POST", "/v1/stores/apple/notifications", ({ body }) => svc.appleNotification(body.signedPayload));
   route("POST", "/v1/teams/:id/join", ({ token, params }) => (svc.joinTeam(auth(token), params[0]), { ok: true }));
   route("GET", "/v1/teams/:id/messages", ({ token, params }) => svc.messages(auth(token), params[0]));
   route("POST", "/v1/teams/:id/messages", ({ token, params, body }) => svc.postMessage(auth(token), params[0], body as never));

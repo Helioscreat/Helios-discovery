@@ -161,6 +161,29 @@ export class Shop {
     return { ok: true };
   }
 
+  /**
+   * Commandes remboursées par le store (liste du serveur) : le contenu encore présent est retiré, une seule fois.
+   * Renvoie le nombre de commandes traitées.
+   */
+  applyRefunds(meta: MetaState, profile: Profile, purchases: { orderId: string; skuId: string; state: "credited" | "refunded" }[]): number {
+    const now = this.clock();
+    let n = 0;
+    for (const e of purchases) {
+      if (e.state !== "refunded" || !CATALOG.some((s) => s.id === e.skuId)) continue;
+      if (!meta.account.ledger.some((l) => l.orderId === e.orderId && l.state === "credited")) continue;
+      const sku = skuById(e.skuId);
+      const r = applyVerified(meta.account, { orderId: e.orderId, skuId: e.skuId, state: "refunded", eurCents: sku.referenceEurCents, at: now }, now);
+      if (!r.ok) continue;
+      meta.account = r.account;
+      // Les boosters sont dans la réserve du profil : on retire ce qui reste, sans passer sous zéro.
+      for (const [b, k] of Object.entries(sku.contents.boosters ?? {}) as [Booster, number][]) profile.inventory[b] = Math.max(0, profile.inventory[b] - k);
+      if (sku.kind === "subscription" && meta.account.wallet.subscription?.skuId === sku.id) meta.account = { ...meta.account, wallet: { ...meta.account.wallet, subscription: null } };
+      if (sku.kind === "seasonPass") meta.season = { ...meta.season, pass: "none" };
+      n++;
+    }
+    return n;
+  }
+
   /** Au lancement et à chaque transaction reçue hors parcours : crédite les achats payés mais non clôturés. */
   async recover(meta: MetaState, profile: Profile, list?: Receipt[]): Promise<Sku[]> {
     const pending = list ?? (await this.store.unfinished?.().catch(() => [] as Receipt[])) ?? [];

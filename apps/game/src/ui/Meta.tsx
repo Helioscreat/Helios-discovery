@@ -202,7 +202,10 @@ export function PassSheet(props: { meta: MetaState; now: number; tier: "premium"
 }
 
 // ───────────────────────── récompenses gratuites ─────────────────────────
-export function RewardsScreen(props: { meta: MetaState; now: number; result: string; onSpin: () => void; onClaimQuest: (id: string) => void; onBack: () => void }) {
+/** Vidéo récompensée proposée : `left` = vidéos restantes aujourd'hui ; absente si la publicité n'est pas possible. */
+export interface AdOffer { left: number; coins: number; busy: boolean; message: string }
+
+export function RewardsScreen(props: { meta: MetaState; now: number; result: string; ad?: AdOffer; onWatchAd?: () => void; onSpin: () => void; onClaimQuest: (id: string) => void; onBack: () => void }) {
   const can = canSpin(props.meta.free, props.now);
   const probs = wheelProbabilities();
   return (
@@ -216,6 +219,17 @@ export function RewardsScreen(props: { meta: MetaState; now: number; result: str
       </table>
       <button type="button" class="btn" disabled={!can} onClick={props.onSpin}>{can ? t("rewards.spin") : t("rewards.spinTomorrow")}</button>
       {props.result ? <p class="notice" role="status">{props.result}</p> : null}
+      {props.ad ? (
+        <section data-testid="rewarded-ad">
+          <h2>{t("rewards.ad.title")}</h2>
+          <p class="muted">{t("rewards.ad.rule", { n: props.ad.coins })}</p>
+          <button type="button" class="btn" disabled={props.ad.left <= 0 || props.ad.busy} onClick={props.onWatchAd}>
+            {props.ad.left > 0 ? t("rewards.ad.watch", { n: props.ad.coins }) : t("rewards.ad.none")}
+          </button>
+          <p class="small muted">{t("rewards.ad.left", { n: props.ad.left })}</p>
+          {props.ad.message ? <p class="notice" role="status">{props.ad.message}</p> : null}
+        </section>
+      ) : null}
       <h2>{t("rewards.streak")}</h2>
       <p>{t("rewards.streakDay", { n: props.meta.free.streakDay })}</p>
       <h2>{t("rewards.quests")}</h2>
