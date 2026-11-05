@@ -6,7 +6,7 @@ Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertal
 
 ## 1. Toepassingsgebied
 
-Deze voorwaarden gelden voor aankopen in het spel Helios Discovery. De verkoper is ⟦À COMPLÉTER : raison sociale⟧. De betaling wordt geïnd door de store (Google Play of App Store) volgens zijn eigen voorwaarden.
+Deze voorwaarden gelden voor aankopen in het spel Helios Discovery. De verkoper is L'AFFRERE. De betaling wordt geïnd door de store (Google Play of App Store) volgens zijn eigen voorwaarden.
 
 ## 2. Artikelen en prijzen
 
@@ -61,7 +61,7 @@ Je geniet de wettelijke conformiteitsgarantie voor digitale inhoud (richtlijn (E
 
 ## 11. Klachten en bemiddeling
 
-Voor elke klacht kun je ons bereiken op contact@helios-discovery.example. Als we geen oplossing vinden, kun je gratis de consumentenbemiddelaar inschakelen: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
+Voor elke klacht kun je ons bereiken op fleurant.m@icloud.com. Als we geen oplossing vinden, kun je gratis de consumentenbemiddelaar inschakelen: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
 
 ## 12. Toepasselijk recht
 

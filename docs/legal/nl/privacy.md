@@ -13,7 +13,7 @@ Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertal
 
 ## 1. Verwerkingsverantwoordelijke
 
-⟦À COMPLÉTER : raison sociale⟧ (SASU), ⟦À COMPLÉTER : adresse du siège⟧, geeft Helios Discovery uit en beslist hoe je gegevens worden gebruikt. Contact: contact@helios-discovery.example of het formulier https://helios-discovery.example/contact.
+L'AFFRERE (SAS), ⟦À COMPLÉTER : adresse du siège⟧, geeft Helios Discovery uit en beslist hoe je gegevens worden gebruikt. Contact: fleurant.m@icloud.com of het formulier ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧.
 
 We hebben geen functionaris voor gegevensbescherming aangesteld. Elke vraag over je gegevens komt op hetzelfde adres binnen en krijgt binnen een maand antwoord.
 
@@ -103,7 +103,7 @@ We tonen minderjarigen nooit gepersonaliseerde reclame. Onder de toestemmingslee
 - bezwaar maken tegen een verwerking op basis van gerechtvaardigd belang;
 - je toestemming op elk moment intrekken, even gemakkelijk als je ze gaf (Instellingen > Privacy > Mijn privacykeuzes beheren); intrekking doet geen afbreuk aan wat eerder is gebeurd.
 
-Voor elk ander recht kun je ons schrijven op contact@helios-discovery.example. We antwoorden binnen een maand. Je kunt ook een klacht indienen bij de Commission nationale de l'informatique et des libertés (CNIL) (https://www.cnil.fr/fr/plaintes) of bij de gegevensbeschermingsautoriteit van je land.
+Voor elk ander recht kun je ons schrijven op fleurant.m@icloud.com. We antwoorden binnen een maand. Je kunt ook een klacht indienen bij de Commission nationale de l'informatique et des libertés (CNIL) (https://www.cnil.fr/fr/plaintes) of bij de gegevensbeschermingsautoriteit van je land.
 
 ## 9. Geautomatiseerde besluiten
 

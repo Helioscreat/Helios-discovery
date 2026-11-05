@@ -8,14 +8,14 @@ Translation of the French original; it has not yet been reviewed by a legal tran
 
 |  |  |
 |---|---|
-| Company name | ⟦À COMPLÉTER : raison sociale⟧ |
-| Legal form and share capital | SASU, ⟦À COMPLÉTER : capital social⟧ |
+| Company name | L'AFFRERE |
+| Legal form and share capital | SAS, ⟦À COMPLÉTER : capital social⟧ |
 | Registered office | ⟦À COMPLÉTER : adresse du siège⟧ |
 | Registration | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
 | SIREN number | ⟦À COMPLÉTER : SIREN⟧ |
 | EU VAT number | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
-| Publication director | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président de la SASU)⟧ |
-| E-mail | contact@helios-discovery.example |
+| Publication director | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président ou la présidente de la SAS)⟧ |
+| E-mail | fleurant.m@icloud.com |
 | Telephone | ⟦À COMPLÉTER : téléphone⟧ |
 
 ## Host
@@ -28,7 +28,7 @@ Translation of the French original; it has not yet been reviewed by a legal tran
 
 ## Contact point (DSA art. 11 and 12)
 
-Players and authorities: contact@helios-discovery.example or https://helios-discovery.example/contact. Accepted languages: French, English, Dutch, German, Spanish, Italian.
+Players and authorities: fleurant.m@icloud.com or ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧. Accepted languages: French, English, Dutch, German, Spanish, Italian.
 
 ## Digital Services Act
 

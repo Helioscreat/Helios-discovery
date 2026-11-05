@@ -13,7 +13,7 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 
 ## 1. Verantwortlicher
 
-⟦À COMPLÉTER : raison sociale⟧ (SASU), ⟦À COMPLÉTER : adresse du siège⟧, gibt Helios Discovery heraus und entscheidet über die Verwendung deiner Daten. Kontakt: contact@helios-discovery.example oder das Formular https://helios-discovery.example/contact.
+L'AFFRERE (SAS), ⟦À COMPLÉTER : adresse du siège⟧, gibt Helios Discovery heraus und entscheidet über die Verwendung deiner Daten. Kontakt: fleurant.m@icloud.com oder das Formular ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧.
 
 Wir haben keinen Datenschutzbeauftragten benannt. Jede Frage zu deinen Daten geht an dieselbe Adresse und wird innerhalb eines Monats beantwortet.
 
@@ -103,7 +103,7 @@ Minderjährigen zeigen wir nie personalisierte Werbung. Unter dem Einwilligungsa
 - einer Verarbeitung auf Grundlage des berechtigten Interesses widersprechen;
 - deine Einwilligung jederzeit so einfach widerrufen, wie du sie erteilt hast (Einstellungen > Datenschutz > Meine Datenschutzeinstellungen verwalten); der Widerruf berührt nicht, was vorher geschehen ist.
 
-Für jedes andere Recht schreib uns an contact@helios-discovery.example. Wir antworten innerhalb eines Monats. Du kannst dich auch bei der Commission nationale de l'informatique et des libertés (CNIL) (https://www.cnil.fr/fr/plaintes) oder bei der Datenschutzbehörde deines Landes beschweren.
+Für jedes andere Recht schreib uns an fleurant.m@icloud.com. Wir antworten innerhalb eines Monats. Du kannst dich auch bei der Commission nationale de l'informatique et des libertés (CNIL) (https://www.cnil.fr/fr/plaintes) oder bei der Datenschutzbehörde deines Landes beschweren.
 
 ## 9. Automatisierte Entscheidungen
 

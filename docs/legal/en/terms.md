@@ -10,7 +10,7 @@ These terms apply to the game Helios Discovery and its online services (account,
 
 ## 2. Publisher and contact point
 
-The game is published by ⟦À COMPLÉTER : raison sociale⟧, ⟦À COMPLÉTER : adresse du siège⟧. Single contact point for players and authorities: contact@helios-discovery.example or https://helios-discovery.example/contact, or from the game (Settings > Contact and reports). Accepted languages: French, English, Dutch, German, Spanish, Italian.
+The game is published by L'AFFRERE, ⟦À COMPLÉTER : adresse du siège⟧. Single contact point for players and authorities: fleurant.m@icloud.com or ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧, or from the game (Settings > Contact and reports). Accepted languages: French, English, Dutch, German, Spanish, Italian.
 
 ## 3. Access, age and account
 

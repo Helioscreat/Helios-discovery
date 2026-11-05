@@ -8,14 +8,14 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 
 |  |  |
 |---|---|
-| Firma | ⟦À COMPLÉTER : raison sociale⟧ |
-| Rechtsform und Stammkapital | SASU, ⟦À COMPLÉTER : capital social⟧ |
+| Firma | L'AFFRERE |
+| Rechtsform und Stammkapital | SAS, ⟦À COMPLÉTER : capital social⟧ |
 | Sitz | ⟦À COMPLÉTER : adresse du siège⟧ |
 | Handelsregister | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
 | SIREN-Nummer | ⟦À COMPLÉTER : SIREN⟧ |
 | USt-IdNr. | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
-| Verantwortlich für den Inhalt | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président de la SASU)⟧ |
-| E-Mail | contact@helios-discovery.example |
+| Verantwortlich für den Inhalt | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président ou la présidente de la SAS)⟧ |
+| E-Mail | fleurant.m@icloud.com |
 | Telefon | ⟦À COMPLÉTER : téléphone⟧ |
 
 ## Hosting
@@ -28,7 +28,7 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 
 ## Kontaktstelle (DSA Art. 11 und 12)
 
-Spieler und Behörden: contact@helios-discovery.example oder https://helios-discovery.example/contact. Akzeptierte Sprachen: Französisch, Englisch, Niederländisch, Deutsch, Spanisch, Italienisch.
+Spieler und Behörden: fleurant.m@icloud.com oder ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧. Akzeptierte Sprachen: Französisch, Englisch, Niederländisch, Deutsch, Spanisch, Italienisch.
 
 ## Gesetz über digitale Dienste
 

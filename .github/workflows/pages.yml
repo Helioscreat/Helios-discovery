@@ -1,0 +1,39 @@
+# Publie les documents juridiques générés (apps/game/public/legal) sur GitHub Pages.
+# Adresse : https://helioscreat.github.io/Helios-discovery/legal/<langue>/<document>.html
+# Prérequis (une fois) : Settings > Pages > Build and deployment > Source = « GitHub Actions ».
+name: Pages (documents juridiques)
+
+on:
+  push:
+    branches: [main]
+    paths: ["apps/game/public/legal/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Préparer le site
+        run: |
+          mkdir -p site
+          cp -r apps/game/public/legal site/legal
+          printf '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=legal/"><title>Helios Discovery</title><a href="legal/">Documents juridiques</a>\n' > site/index.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -8,14 +8,14 @@ Version originale du document. Modèle à faire valider par un professionnel du 
 
 |  |  |
 |---|---|
-| Raison sociale | ⟦À COMPLÉTER : raison sociale⟧ |
-| Forme et capital | SASU, ⟦À COMPLÉTER : capital social⟧ |
+| Raison sociale | L'AFFRERE |
+| Forme et capital | SAS, ⟦À COMPLÉTER : capital social⟧ |
 | Siège | ⟦À COMPLÉTER : adresse du siège⟧ |
 | Immatriculation | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
 | SIREN | ⟦À COMPLÉTER : SIREN⟧ |
 | TVA intracommunautaire | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
-| Directeur ou directrice de la publication | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président de la SASU)⟧ |
-| E-mail | contact@helios-discovery.example |
+| Directeur ou directrice de la publication | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président ou la présidente de la SAS)⟧ |
+| E-mail | fleurant.m@icloud.com |
 | Téléphone | ⟦À COMPLÉTER : téléphone⟧ |
 
 ## Hébergeur
@@ -28,7 +28,7 @@ Version originale du document. Modèle à faire valider par un professionnel du 
 
 ## Point de contact (DSA art. 11 et 12)
 
-Joueurs et autorités : contact@helios-discovery.example ou https://helios-discovery.example/contact. Langues acceptées : français, anglais, néerlandais, allemand, espagnol, italien.
+Joueurs et autorités : fleurant.m@icloud.com ou ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧. Langues acceptées : français, anglais, néerlandais, allemand, espagnol, italien.
 
 ## Règlement sur les services numériques
 

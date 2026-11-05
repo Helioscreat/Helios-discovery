@@ -13,7 +13,7 @@ Version originale du document. Modèle à faire valider par un professionnel du 
 
 ## 1. Responsable du traitement
 
-⟦À COMPLÉTER : raison sociale⟧ (SASU), ⟦À COMPLÉTER : adresse du siège⟧, édite Helios Discovery et décide de l'usage de tes données. Contact : contact@helios-discovery.example ou le formulaire https://helios-discovery.example/contact.
+L'AFFRERE (SAS), ⟦À COMPLÉTER : adresse du siège⟧, édite Helios Discovery et décide de l'usage de tes données. Contact : fleurant.m@icloud.com ou le formulaire ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧.
 
 Nous n'avons pas désigné de délégué à la protection des données. Toute question sur tes données arrive à la même adresse et reçoit une réponse sous un mois.
 
@@ -103,7 +103,7 @@ Nous ne montrons jamais de publicité personnalisée aux mineurs. Sous l'âge du
 - t'opposer à un traitement fondé sur l'intérêt légitime ;
 - retirer ton consentement à tout moment, aussi facilement que tu l'as donné (Paramètres > Confidentialité > Gérer mes choix de confidentialité) ; le retrait ne remet pas en cause ce qui a été fait avant.
 
-Pour tout autre droit, écris-nous à contact@helios-discovery.example. Nous répondons sous un mois. Tu peux aussi déposer une réclamation auprès de la Commission nationale de l'informatique et des libertés (CNIL) (https://www.cnil.fr/fr/plaintes) ou de l'autorité de protection des données de ton pays.
+Pour tout autre droit, écris-nous à fleurant.m@icloud.com. Nous répondons sous un mois. Tu peux aussi déposer une réclamation auprès de la Commission nationale de l'informatique et des libertés (CNIL) (https://www.cnil.fr/fr/plaintes) ou de l'autorité de protection des données de ton pays.
 
 ## 9. Décisions automatisées
 

@@ -6,7 +6,7 @@ Traduzione dell'originale francese; non ancora rivista da un traduttore giuridic
 
 ## 1. Ambito
 
-Queste condizioni si applicano agli acquisti in-app del gioco Helios Discovery. Il venditore è ⟦À COMPLÉTER : raison sociale⟧. Il pagamento è incassato dallo store (Google Play o App Store) secondo le sue condizioni.
+Queste condizioni si applicano agli acquisti in-app del gioco Helios Discovery. Il venditore è L'AFFRERE. Il pagamento è incassato dallo store (Google Play o App Store) secondo le sue condizioni.
 
 ## 2. Articoli e prezzi
 
@@ -61,7 +61,7 @@ Godi della garanzia legale di conformità dei contenuti digitali (direttiva (UE)
 
 ## 11. Reclami e mediazione
 
-Per ogni reclamo, scrivici a contact@helios-discovery.example. Se non troviamo una soluzione, puoi rivolgerti gratuitamente al mediatore dei consumatori: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
+Per ogni reclamo, scrivici a fleurant.m@icloud.com. Se non troviamo una soluzione, puoi rivolgerti gratuitamente al mediatore dei consumatori: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
 
 ## 12. Legge applicabile
 

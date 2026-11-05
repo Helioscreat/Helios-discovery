@@ -4,7 +4,7 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 
 Übersetzung des französischen Originals; noch nicht von einer juristischen Übersetzerin oder einem juristischen Übersetzer geprüft. Vorlage, die vor der Veröffentlichung von einer Rechtsfachperson geprüft werden muss.
 
-⟦À COMPLÉTER : raison sociale⟧ möchte Helios Discovery für alle zugänglich machen, über das hinaus, was das Gesetz von einem Kleinstunternehmen verlangt (Richtlinie (EU) 2019/882, Art. 4(5)).
+L'AFFRERE möchte Helios Discovery für alle zugänglich machen, über das hinaus, was das Gesetz von einem Kleinstunternehmen verlangt (Richtlinie (EU) 2019/882, Art. 4(5)).
 
 ## Stand der Vereinbarkeit
 
@@ -32,7 +32,7 @@ Automatisierte Tests (axe-core, Kontraste, Tastatur, Textgröße, Blitzfrequenz)
 
 ## Kontakt
 
-Wenn du auf einen Inhalt oder eine Funktion nicht zugreifen kannst, schreib uns an contact@helios-discovery.example oder über https://helios-discovery.example/contact: Wir bieten dir eine barrierefreie Alternative an.
+Wenn du auf einen Inhalt oder eine Funktion nicht zugreifen kannst, schreib uns an fleurant.m@icloud.com oder über ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧: Wir bieten dir eine barrierefreie Alternative an.
 
 ## Rechtsbehelf
 

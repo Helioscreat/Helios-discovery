@@ -13,7 +13,7 @@ reposent sur des hypothèses par défaut faute de réponse aux questions bloquan
 | Pays | FR, BE, DE, ES, IT, NL | Ajout de pays : table d'âge, langues, CGV locales |
 | Public | 13 ans et plus, **non destiné aux enfants** au sens de Google Families | Si enfants visés : politique Familles, SDK certifiés, plus de pub ni d'analytics tiers |
 | Publicité | Vidéos récompensées uniquement (AdMob), facultatives, 5/jour max | Sans pub : la CMP TCF devient inutile |
-| Éditeur | SASU, micro-entreprise (< 10 salariés, CA ≤ 2 M€) | Petite ou moyenne entreprise : l'EAA et l'art. 28 du DSA deviennent des obligations (déjà implémentés) |
+| Éditeur | SAS L'AFFRERE, micro-entreprise (< 10 salariés, CA ≤ 2 M€) | Petite ou moyenne entreprise : l'EAA et l'art. 28 du DSA deviennent des obligations (déjà implémentés) |
 | Monnaie premium | **Supprimée.** Tout se vend directement en euros via le store ; les pièces se gagnent uniquement en jouant | Réactivable par config (`pricing.model = "gems"`) ; les règles COM-15/16 s'activent alors |
 | Âge des protections commerciales | **< 18 ans** (DSA art. 28, directive 2005/29 annexe I pt 28) | — |
 | Âge du consentement RGPD | Table par pays (FR 15, BE 13, DE 16, ES 14, IT 14, NL 16 ; défaut 16) | — |

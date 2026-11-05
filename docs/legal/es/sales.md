@@ -6,7 +6,7 @@ Traducción del original francés; todavía no la ha revisado un traductor jurí
 
 ## 1. Ámbito
 
-Estas condiciones se aplican a las compras dentro del juego Helios Discovery. El vendedor es ⟦À COMPLÉTER : raison sociale⟧. El pago lo cobra la tienda (Google Play o App Store) según sus propias condiciones.
+Estas condiciones se aplican a las compras dentro del juego Helios Discovery. El vendedor es L'AFFRERE. El pago lo cobra la tienda (Google Play o App Store) según sus propias condiciones.
 
 ## 2. Artículos y precios
 
@@ -61,7 +61,7 @@ Disfrutas de la garantía legal de conformidad de los contenidos digitales (Dire
 
 ## 11. Reclamaciones y mediación
 
-Para cualquier reclamación, escríbenos a contact@helios-discovery.example. Si no encontramos solución, puedes acudir gratuitamente al mediador de consumo: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
+Para cualquier reclamación, escríbenos a fleurant.m@icloud.com. Si no encontramos solución, puedes acudir gratuitamente al mediador de consumo: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
 
 ## 12. Ley aplicable
 

@@ -10,7 +10,7 @@ Queste condizioni si applicano al gioco Helios Discovery e ai suoi servizi onlin
 
 ## 2. Editore e punto di contatto
 
-Il gioco è pubblicato da ⟦À COMPLÉTER : raison sociale⟧, ⟦À COMPLÉTER : adresse du siège⟧. Punto di contatto unico per giocatori e autorità: contact@helios-discovery.example o https://helios-discovery.example/contact, oppure dal gioco (Impostazioni > Contatti e segnalazioni). Lingue accettate: francese, inglese, olandese, tedesco, spagnolo, italiano.
+Il gioco è pubblicato da L'AFFRERE, ⟦À COMPLÉTER : adresse du siège⟧. Punto di contatto unico per giocatori e autorità: fleurant.m@icloud.com o ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧, oppure dal gioco (Impostazioni > Contatti e segnalazioni). Lingue accettate: francese, inglese, olandese, tedesco, spagnolo, italiano.
 
 ## 3. Accesso, età e account
 

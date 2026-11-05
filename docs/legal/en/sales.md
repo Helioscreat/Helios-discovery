@@ -6,7 +6,7 @@ Translation of the French original; it has not yet been reviewed by a legal tran
 
 ## 1. Scope
 
-These terms apply to in-app purchases in the game Helios Discovery. The seller is ⟦À COMPLÉTER : raison sociale⟧. Payment is collected by the store (Google Play or App Store) under its own terms.
+These terms apply to in-app purchases in the game Helios Discovery. The seller is L'AFFRERE. Payment is collected by the store (Google Play or App Store) under its own terms.
 
 ## 2. Items and prices
 
@@ -61,7 +61,7 @@ You benefit from the legal guarantee of conformity for digital content (Directiv
 
 ## 11. Complaints and mediation
 
-For any complaint, contact us at contact@helios-discovery.example. If we cannot find a solution, you may refer the matter free of charge to the consumer mediator: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
+For any complaint, contact us at fleurant.m@icloud.com. If we cannot find a solution, you may refer the matter free of charge to the consumer mediator: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
 
 ## 12. Governing law
 

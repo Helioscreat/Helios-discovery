@@ -4,7 +4,7 @@ Versie 2026-11-v1, van kracht sinds 4 november 2026.
 
 Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertaler. Model dat vóór publicatie door een juridisch deskundige moet worden gecontroleerd.
 
-⟦À COMPLÉTER : raison sociale⟧ wil Helios Discovery voor iedereen toegankelijk maken, verder dan de wet van een micro-onderneming eist (richtlijn (EU) 2019/882, art. 4(5)).
+L'AFFRERE wil Helios Discovery voor iedereen toegankelijk maken, verder dan de wet van een micro-onderneming eist (richtlijn (EU) 2019/882, art. 4(5)).
 
 ## Nalevingsstatus
 
@@ -32,7 +32,7 @@ Geautomatiseerde tests (axe-core, contrast, toetsenbord, tekstgrootte, flitsfreq
 
 ## Contact
 
-Als je geen toegang hebt tot een inhoud of functie, schrijf ons dan op contact@helios-discovery.example of via https://helios-discovery.example/contact: we bieden je een toegankelijk alternatief.
+Als je geen toegang hebt tot een inhoud of functie, schrijf ons dan op fleurant.m@icloud.com of via ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧: we bieden je een toegankelijk alternatief.
 
 ## Beroep
 

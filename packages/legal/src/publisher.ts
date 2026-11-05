@@ -34,18 +34,19 @@ export interface Publisher {
 }
 
 export const PUBLISHER: Publisher = {
-  name: todo("raison sociale"),
-  legalForm: "SASU",
+  name: "L'AFFRERE",
+  legalForm: "SAS",
   capital: todo("capital social"),
   address: todo("adresse du siège"),
   registry: todo("RCS (ville et numéro)"),
   siren: todo("SIREN"),
   vat: todo("numéro de TVA intracommunautaire"),
-  director: todo("directeur ou directrice de la publication (le président de la SASU)"),
-  email: "contact@helios-discovery.example",
+  director: todo("directeur ou directrice de la publication (le président ou la présidente de la SAS)"),
+  email: "fleurant.m@icloud.com",
   phone: todo("téléphone"),
-  contactForm: "https://helios-discovery.example/contact",
-  website: "https://helios-discovery.example",
+  contactForm: todo("adresse d'un formulaire de contact en ligne"),
+  /** GitHub Pages du dépôt (publié par .github/workflows/pages.yml) ; à remplacer par le domaine de l'éditeur s'il en a un. */
+  website: "https://helioscreat.github.io/Helios-discovery",
   /** Langues acceptées par le point de contact (DSA art. 12), identiques à celles du serveur. */
   contactLanguages: ["fr", "en", "nl", "de", "es", "it"],
   mediator: { name: todo("médiateur de la consommation"), url: todo("site du médiateur"), address: todo("adresse du médiateur") },
