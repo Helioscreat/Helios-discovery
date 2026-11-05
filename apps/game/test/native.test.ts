@@ -24,9 +24,14 @@ describe("projets natifs (Capacitor)", () => {
     expect(pbx).toContain(`PRODUCT_BUNDLE_IDENTIFIER = ${build.appId};`);
   });
 
-  it("version native = version du jeu", () => {
+  it("version native = version du jeu ; clé de signature jamais dans le dépôt", () => {
     const v = JSON.parse(read("package.json")).version as string;
-    expect(read("android/app/build.gradle")).toContain(`versionName "${v}"`);
+    const gradle = read("android/app/build.gradle");
+    expect(gradle).toContain(`versionName "${v}"`);
+    expect(gradle).toMatch(/storeFile file\(ks\)/);
+    expect(gradle).not.toMatch(/storePassword\s+["']/); // mot de passe en clair interdit
+    expect(read("android/.gitignore")).toMatch(/^\*\.jks$/m);
+    expect(read("android/.gitignore")).toMatch(/^\*\.keystore$/m);
     expect(pbx).toContain(`MARKETING_VERSION = ${v};`);
   });
 

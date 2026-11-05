@@ -1,0 +1,73 @@
+# Version Android signée (AAB) pour Play Console : lancée à la main (onglet Actions > « Version Android » > Run workflow).
+# Secrets du dépôt (Settings > Secrets and variables > Actions), jamais dans le code :
+#   ANDROID_KEYSTORE_BASE64   clé d'envoi (upload key) .jks encodée en base64
+#   ANDROID_KEYSTORE_PASSWORD mot de passe du fichier .jks
+#   ANDROID_KEY_ALIAS         alias de la clé (ex. upload)
+#   ANDROID_KEY_PASSWORD      mot de passe de la clé
+# Variable facultative : VITE_API_URL (adresse du serveur de l'éditeur, quand il sera en ligne).
+name: Version Android
+
+on:
+  workflow_dispatch:
+    inputs:
+      ads_testing:
+        description: "Annonces de test Google (oui pour toute version de test interne)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Secrets présents
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KSP: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KA: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KP: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          for v in KS KSP KA KP; do if [ -z "${!v}" ]; then echo "::error::secret manquant ($v) : voir docs/stores/signature-android.md"; exit 1; fi; done
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - name: Tests (aucune version sans tests verts)
+        run: npm test
+      - name: Jeu web + synchronisation Android
+        working-directory: apps/game
+        env:
+          VITE_ADS_TESTING: ${{ inputs.ads_testing && '1' || '0' }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+        run: npx vite build --logLevel error && npx cap sync android
+      - name: Compilation signée (AAB)
+        working-directory: apps/game/android
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          export ANDROID_KEYSTORE_PATH="$RUNNER_TEMP/upload.jks"
+          ./gradlew bundleRelease --no-daemon
+          rm -f "$RUNNER_TEMP/upload.jks"
+      - name: Vérifier la signature
+        working-directory: apps/game/android
+        run: |
+          AAB=app/build/outputs/bundle/release/app-release.aab
+          jarsigner -verify "$AAB" | tail -1
+          jarsigner -verify "$AAB" | grep -q "jar verified"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: helios-discovery-${{ github.run_number }}-aab
+          path: apps/game/android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
