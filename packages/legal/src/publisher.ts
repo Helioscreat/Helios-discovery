@@ -17,8 +17,6 @@ export interface Publisher {
   director: string;
   email: string;
   phone: string;
-  /** Formulaire de contact en ligne (point de contact DSA, demandes RGPD). */
-  contactForm: string;
   /** Site public où sont hébergés les documents. */
   website: string;
   contactLanguages: string[];
@@ -37,14 +35,13 @@ export const PUBLISHER: Publisher = {
   name: "L'AFFRERE",
   legalForm: "SAS",
   capital: todo("capital social"),
-  address: todo("adresse du siège"),
+  address: "23 bis La Croix du Milieu, 16470 Saint-Michel, France",
   registry: todo("RCS (ville et numéro)"),
   siren: todo("SIREN"),
   vat: todo("numéro de TVA intracommunautaire"),
   director: todo("directeur ou directrice de la publication (le président ou la présidente de la SAS)"),
   email: "fleurant.m@icloud.com",
   phone: todo("téléphone"),
-  contactForm: todo("adresse d'un formulaire de contact en ligne"),
   /** GitHub Pages du dépôt (publié par .github/workflows/pages.yml) ; à remplacer par le domaine de l'éditeur s'il en a un. */
   website: "https://helioscreat.github.io/Helios-discovery",
   /** Langues acceptées par le point de contact (DSA art. 12), identiques à celles du serveur. */

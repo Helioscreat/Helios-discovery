@@ -13,7 +13,7 @@ Traduzione dell'originale francese; non ancora rivista da un traduttore giuridic
 
 ## 1. Titolare del trattamento
 
-L'AFFRERE (SAS), ⟦À COMPLÉTER : adresse du siège⟧, pubblica Helios Discovery e decide come vengono usati i tuoi dati. Contatto: fleurant.m@icloud.com o il modulo ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧.
+L'AFFRERE (SAS), 23 bis La Croix du Milieu, 16470 Saint-Michel, France, pubblica Helios Discovery e decide come vengono usati i tuoi dati. Contatto: fleurant.m@icloud.com.
 
 Non abbiamo nominato un responsabile della protezione dei dati. Ogni domanda sui tuoi dati arriva allo stesso indirizzo e riceve risposta entro un mese.
 

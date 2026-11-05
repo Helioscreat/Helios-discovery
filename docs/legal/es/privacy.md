@@ -13,7 +13,7 @@ Traducción del original francés; todavía no la ha revisado un traductor jurí
 
 ## 1. Responsable del tratamiento
 
-L'AFFRERE (SAS), ⟦À COMPLÉTER : adresse du siège⟧, edita Helios Discovery y decide cómo se usan tus datos. Contacto: fleurant.m@icloud.com o el formulario ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧.
+L'AFFRERE (SAS), 23 bis La Croix du Milieu, 16470 Saint-Michel, France, edita Helios Discovery y decide cómo se usan tus datos. Contacto: fleurant.m@icloud.com.
 
 No hemos designado delegado de protección de datos. Cualquier pregunta sobre tus datos llega a la misma dirección y recibe respuesta en un plazo de un mes.
 

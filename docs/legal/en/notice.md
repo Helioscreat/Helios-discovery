@@ -10,7 +10,7 @@ Translation of the French original; it has not yet been reviewed by a legal tran
 |---|---|
 | Company name | L'AFFRERE |
 | Legal form and share capital | SAS, ⟦À COMPLÉTER : capital social⟧ |
-| Registered office | ⟦À COMPLÉTER : adresse du siège⟧ |
+| Registered office | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
 | Registration | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
 | SIREN number | ⟦À COMPLÉTER : SIREN⟧ |
 | EU VAT number | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
@@ -28,7 +28,7 @@ Translation of the French original; it has not yet been reviewed by a legal tran
 
 ## Contact point (DSA art. 11 and 12)
 
-Players and authorities: fleurant.m@icloud.com or ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧. Accepted languages: French, English, Dutch, German, Spanish, Italian.
+Players and authorities: fleurant.m@icloud.com. Accepted languages: French, English, Dutch, German, Spanish, Italian.
 
 ## Digital Services Act
 

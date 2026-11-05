@@ -10,7 +10,7 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 |---|---|
 | Firma | L'AFFRERE |
 | Rechtsform und Stammkapital | SAS, ⟦À COMPLÉTER : capital social⟧ |
-| Sitz | ⟦À COMPLÉTER : adresse du siège⟧ |
+| Sitz | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
 | Handelsregister | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
 | SIREN-Nummer | ⟦À COMPLÉTER : SIREN⟧ |
 | USt-IdNr. | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
@@ -28,7 +28,7 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 
 ## Kontaktstelle (DSA Art. 11 und 12)
 
-Spieler und Behörden: fleurant.m@icloud.com oder ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧. Akzeptierte Sprachen: Französisch, Englisch, Niederländisch, Deutsch, Spanisch, Italienisch.
+Spieler und Behörden: fleurant.m@icloud.com. Akzeptierte Sprachen: Französisch, Englisch, Niederländisch, Deutsch, Spanisch, Italienisch.
 
 ## Gesetz über digitale Dienste
 

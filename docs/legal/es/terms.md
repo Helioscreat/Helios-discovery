@@ -10,7 +10,7 @@ Estas condiciones se aplican al juego Helios Discovery y a sus servicios en lín
 
 ## 2. Editor y punto de contacto
 
-El juego lo edita L'AFFRERE, ⟦À COMPLÉTER : adresse du siège⟧. Punto de contacto único para jugadores y autoridades: fleurant.m@icloud.com o ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧, o desde el juego (Ajustes > Contacto y denuncias). Idiomas aceptados: francés, inglés, neerlandés, alemán, español, italiano.
+El juego lo edita L'AFFRERE, 23 bis La Croix du Milieu, 16470 Saint-Michel, France. Punto de contacto único para jugadores y autoridades: fleurant.m@icloud.com, o desde el juego (Ajustes > Contacto y denuncias). Idiomas aceptados: francés, inglés, neerlandés, alemán, español, italiano.
 
 ## 3. Acceso, edad y cuenta
 

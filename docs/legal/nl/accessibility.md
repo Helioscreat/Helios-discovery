@@ -32,7 +32,7 @@ Geautomatiseerde tests (axe-core, contrast, toetsenbord, tekstgrootte, flitsfreq
 
 ## Contact
 
-Als je geen toegang hebt tot een inhoud of functie, schrijf ons dan op fleurant.m@icloud.com of via ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧: we bieden je een toegankelijk alternatief.
+Als je geen toegang hebt tot een inhoud of functie, schrijf ons dan op fleurant.m@icloud.com: we bieden je een toegankelijk alternatief.
 
 ## Beroep
 

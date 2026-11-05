@@ -10,7 +10,7 @@ Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertal
 |---|---|
 | Bedrijfsnaam | L'AFFRERE |
 | Rechtsvorm en kapitaal | SAS, ⟦À COMPLÉTER : capital social⟧ |
-| Maatschappelijke zetel | ⟦À COMPLÉTER : adresse du siège⟧ |
+| Maatschappelijke zetel | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
 | Inschrijving | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
 | SIREN-nummer | ⟦À COMPLÉTER : SIREN⟧ |
 | Btw-nummer | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
@@ -28,7 +28,7 @@ Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertal
 
 ## Contactpunt (DSA art. 11 en 12)
 
-Spelers en autoriteiten: fleurant.m@icloud.com of ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧. Aanvaarde talen: Frans, Engels, Nederlands, Duits, Spaans, Italiaans.
+Spelers en autoriteiten: fleurant.m@icloud.com. Aanvaarde talen: Frans, Engels, Nederlands, Duits, Spaans, Italiaans.
 
 ## Digitaledienstenverordening
 

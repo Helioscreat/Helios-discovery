@@ -10,7 +10,7 @@ Diese Bedingungen gelten für das Spiel Helios Discovery und seine Online-Dienst
 
 ## 2. Anbieter und Kontaktstelle
 
-Das Spiel wird von L'AFFRERE, ⟦À COMPLÉTER : adresse du siège⟧, herausgegeben. Zentrale Kontaktstelle für Spieler und Behörden: fleurant.m@icloud.com oder ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧, oder im Spiel (Einstellungen > Kontakt und Meldungen). Akzeptierte Sprachen: Französisch, Englisch, Niederländisch, Deutsch, Spanisch, Italienisch.
+Das Spiel wird von L'AFFRERE, 23 bis La Croix du Milieu, 16470 Saint-Michel, France, herausgegeben. Zentrale Kontaktstelle für Spieler und Behörden: fleurant.m@icloud.com, oder im Spiel (Einstellungen > Kontakt und Meldungen). Akzeptierte Sprachen: Französisch, Englisch, Niederländisch, Deutsch, Spanisch, Italienisch.
 
 ## 3. Zugang, Alter und Konto
 

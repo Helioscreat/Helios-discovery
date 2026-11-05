@@ -13,7 +13,7 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 
 ## 1. Verantwortlicher
 
-L'AFFRERE (SAS), ⟦À COMPLÉTER : adresse du siège⟧, gibt Helios Discovery heraus und entscheidet über die Verwendung deiner Daten. Kontakt: fleurant.m@icloud.com oder das Formular ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧.
+L'AFFRERE (SAS), 23 bis La Croix du Milieu, 16470 Saint-Michel, France, gibt Helios Discovery heraus und entscheidet über die Verwendung deiner Daten. Kontakt: fleurant.m@icloud.com.
 
 Wir haben keinen Datenschutzbeauftragten benannt. Jede Frage zu deinen Daten geht an dieselbe Adresse und wird innerhalb eines Monats beantwortet.
 

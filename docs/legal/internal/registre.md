@@ -8,8 +8,8 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 |---|---|
 | Nom | L'AFFRERE |
 | Forme | SAS |
-| Adresse | ⟦À COMPLÉTER : adresse du siège⟧ |
-| Contact | fleurant.m@icloud.com ; ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧ |
+| Adresse | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
+| Contact | fleurant.m@icloud.com |
 | Représentant dans l'UE | Sans objet (établi en France) |
 | Délégué à la protection des données | Non désigné (à réévaluer : suivi régulier et systématique à grande échelle ?) |
 

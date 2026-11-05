@@ -32,7 +32,7 @@ Tests automatisés (axe-core, contrastes, clavier, taille de texte, fréquence d
 
 ## Contact
 
-Si tu ne peux pas accéder à un contenu ou à une fonction, écris-nous à fleurant.m@icloud.com ou via ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧ : nous te proposerons une alternative accessible.
+Si tu ne peux pas accéder à un contenu ou à une fonction, écris-nous à fleurant.m@icloud.com : nous te proposerons une alternative accessible.
 
 ## Recours
 

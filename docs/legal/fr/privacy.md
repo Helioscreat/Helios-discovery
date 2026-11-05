@@ -13,7 +13,7 @@ Version originale du document. Modèle à faire valider par un professionnel du 
 
 ## 1. Responsable du traitement
 
-L'AFFRERE (SAS), ⟦À COMPLÉTER : adresse du siège⟧, édite Helios Discovery et décide de l'usage de tes données. Contact : fleurant.m@icloud.com ou le formulaire ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧.
+L'AFFRERE (SAS), 23 bis La Croix du Milieu, 16470 Saint-Michel, France, édite Helios Discovery et décide de l'usage de tes données. Contact : fleurant.m@icloud.com.
 
 Nous n'avons pas désigné de délégué à la protection des données. Toute question sur tes données arrive à la même adresse et reçoit une réponse sous un mois.
 

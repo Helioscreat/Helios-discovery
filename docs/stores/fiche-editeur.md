@@ -5,7 +5,7 @@
 | Champ du store | Valeur |
 |---|---|
 | Nom ou raison sociale | L'AFFRERE |
-| Adresse | ⟦À COMPLÉTER : adresse du siège⟧ |
+| Adresse | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
 | E-mail | fleurant.m@icloud.com |
 | Téléphone | ⟦À COMPLÉTER : téléphone⟧ |
 | Numéro d'immatriculation | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ ; SIREN ⟦À COMPLÉTER : SIREN⟧ |

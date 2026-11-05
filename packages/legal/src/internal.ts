@@ -45,7 +45,7 @@ export function register(): Doc {
     { h: 1, text: "Registre des activités de traitement (RGPD art. 30)" },
     { p: `Version ${LEGAL_VERSION.label} du ${LEGAL_VERSION.date}. Document interne, généré depuis packages/legal/src/inventory.ts.` },
     { h: 2, text: "Responsable du traitement (art. 30(1)(a))", id: "a" },
-    { table: { head: ["Rubrique", "Valeur"], rows: [["Nom", p.name], ["Forme", p.legalForm], ["Adresse", p.address], ["Contact", `${p.email} ; ${p.contactForm}`], ["Représentant dans l'UE", "Sans objet (établi en France)"], ["Délégué à la protection des données", "Non désigné (à réévaluer : suivi régulier et systématique à grande échelle ?)"]] } },
+    { table: { head: ["Rubrique", "Valeur"], rows: [["Nom", p.name], ["Forme", p.legalForm], ["Adresse", p.address], ["Contact", p.email], ["Représentant dans l'UE", "Sans objet (établi en France)"], ["Délégué à la protection des données", "Non désigné (à réévaluer : suivi régulier et systématique à grande échelle ?)"]] } },
   ];
   for (const t of TREATMENTS) {
     blocks.push(

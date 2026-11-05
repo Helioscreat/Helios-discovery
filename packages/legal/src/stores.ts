@@ -35,7 +35,7 @@ export function dataSafety(): Doc {
     { table: { head: ["Question", "Réponse"], rows: [
       ["L'application collecte-t-elle ou partage-t-elle des données utilisateur des types requis ?", "Oui"],
       ["Toutes les données collectées sont-elles chiffrées en transit ?", "Oui (HTTPS)"],
-      ["Proposez-vous un moyen de demander la suppression des données ?", `Oui : dans l'application (Paramètres > Confidentialité) et via ${PUBLISHER.contactForm}`],
+      ["Proposez-vous un moyen de demander la suppression des données ?", `Oui : dans l'application (Paramètres > Confidentialité) et par e-mail (${PUBLISHER.email})`],
       ["Application conforme à la politique Familles ?", "Non applicable : public 13 ans et plus, hors programme Familles"],
     ] } },
     { h: 2, text: "Types de données" },

@@ -10,7 +10,7 @@ Version originale du document. Modèle à faire valider par un professionnel du 
 |---|---|
 | Raison sociale | L'AFFRERE |
 | Forme et capital | SAS, ⟦À COMPLÉTER : capital social⟧ |
-| Siège | ⟦À COMPLÉTER : adresse du siège⟧ |
+| Siège | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
 | Immatriculation | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
 | SIREN | ⟦À COMPLÉTER : SIREN⟧ |
 | TVA intracommunautaire | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
@@ -28,7 +28,7 @@ Version originale du document. Modèle à faire valider par un professionnel du 
 
 ## Point de contact (DSA art. 11 et 12)
 
-Joueurs et autorités : fleurant.m@icloud.com ou ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧. Langues acceptées : français, anglais, néerlandais, allemand, espagnol, italien.
+Joueurs et autorités : fleurant.m@icloud.com. Langues acceptées : français, anglais, néerlandais, allemand, espagnol, italien.
 
 ## Règlement sur les services numériques
 

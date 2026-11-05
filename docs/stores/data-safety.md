@@ -8,7 +8,7 @@ Réponses générées depuis packages/legal/src/inventory.ts (2026-11-v1). À re
 |---|---|
 | L'application collecte-t-elle ou partage-t-elle des données utilisateur des types requis ? | Oui |
 | Toutes les données collectées sont-elles chiffrées en transit ? | Oui (HTTPS) |
-| Proposez-vous un moyen de demander la suppression des données ? | Oui : dans l'application (Paramètres > Confidentialité) et via ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧ |
+| Proposez-vous un moyen de demander la suppression des données ? | Oui : dans l'application (Paramètres > Confidentialité) et par e-mail (fleurant.m@icloud.com) |
 | Application conforme à la politique Familles ? | Non applicable : public 13 ans et plus, hors programme Familles |
 
 ## Types de données

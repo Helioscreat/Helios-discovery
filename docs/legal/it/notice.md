@@ -10,7 +10,7 @@ Traduzione dell'originale francese; non ancora rivista da un traduttore giuridic
 |---|---|
 | Ragione sociale | L'AFFRERE |
 | Forma giuridica e capitale | SAS, ⟦À COMPLÉTER : capital social⟧ |
-| Sede legale | ⟦À COMPLÉTER : adresse du siège⟧ |
+| Sede legale | 23 bis La Croix du Milieu, 16470 Saint-Michel, France |
 | Iscrizione al registro | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
 | Numero SIREN | ⟦À COMPLÉTER : SIREN⟧ |
 | Partita IVA intracomunitaria | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
@@ -28,7 +28,7 @@ Traduzione dell'originale francese; non ancora rivista da un traduttore giuridic
 
 ## Punto di contatto (DSA art. 11 e 12)
 
-Giocatori e autorità: fleurant.m@icloud.com o ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧. Lingue accettate: francese, inglese, olandese, tedesco, spagnolo, italiano.
+Giocatori e autorità: fleurant.m@icloud.com. Lingue accettate: francese, inglese, olandese, tedesco, spagnolo, italiano.
 
 ## Regolamento sui servizi digitali
 

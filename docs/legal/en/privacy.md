@@ -13,7 +13,7 @@ Translation of the French original; it has not yet been reviewed by a legal tran
 
 ## 1. Controller
 
-L'AFFRERE (SAS), ⟦À COMPLÉTER : adresse du siège⟧, publishes Helios Discovery and decides how your data is used. Contact: fleurant.m@icloud.com or the form ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧.
+L'AFFRERE (SAS), 23 bis La Croix du Milieu, 16470 Saint-Michel, France, publishes Helios Discovery and decides how your data is used. Contact: fleurant.m@icloud.com.
 
 We have not appointed a data protection officer. Any question about your data goes to the same address and is answered within one month.
 

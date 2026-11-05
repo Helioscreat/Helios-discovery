@@ -67,7 +67,6 @@ const pub = () => ({
   legalForm: PUBLISHER.legalForm,
   address: PUBLISHER.address,
   email: PUBLISHER.email,
-  form: PUBLISHER.contactForm,
   mediator: PUBLISHER.mediator.name,
   mediatorUrl: PUBLISHER.mediator.url,
   mediatorAddress: PUBLISHER.mediator.address,

@@ -10,7 +10,7 @@ Ces conditions s'appliquent au jeu Helios Discovery et à ses services en ligne 
 
 ## 2. Éditeur et point de contact
 
-Le jeu est édité par L'AFFRERE, ⟦À COMPLÉTER : adresse du siège⟧. Point de contact unique pour les joueurs et les autorités : fleurant.m@icloud.com ou ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧, ou depuis le jeu (Paramètres > Contact et signalements). Langues acceptées : français, anglais, néerlandais, allemand, espagnol, italien.
+Le jeu est édité par L'AFFRERE, 23 bis La Croix du Milieu, 16470 Saint-Michel, France. Point de contact unique pour les joueurs et les autorités : fleurant.m@icloud.com, ou depuis le jeu (Paramètres > Contact et signalements). Langues acceptées : français, anglais, néerlandais, allemand, espagnol, italien.
 
 ## 3. Accès, âge et compte
 
