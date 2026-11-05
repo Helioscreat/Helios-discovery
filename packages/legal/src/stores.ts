@@ -157,7 +157,11 @@ export function umpConfig(): Doc {
       { ul: [
         "Créer un message pour l'application Android et pour l'application iOS (même configuration).",
         `Langues : ${langs.join(", ")} (mêmes langues que le jeu).`,
-        "Activer le bouton « Ne pas autoriser » sur le premier écran, au même niveau que « Autoriser » (GDPR-02, COM-04) ; vérifier sur une capture que les deux boutons ont la même taille et le même contraste.",
+        "Activer le bouton de refus sur le premier écran (« Refuser » en français, « Do not consent » en anglais), au même niveau que « Autoriser » (GDPR-02, COM-04) ; vérifier sur une capture que les deux boutons ont la même taille et le même contraste. Vérifié le 2026-11-05 dans les 6 langues.",
+        "Désactiver la fonctionnalité spéciale « Utiliser des données de géolocalisation précises » : le jeu ne collecte aucune position (inventaire, Sécurité des données, IARC). Le formulaire ne doit plus mentionner la géolocalisation précise.",
+        "Désactiver l'intérêt légitime pour les partenaires : la politique de confidentialité fonde la publicité sur le consentement seul.",
+        "Ne sélectionner aucune « finalité concernant votre utilisation » (finalités de l'éditeur) : la mesure d'audience reste sur l'écran du jeu, car le plugin Capacitor ne transmet pas la chaîne TC au jeu, qui ne pourrait donc pas lire ce choix.",
+        "Dans AdMob, nommer l'application Android « Helios Discovery » (nom affiché dans le formulaire à la place de %%APP_NAME%%).",
         "Garder « Gérer les options » pour le choix finalité par finalité.",
         "Partenaires publicitaires : liste personnalisée réduite à Google ; n'ajouter aucun autre partenaire sans mettre à jour la politique de confidentialité et le registre.",
         `Lien vers la politique de confidentialité : ${PUBLISHER.website}/legal/fr/privacy.html (et la langue de chaque message).`,

@@ -70,7 +70,7 @@ export class NoAds implements ConsentPlatform {
 export class TestUmp implements ConsentPlatform {
   readonly kind = "test" as const;
   readonly calls: { method: "gather" | "privacyOptions"; tagForUnderAgeOfConsent: boolean }[] = [];
-  /** `showForm` = false : comme si le joueur avait déjà répondu « Ne pas autoriser » lors d'un lancement précédent. */
+  /** `showForm` = false : comme si le joueur avait déjà répondu « Refuser » lors d'un lancement précédent. */
   constructor(showForm: boolean) {
     this.decided = showForm ? null : false;
   }
@@ -90,7 +90,7 @@ export class TestUmp implements ConsentPlatform {
   }
 
   private state(): AdsConsentState {
-    // « Ne pas autoriser » : UMP renvoie OBTAINED (un choix existe) ; canRequestAds reste vrai pour la publicité limitée.
+    // « Refuser » : UMP renvoie OBTAINED (un choix existe) ; canRequestAds reste vrai pour la publicité limitée.
     return { status: this.decided === null ? "REQUIRED" : "OBTAINED", canRequestAds: this.decided !== null, privacyOptionsRequired: true };
   }
 
@@ -102,7 +102,7 @@ export class TestUmp implements ConsentPlatform {
       d.dataset.testid = "ump-form";
       // Le vrai formulaire UMP est une vue native au-dessus de tout le jeu : la doublure l'imite.
       d.style.cssText = "position:fixed;inset:0;z-index:2147483647;display:grid;place-content:center;gap:12px;background:var(--bg,#fff);color:var(--fg,#000);padding:16px";
-      d.innerHTML = '<p>Formulaire Google UMP (doublure de test)</p><button type="button" data-ump="consent">Autoriser</button> <button type="button" data-ump="decline">Ne pas autoriser</button>';
+      d.innerHTML = '<p>Formulaire Google UMP (doublure de test)</p><button type="button" data-ump="consent">Autoriser</button> <button type="button" data-ump="decline">Refuser</button>';
       d.addEventListener("click", (e) => {
         const b = (e.target as HTMLElement).closest("button");
         if (!b) return;

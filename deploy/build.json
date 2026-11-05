@@ -3,12 +3,51 @@
   "appId": "com.helioscreat.heliosdiscovery",
   "targetAudience": "teen",
   "nativeSdks": [
-    { "id": "com.android.billingclient:billing", "kind": "billing", "platform": "android" },
-    { "id": "StoreKit", "kind": "billing", "platform": "ios" },
-    { "id": "com.google.android.gms:play-services-ads", "kind": "ads", "platform": "android" },
-    { "id": "Google-Mobile-Ads-SDK", "kind": "ads", "platform": "ios" },
-    { "id": "com.google.android.ump:user-messaging-platform", "kind": "consent", "platform": "android" },
-    { "id": "GoogleUserMessagingPlatform", "kind": "consent", "platform": "ios" },
-    { "id": "com.google.firebase:firebase-messaging", "kind": "push", "platform": "android" }
-  ]
+    {
+      "id": "com.android.billingclient:billing",
+      "kind": "billing",
+      "platform": "android"
+    },
+    {
+      "id": "StoreKit",
+      "kind": "billing",
+      "platform": "ios"
+    },
+    {
+      "id": "com.google.android.gms:play-services-ads",
+      "kind": "ads",
+      "platform": "android"
+    },
+    {
+      "id": "Google-Mobile-Ads-SDK",
+      "kind": "ads",
+      "platform": "ios"
+    },
+    {
+      "id": "com.google.android.ump:user-messaging-platform",
+      "kind": "consent",
+      "platform": "android"
+    },
+    {
+      "id": "GoogleUserMessagingPlatform",
+      "kind": "consent",
+      "platform": "ios"
+    },
+    {
+      "id": "com.google.firebase:firebase-messaging",
+      "kind": "push",
+      "platform": "android"
+    }
+  ],
+  "admob": {
+    "$comment": "Identifiants AdMob (publics : ils figurent dans l'application publiée). Relevés le 2026-11-05. À reporter dans AndroidManifest.xml (com.google.android.gms.ads.APPLICATION_ID) et Info.plist (GADApplicationIdentifier) à la création du projet natif.",
+    "android": {
+      "appId": "ca-app-pub-1598630500327730~6178542215",
+      "rewardedAdUnitId": "ca-app-pub-1598630500327730/3324615339"
+    },
+    "ios": {
+      "appId": "ca-app-pub-1598630500327730~8421774200",
+      "rewardedAdUnitId": "ca-app-pub-1598630500327730/2175185190"
+    }
+  }
 }
