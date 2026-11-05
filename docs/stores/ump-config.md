@@ -9,7 +9,7 @@ Le formulaire de consentement publicitaire est rendu par Google à partir de la 
 - Activer le bouton « Ne pas autoriser » sur le premier écran, au même niveau que « Autoriser » (GDPR-02, COM-04) ; vérifier sur une capture que les deux boutons ont la même taille et le même contraste.
 - Garder « Gérer les options » pour le choix finalité par finalité.
 - Partenaires publicitaires : liste personnalisée réduite à Google ; n'ajouter aucun autre partenaire sans mettre à jour la politique de confidentialité et le registre.
-- Lien vers la politique de confidentialité : https://helios-discovery.example/legal/fr/privacy.html (et la langue de chaque message).
+- Lien vers la politique de confidentialité : https://helioscreat.github.io/Helios-discovery/legal/fr/privacy.html (et la langue de chaque message).
 - Désactiver le message explicatif IDFA d'AdMob : le jeu ne demande l'autorisation App Tracking Transparency qu'à un majeur dont UMP a recueilli le consentement (AGE-05).
 
 ## Comportement attendu dans le jeu

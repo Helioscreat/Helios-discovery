@@ -45,7 +45,8 @@ export const PUBLISHER: Publisher = {
   email: "contact@helios-discovery.example",
   phone: todo("téléphone"),
   contactForm: "https://helios-discovery.example/contact",
-  website: "https://helios-discovery.example",
+  /** GitHub Pages du dépôt (publié par .github/workflows/pages.yml) ; à remplacer par le domaine de l'éditeur s'il en a un. */
+  website: "https://helioscreat.github.io/Helios-discovery",
   /** Langues acceptées par le point de contact (DSA art. 12), identiques à celles du serveur. */
   contactLanguages: ["fr", "en", "nl", "de", "es", "it"],
   mediator: { name: todo("médiateur de la consommation"), url: todo("site du médiateur"), address: todo("adresse du médiateur") },
