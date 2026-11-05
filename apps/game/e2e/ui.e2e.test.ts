@@ -1010,3 +1010,45 @@ describe("documents juridiques", () => {
     await ctx.close();
   });
 });
+
+describe("vidéos récompensées", () => {
+  it("majeur, choix UMP fait : vidéo facultative, +50 pièces, compteur du jour ; vidéo interrompue : rien", async () => {
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, umpForm: true });
+    await answerAge(page, yearsAgo(30));
+    await page.locator("[data-modal='consent'] [data-choice='decline']").click();
+    await page.locator("[data-testid='ump-form'] [data-ump='decline']").click();
+    await page.waitForFunction(() => window.__helios!.compliance().ads.canRequestAds);
+    await page.evaluate(() => window.__helios!.goto("rewards"));
+    const ad = page.locator("[data-testid='rewarded-ad']");
+    await ad.waitFor();
+    const coins = () => page.evaluate(() => window.__helios!.meta().account.wallet.coins);
+    const before = await coins();
+    await ad.getByRole("button").click();
+    await page.waitForFunction((b) => window.__helios!.meta().account.wallet.coins === b + 50, before);
+    expect(await ad.innerText()).toMatch(/: 4/); // 5 par jour, 1 utilisée
+    await ctx.close();
+
+    const c2 = await phone(PHONES[0], undefined, { fresh: true, umpForm: true });
+    await c2.page.goto(`${c2.url}&ad=dismiss`);
+    await answerAge(c2.page, yearsAgo(30));
+    await c2.page.locator("[data-modal='consent'] [data-choice='decline']").click();
+    await c2.page.locator("[data-testid='ump-form'] [data-ump='consent']").click();
+    await c2.page.waitForFunction(() => window.__helios!.compliance().ads.canRequestAds);
+    await c2.page.evaluate(() => window.__helios!.goto("rewards"));
+    const b2 = await c2.page.evaluate(() => window.__helios!.meta().account.wallet.coins);
+    await c2.page.locator("[data-testid='rewarded-ad']").getByRole("button").click();
+    await c2.page.waitForSelector("[data-testid='rewarded-ad'] [role='status']");
+    expect(await c2.page.evaluate(() => window.__helios!.meta().account.wallet.coins)).toBe(b2);
+    await c2.ctx.close();
+  });
+
+  it("FR, 14 ans : aucune vidéo proposée (ni UMP ni AdMob)", async () => {
+    const { page, ctx } = await phone(PHONES[0], undefined, { fresh: true, country: "FR", umpForm: true });
+    await answerAge(page, yearsAgo(14));
+    await page.waitForSelector(".home");
+    await page.evaluate(() => window.__helios!.goto("rewards"));
+    await page.locator("[data-screen-name='rewards']").waitFor();
+    expect(await page.locator("[data-testid='rewarded-ad']").count()).toBe(0);
+    await ctx.close();
+  });
+});

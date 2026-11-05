@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import config from "../capacitor.config";
+import { AD_UNITS } from "../src/game/ads";
 
 const GAME = join(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p: string) => readFileSync(join(GAME, p), "utf8");
@@ -23,9 +24,14 @@ describe("projets natifs (Capacitor)", () => {
     expect(pbx).toContain(`PRODUCT_BUNDLE_IDENTIFIER = ${build.appId};`);
   });
 
-  it("version native = version du jeu", () => {
+  it("version native = version du jeu ; clé de signature jamais dans le dépôt", () => {
     const v = JSON.parse(read("package.json")).version as string;
-    expect(read("android/app/build.gradle")).toContain(`versionName "${v}"`);
+    const gradle = read("android/app/build.gradle");
+    expect(gradle).toContain(`versionName "${v}"`);
+    expect(gradle).toMatch(/storeFile file\(ks\)/);
+    expect(gradle).not.toMatch(/storePassword\s+["']/); // mot de passe en clair interdit
+    expect(read("android/.gitignore")).toMatch(/^\*\.jks$/m);
+    expect(read("android/.gitignore")).toMatch(/^\*\.keystore$/m);
     expect(pbx).toContain(`MARKETING_VERSION = ${v};`);
   });
 
@@ -34,6 +40,7 @@ describe("projets natifs (Capacitor)", () => {
     expect(plistValue("GADApplicationIdentifier")).toBe(build.admob.ios.appId);
     for (const id of [build.admob.android.appId, build.admob.ios.appId]) expect(id).toMatch(/^ca-app-pub-\d{16}~\d{10}$/);
     for (const id of [build.admob.android.rewardedAdUnitId, build.admob.ios.rewardedAdUnitId]) expect(id).toMatch(/^ca-app-pub-\d{16}\/\d{10}$/);
+    expect(AD_UNITS).toEqual({ android: build.admob.android.rewardedAdUnitId, ios: build.admob.ios.rewardedAdUnitId });
   });
 
   it("SDK publicitaire jamais initialisé avant UMP : initialisation différée sur les deux plateformes", () => {

@@ -131,6 +131,22 @@ export class GooglePlayVerifier implements ReceiptVerifier {
     }
   }
 
+  /**
+   * Remboursements et annulations depuis `startMs` (API des achats annulés : produits et abonnements).
+   * Interrogée périodiquement par le serveur, sans dépendre des notifications Pub/Sub.
+   */
+  async voidedSince(startMs: number): Promise<{ orderId: string; purchaseToken: string; voidedAt: number }[]> {
+    const out: { orderId: string; purchaseToken: string; voidedAt: number }[] = [];
+    let page: string | undefined;
+    do {
+      const q = `purchases/voidedpurchases?type=1&startTime=${Math.floor(startMs)}${page ? `&token=${encodeURIComponent(page)}` : ""}`;
+      const r = await this.call<{ voidedPurchases?: { orderId?: string; purchaseToken?: string; voidedTimeMillis?: string }[]; tokenPagination?: { nextPageToken?: string } }>(q);
+      for (const v of r.voidedPurchases ?? []) if (v.orderId) out.push({ orderId: v.orderId, purchaseToken: v.purchaseToken ?? "", voidedAt: Number(v.voidedTimeMillis ?? 0) });
+      page = r.tokenPagination?.nextPageToken;
+    } while (page);
+    return out;
+  }
+
   /** Acquittement côté serveur juste après le crédit : protège contre le remboursement automatique à 3 jours. */
   async acknowledge(r: Receipt): Promise<void> {
     const sku = skuById(r.skuId);
@@ -197,6 +213,24 @@ export class AppStoreVerifier implements ReceiptVerifier {
     return null;
   }
 
+  /**
+   * Notification du serveur App Store (V2). Son contenu n'est pas cru sur parole : seul l'identifiant de transaction
+   * en est extrait, puis la transaction est relue auprès de l'API d'Apple (authentifiée). Renvoie la commande remboursée.
+   */
+  async refundFromNotification(signedPayload: string): Promise<{ orderId: string } | null> {
+    let id: string | undefined;
+    try {
+      const n = jwsPayload<{ notificationType?: string; data?: { signedTransactionInfo?: string; bundleId?: string } }>(signedPayload);
+      if (!n.data?.signedTransactionInfo) return null;
+      id = jwsPayload<{ transactionId?: string }>(n.data.signedTransactionInfo).transactionId;
+    } catch {
+      return null;
+    }
+    if (!id) return null;
+    const t = await this.transaction(id);
+    return t && t.bundleId === this.cfg.bundleId && t.revocationDate ? { orderId: t.transactionId } : null;
+  }
+
   async verify(r: Receipt, ctx?: VerifyContext): Promise<VerifiedPurchase> {
     const sku = skuById(r.skuId);
     const base = { skuId: r.skuId, eurCents: sku.referenceEurCents, at: this.clock() };
@@ -211,7 +245,7 @@ export class AppStoreVerifier implements ReceiptVerifier {
 
 /** Aiguillage par plateforme. Le store simulé n'est accepté que hors production. */
 export class StoreVerifiers implements ReceiptVerifier {
-  constructor(private readonly by: Partial<Record<Receipt["platform"], ReceiptVerifier>>) {}
+  constructor(readonly by: Partial<Record<Receipt["platform"], ReceiptVerifier>>) {}
   private pick(r: Receipt): ReceiptVerifier {
     const v = this.by[r.platform];
     if (!v) throw Object.assign(new Error(`aucun vérificateur pour ${r.platform}`), { status: 503 });

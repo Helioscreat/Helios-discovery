@@ -4,3 +4,9 @@ coverage/
 *.log
 .DS_Store
 packages/levels/out/
+
+# Secrets (clés de signature, clé Apple, compte de service Google) : jamais dans le dépôt
+*.jks
+*.keystore
+*.p8
+*service-account*.json

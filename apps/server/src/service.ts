@@ -157,6 +157,33 @@ export class Service {
     return { credited: r.credited, state: v.state, purchase: v };
   }
 
+  /** Achats du joueur et leur état (le jeu retire localement le contenu des commandes remboursées). */
+  purchasesOf(p: PlayerRow): { orderId: string; skuId: string; state: "credited" | "refunded" }[] {
+    return this.ledgerOf(p.id).map((e) => ({ orderId: e.orderId, skuId: e.skuId, state: e.state }));
+  }
+
+  /** Commande remboursée par le store : sortie du plafond mensuel, contenu retiré par le jeu à la synchronisation. */
+  markRefunded(orderId: string): boolean {
+    return this.db.prepare("UPDATE ledger SET state = 'refunded' WHERE order_id = ? AND state = 'credited'").run(orderId).changes > 0;
+  }
+
+  /** Google : remboursements des dernières 30 heures (tâche horaire, recouvrement volontaire). */
+  async runRefundJob(): Promise<number> {
+    const g = (this.verifier as { by?: { google?: { voidedSince?(t: number): Promise<{ orderId: string }[]> } } }).by?.google;
+    if (!g?.voidedSince) return 0;
+    let n = 0;
+    for (const v of await g.voidedSince(this.cfg.clock() - 30 * 3_600_000)) if (this.markRefunded(v.orderId)) n++;
+    return n;
+  }
+
+  /** Apple : notification du serveur App Store, relue auprès de l'API avant tout effet. */
+  async appleNotification(signedPayload: unknown): Promise<{ refunded: boolean }> {
+    const a = (this.verifier as { by?: { apple?: { refundFromNotification?(s: string): Promise<{ orderId: string } | null> } } }).by?.apple;
+    if (typeof signedPayload !== "string" || !a?.refundFromNotification) return { refunded: false };
+    const r = await a.refundFromNotification(signedPayload);
+    return { refunded: !!r && this.markRefunded(r.orderId) };
+  }
+
   // ───────────── chat d'équipe ─────────────
   joinTeam(p: PlayerRow, teamId: string): void {
     // @collects team.membership

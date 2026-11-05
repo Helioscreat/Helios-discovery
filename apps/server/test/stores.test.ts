@@ -148,3 +148,49 @@ describe("configuration et service", () => {
     expect((db.prepare("SELECT COUNT(*) n FROM ledger WHERE order_id = 'GPA.2'").get() as { n: number }).n).toBe(0);
   });
 });
+
+describe("remboursements", () => {
+  const rsa = generateKeyPairSync("rsa", { modulusLength: 2048, publicKeyEncoding: { type: "spki", format: "pem" }, privateKeyEncoding: { type: "pkcs8", format: "pem" } });
+  const ec = generateKeyPairSync("ec", { namedCurve: "P-256", publicKeyEncoding: { type: "spki", format: "pem" }, privateKeyEncoding: { type: "pkcs8", format: "pem" } });
+  const jws = (t: Record<string, unknown>) => `eyJhbGciOiJFUzI1NiJ9.${Buffer.from(JSON.stringify(t)).toString("base64url")}.sig`;
+
+  it("Google : API des achats annulés lue page par page", async () => {
+    const f = fakeFetch((c) => {
+      if (c.url.includes("oauth2")) return { status: 200, body: { access_token: "AT", expires_in: 3600 } };
+      if (c.url.includes("voidedpurchases") && !c.url.includes("token=p2")) return { status: 200, body: { voidedPurchases: [{ orderId: "GPA.1", purchaseToken: "a", voidedTimeMillis: "1" }], tokenPagination: { nextPageToken: "p2" } } };
+      if (c.url.includes("voidedpurchases")) return { status: 200, body: { voidedPurchases: [{ orderId: "GPA.2", purchaseToken: "b", voidedTimeMillis: "2" }] } };
+      return { status: 404 };
+    });
+    const v = new GooglePlayVerifier({ packageName: "p", serviceAccount: { client_email: "x@y", private_key: rsa.privateKey }, fetch: f.fetch, clock: () => NOW });
+    expect((await v.voidedSince(NOW - 1000)).map((x) => x.orderId)).toEqual(["GPA.1", "GPA.2"]);
+    expect(f.calls.find((c) => c.url.includes("voidedpurchases"))!.url).toContain(`type=1&startTime=${NOW - 1000}`);
+  });
+
+  it("Apple : une notification falsifiée n'a aucun effet ; seul l'état relu auprès d'Apple compte", async () => {
+    const cfg = { issuerId: "i", keyId: "k", privateKey: ec.privateKey, bundleId: "com.helioscreat.heliosdiscovery" };
+    const notif = jws({ notificationType: "REFUND", data: { signedTransactionInfo: jws({ transactionId: "2000000555", revocationDate: NOW }) } });
+    const notRevoked = fakeFetch(() => ({ status: 200, body: { signedTransactionInfo: jws({ transactionId: "2000000555", productId: "boosters_m", bundleId: cfg.bundleId }) } }));
+    expect(await new AppStoreVerifier({ ...cfg, fetch: notRevoked.fetch, clock: () => NOW }).refundFromNotification(notif)).toBeNull();
+    const revoked = fakeFetch(() => ({ status: 200, body: { signedTransactionInfo: jws({ transactionId: "2000000555", productId: "boosters_m", bundleId: cfg.bundleId, revocationDate: NOW }) } }));
+    expect(await new AppStoreVerifier({ ...cfg, fetch: revoked.fetch, clock: () => NOW }).refundFromNotification(notif)).toEqual({ orderId: "2000000555" });
+    expect(await new AppStoreVerifier({ ...cfg, fetch: revoked.fetch, clock: () => NOW }).refundFromNotification("pas-un-jws")).toBeNull();
+  });
+
+  it("service : commande remboursée sortie du plafond, visible par le jeu ; tâche horaire Google", async () => {
+    const verifier = new (await import("../src/stores")).StoreVerifiers({
+      google: {
+        verify: async (r) => ({ orderId: r.orderId, skuId: r.skuId, state: "purchased", eurCents: 999, at: NOW }),
+        voidedSince: async () => [{ orderId: "GPA.10", purchaseToken: "t", voidedAt: NOW }],
+      } as ReceiptVerifier & { voidedSince(): Promise<{ orderId: string; purchaseToken: string; voidedAt: number }[]> },
+    });
+    const db = openDb();
+    const svc = new Service(db, { clock: () => NOW, deletionDelayMs: 1, moderators: [], contact: { email: "c@x.eu", languages: ["fr"] }, minorCapCents: 2000, adminKeys: [], verifier });
+    const p = svc.authenticate(svc.createAccount("FR").token);
+    await svc.verifyPurchase(p, { platform: "google", orderId: "GPA.10", skuId: "boosters_m", token: "t" });
+    expect(svc.purchasesOf(p)).toEqual([{ orderId: "GPA.10", skuId: "boosters_m", state: "credited" }]);
+    expect(await svc.runRefundJob()).toBe(1);
+    expect(svc.purchasesOf(p)[0].state).toBe("refunded");
+    expect(await svc.runRefundJob()).toBe(0); // idempotent
+    expect(await svc.appleNotification(undefined)).toEqual({ refunded: false });
+  });
+});

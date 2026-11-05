@@ -137,3 +137,22 @@ describe("NativeStore (@capgo/native-purchases)", () => {
     expect(f.calls.some((c) => c.m === "purchaseProduct")).toBe(false);
   });
 });
+
+describe("remboursements", () => {
+  it("commande remboursée : contenu retiré une seule fois (boosters de la réserve, abonnement, passe)", async () => {
+    const { store } = fakeStore((id) => ({ kind: "receipt", receipt: receipt("GPA.R1", id) }));
+    const shop = new Shop(() => NOW, store);
+    shop.remote = remote();
+    const meta = newMeta(NOW), profile = newProfile();
+    await shop.buy(meta, profile, skuById("boosters_m"));
+    const bought = { ...profile.inventory };
+    expect(bought.hammer).toBeGreaterThan(0);
+    profile.inventory.hammer -= 1; // un marteau déjà utilisé
+    const list = [{ orderId: "GPA.R1", skuId: "boosters_m", state: "refunded" as const }];
+    expect(shop.applyRefunds(meta, profile, list)).toBe(1);
+    expect(profile.inventory.hammer).toBe(0); // jamais négatif
+    expect(meta.account.ledger.find((e) => e.orderId === "GPA.R1")!.state).toBe("refunded");
+    expect(shop.applyRefunds(meta, profile, list)).toBe(0); // idempotent
+    expect(shop.applyRefunds(meta, profile, [{ orderId: "inconnu", skuId: "boosters_m", state: "refunded" }])).toBe(0);
+  });
+});

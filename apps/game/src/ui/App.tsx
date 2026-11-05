@@ -15,11 +15,12 @@ import { IslandScreen, LivesModal, PassScreen, PassSheet, Price, PurchaseSheet, 
 import { continueGame } from "@helios/core";
 import {
   addXp, buyPass, canPlay, claim, claimQuest, doTask, claimSubscriptionPerks, COIN_PRICES, COIN_REWARDS, continueOffer, dailyQuests, login,
-  progressQuests, refillLivesWithCoins, skuById, spendCoins, spinWheel, tierOf, WHEEL, winXp, type AgeBand, type Sku,
+  adsLeft, MAX_ADS_PER_DAY, progressQuests, refillLivesWithCoins, rewardAd, skuById, spendCoins, spinWheel, tierOf, WHEEL, winXp, type AgeBand, type Sku,
 } from "@helios/economy";
 import { currentSeason, endLevel, grant, saveMeta, type MetaState, type Shop } from "../game/meta";
 import { categoriesFor, CHANGELOG, DEFAULT_CONFIG, DEFAULT_PREFS, resolveConfig, type ResolvedConfig } from "@helios/config";
-import { ADS_UNKNOWN, umpPlan, type ConsentChoice } from "@helios/compliance";
+import { adRequestParams, ADS_UNKNOWN, umpPlan, type ConsentChoice } from "@helios/compliance";
+import type { RewardedAds } from "../game/ads";
 import type { ConsentPlatform, TestUmp } from "../game/ump";
 import { Analytics, applyBirth, applyConsent, nextOnboardingStep, saveCompliance, type Api, type ComplianceState } from "../game/compliance";
 import { AgeGate, ConsentScreen, ContactScreen, DeleteAccountModal, ParentalModal, PrivacySettings, ReportModal, TeamScreen } from "./Compliance";
@@ -54,6 +55,8 @@ export interface AppProps {
   compliance: ComplianceState;
   /** Consentement publicitaire : Google UMP (natif), aucune publicité (web) ou doublure (tests). */
   consentPlatform: Promise<ConsentPlatform>;
+  /** Vidéos récompensées : AdMob (natif), aucune (web) ou doublure (tests). */
+  rewardedAds: RewardedAds;
   /** Crochets de test (activés par ?test=1) : exposent l'état sans passer par le canvas. */
   testHooks?: (api: TestApi) => void;
 }
@@ -185,6 +188,31 @@ export function App(props: AppProps) {
       })
       .catch(() => undefined);
   };
+  // Vidéos récompensées : à la demande, récompense fixe, plafond du jour (le plus bas entre l'économie et la config du pays).
+  const [adBusy, setAdBusy] = useState(false);
+  const [adMessage, setAdMessage] = useState("");
+  const adParams = adRequestParams(comp.age, comp.ads, adsEnabled);
+  const adsUsedToday = MAX_ADS_PER_DAY - adsLeft(meta.free, now);
+  const adOffer =
+    props.rewardedAds.available && adParams.allowed
+      ? { left: Math.min(adsLeft(meta.free, now), Math.max(0, rc.monetization.ads.maxPerDay - adsUsedToday)), coins: COIN_REWARDS.rewardedAd, busy: adBusy, message: adMessage }
+      : null;
+  const watchAd = async () => {
+    if (!adOffer || adOffer.left <= 0 || adBusy) return;
+    setAdBusy(true);
+    setAdMessage("");
+    const out = await props.rewardedAds.show(adParams);
+    setAdBusy(false);
+    if (out !== "rewarded") return setAdMessage(t(out === "dismissed" ? "rewards.ad.noReward" : "rewards.ad.failed"));
+    const r = rewardAd(meta.free, props.clock());
+    if (!r) return;
+    meta.free = r.state;
+    grant(meta, profile, r.contents, props.clock());
+    setAdMessage(t("rewards.won", { x: t("coins.count", { n: r.contents.coins ?? 0 }) }));
+    persist();
+    refresh();
+  };
+
   const adsNext = (() => {
     const plan = umpPlan(comp.age, adsEnabled);
     return plan.call && plan.mayShowForm;
@@ -285,6 +313,16 @@ export function App(props: AppProps) {
       }
     };
     void shop.recover(meta, profile).then(credit);
+    // Remboursements : le contenu remboursé est retiré (et sort du plafond mensuel côté serveur).
+    void api
+      .myPurchases(compRef.current)
+      .then(({ purchases }) => {
+        if (shop.applyRefunds(meta, profile, purchases) > 0) {
+          persist();
+          refresh();
+        }
+      })
+      .catch(() => undefined);
     if (!storeListening.on) {
       storeListening.on = true;
       shop.store.onUpdate?.((r) => void shop.recover(meta, profile, [r]).then(credit));
@@ -521,6 +559,8 @@ export function App(props: AppProps) {
           meta={meta}
           now={now}
           result={wheelResult}
+          ad={adOffer ?? undefined}
+          onWatchAd={() => void watchAd()}
           onSpin={() => {
             const r = spinWheel(meta.free, props.clock(), meta.playerSeed);
             if (!r) return;
