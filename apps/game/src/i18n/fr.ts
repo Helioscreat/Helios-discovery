@@ -141,6 +141,8 @@ export const fr = {
   "purchase.result.cap": "Plafond mensuel de dépense atteint pour ce compte.",
   "purchase.result.oneTimeOwned": "Cet article a déjà été obtenu.",
   "purchase.result.invalid": "Le store n'a pas confirmé l'achat. Rien n'a été ajouté.",
+  "purchase.result.offline": "Connexion nécessaire : les achats sont vérifiés par notre serveur avant d'être ajoutés. Rien n'a été débité.",
+  "purchase.result.verifyLater": "Paiement reçu, vérification en cours. Le contenu sera ajouté automatiquement dès que la connexion revient.",
   "rewards.title": "Récompenses gratuites",
   "rewards.wheel": "Roue du jour",
   "rewards.wheelRule": "Un tour gratuit par jour. Les chances de chaque lot sont affichées ci-dessous.",

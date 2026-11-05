@@ -265,6 +265,32 @@ export function App(props: AppProps) {
     return () => clearTimeout(id);
   }, [caption]);
 
+  // Achats réels : le serveur autorise (plafond des mineurs) et vérifie chaque reçu auprès du store ;
+  // au lancement, les achats payés mais non clôturés (crédit interrompu, approbation parentale) sont repris.
+  const storeListening = useMemo(() => ({ on: false }), []);
+  useEffect(() => {
+    shop.remote = api.online
+      ? {
+          accountId: () => compRef.current.account?.id ?? null,
+          authorize: (skuId) => api.authorizePurchase(compRef.current, skuId),
+          verify: async (r) => (await api.verifyPurchase(compRef.current, r)).purchase,
+        }
+      : null;
+    if (shop.store.platform === "mock" || !comp.account) return;
+    const credit = (skus: Sku[]) => {
+      for (const s of skus) if (s.kind === "seasonPass") meta.season = buyPass(meta.season, s.passTier!);
+      if (skus.length) {
+        persist();
+        refresh();
+      }
+    };
+    void shop.recover(meta, profile).then(credit);
+    if (!storeListening.on) {
+      storeListening.on = true;
+      shop.store.onUpdate?.((r) => void shop.recover(meta, profile, [r]).then(credit));
+    }
+  }, [comp.account?.id]);
+
   // Horloge, prix du store, connexion du jour, quêtes, avantages d'abonnement.
   useEffect(() => {
     const id = setInterval(() => setNow(props.clock()), 30_000);

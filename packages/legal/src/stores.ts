@@ -5,7 +5,8 @@
  *  - fiche éditeur « professionnel » des deux consoles (DSA-06) ;
  *  - contrôle Familles des SDK (STO-03) et recherche de paiements hors store (STO-04).
  */
-import { CATALOG } from "@helios/economy";
+import { APPLE_SUBSCRIPTION_GROUP, CATALOG, GOOGLE_BASE_PLAN, storeProduct } from "@helios/economy";
+import { CATALOGS as GAME_TEXTS } from "../../../apps/game/src/i18n";
 import type { Block, Doc } from "./blocks";
 import { DATA_TYPES, TREATMENTS, type AppleType, type DataType, type Purpose } from "./inventory";
 import { noticeFields } from "./documents";
@@ -183,6 +184,46 @@ export function umpConfig(): Doc {
       ] },
       { h: 2, text: "Limite connue" },
       { p: "Le plugin Capacitor n'expose pas la chaîne TC : le serveur ne journalise que le statut renvoyé par UMP et sa date (table consents, colonne ads_status). La preuve détaillée du choix reste sur l'appareil (clés IABTCF_*) et chez Google." },
+    ],
+  };
+}
+
+/** Articles à créer dans Play Console et App Store Connect, générés depuis le catalogue (identifiants identiques). */
+export function storeProducts(): Doc {
+  const fr = GAME_TEXTS.fr as Record<string, string>;
+  const en = GAME_TEXTS.en as Record<string, string>;
+  const eur = (c: number) => new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(c / 100);
+  const gType = { inapp: "Produit intégré", subs: `Abonnement (forfait de base « ${GOOGLE_BASE_PLAN} », mensuel, renouvelé automatiquement)` };
+  const aType = { consumable: "Consommable", nonConsumable: "Non consommable", autoRenewable: `Abonnement renouvelable (groupe « ${APPLE_SUBSCRIPTION_GROUP} », 1 mois)` };
+  return {
+    id: "produits",
+    lang: "fr",
+    title: "Produits des stores",
+    blocks: [
+      { h: 1, text: "Articles à créer dans Play Console et App Store Connect" },
+      { p: "Généré depuis packages/economy (catalogue et storeProduct). L'identifiant de produit doit être recopié exactement : le jeu et le serveur l'utilisent tel quel. Le prix de référence sert au plafond des mineurs ; le prix affiché au joueur est celui du store, à fixer au même niveau (prix TTC)." },
+      { table: { head: ["Identifiant", "Google Play", "Consommé après crédit", "App Store", "Prix de référence TTC", "Nom (fr)", "Nom (en)", "Description (fr)"], rows: CATALOG.map((s) => {
+        const p = storeProduct(s);
+        return [p.productId, gType[p.google.type], p.google.consumable ? "Oui" : "Non", aType[p.apple.type], eur(s.referenceEurCents), fr[s.nameKey], en[s.nameKey], fr[`${s.nameKey}.desc`]];
+      }) } },
+      { h: 2, text: "Google Play : accès du serveur" },
+      { ul: [
+        "Google Cloud : créer un compte de service dans un projet lié à Play Console et activer l'API Google Play Android Developer.",
+        "Play Console > Utilisateurs et autorisations : inviter l'adresse du compte de service avec les droits « Afficher les données financières » et « Gérer les commandes et les abonnements », pour l'application Helios Discovery.",
+        "Créer une clé JSON pour ce compte de service et la placer dans le coffre de secrets du serveur (variable GOOGLE_PLAY_SERVICE_ACCOUNT_JSON). Ne jamais la mettre dans le dépôt.",
+      ] },
+      { h: 2, text: "App Store : accès du serveur" },
+      { ul: [
+        "App Store Connect > Accords, taxes et banques : signer l'accord des apps payantes et renseigner la fiscalité et le compte bancaire.",
+        "App Store Connect > Utilisateurs et accès > Intégrations > Achats intégrés : générer une clé ; noter l'identifiant de la clé (APPLE_KEY_ID) et l'identifiant de l'émetteur (APPLE_ISSUER_ID).",
+        "Placer le fichier .p8 dans le coffre de secrets du serveur (APPLE_PRIVATE_KEY). Il ne se télécharge qu'une fois.",
+      ] },
+      { h: 2, text: "Recette" },
+      { ul: [
+        "Google : ajouter des testeurs de licence (Play Console > Paramètres > Test des licences) et publier une version en test interne.",
+        "Apple : créer un compte Sandbox et tester depuis TestFlight ; le serveur interroge automatiquement l'environnement Sandbox si la transaction n'existe pas en production.",
+        "Vérifier pour chaque type : achat, annulation, paiement en attente (Google : « Paiement lent »), approbation parentale (Apple : « Demander l'autorisation »), remboursement.",
+      ] },
     ],
   };
 }

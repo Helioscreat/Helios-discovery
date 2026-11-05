@@ -24,7 +24,7 @@ We have not appointed a data protection officer. Any question about your data go
 | Providing the game: account, progress, synchronisation | pseudonymous identifier, country, nickname | Contract (providing the game), 6(1)(b) | As long as the account exists |
 | Adapting the game to your age and protecting minors | month and year of birth | Legal obligation, 6(1)(c) | As long as the account exists |
 | Collecting and proving your consent | consent choices and date | Legal obligation, 6(1)(c) | Proof of consent: 5 years |
-| Purchases: delivery, minors' cap, refunds, accounting | purchases (item, price, date, order) | Contract (providing the game), 6(1)(b) | Purchase accounting records: 10 years |
+| Purchases: delivery, minors' cap, refunds, accounting | purchases (item, price, date, order), pseudonymous identifier | Contract (providing the game), 6(1)(b) | Purchase accounting records: 10 years |
 | Team chat and blocking players | team, messages, blocked players | Contract (providing the game), 6(1)(b) | Chat messages: 90 days ; As long as the account exists |
 | Reports, moderation and appeals | reports, decisions and reasons, appeals, notices sent in the game | Legal obligation, 6(1)(c) | Reports: 2 years ; Moderation decisions: 2 years ; Appeals: 2 years ; Notices sent in the game: 6 months |
 | Contact point and support | message, e-mail (optional) | Legal obligation, 6(1)(c) | Requests to the contact point: 1 year |

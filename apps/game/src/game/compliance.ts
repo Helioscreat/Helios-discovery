@@ -1,4 +1,5 @@
 import type { ResolvedConfig } from "@helios/config";
+import type { Receipt, VerifiedPurchase } from "@helios/economy";
 import {
   ADS_UNKNOWN, ageFromBirth, ageProfile, allowedSdks, normalizeConsent, REFUSE_ALL, showConsentScreen, UNKNOWN_AGE,
   type AdsConsentState, type AgeProfile, type ConsentChoice,
@@ -127,6 +128,8 @@ export class Api {
   post = (c: ComplianceState, team: string, body: { presetId?: string; text?: string }) => this.call<{ id: string }>("POST", `/v1/teams/${team}/messages`, c.account!.token, body);
   block = (c: ComplianceState, playerId: string) => this.call("POST", "/v1/blocks", c.account!.token, { playerId });
   report = (c: ComplianceState, body: { targetType: "message" | "profile"; targetId: string; reason: string; details: string }) => this.call<{ id: string; receivedAt: number }>("POST", "/v1/reports", c.account!.token, body);
+  authorizePurchase = (c: ComplianceState, skuId: string) => this.call<{ allowed: boolean; reason?: string }>("POST", "/v1/purchases/authorize", c.account!.token, { skuId });
+  verifyPurchase = (c: ComplianceState, receipt: Receipt) => this.call<{ credited: boolean; state: string; purchase: VerifiedPurchase }>("POST", "/v1/purchases/verify", c.account!.token, { receipt });
   event = (c: ComplianceState, name: string, data: Record<string, unknown>) => this.call("POST", "/v1/events", c.account!.token, { name, data });
   config = (country: string) => this.call<ResolvedConfig>("GET", `/v1/config?country=${encodeURIComponent(country)}`, null);
 }

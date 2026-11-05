@@ -24,7 +24,7 @@ We hebben geen functionaris voor gegevensbescherming aangesteld. Elke vraag over
 | Het spel leveren: account, voortgang, synchronisatie | pseudonieme ID, land, bijnaam | Overeenkomst (het spel leveren), 6(1)(b) | Zolang het account bestaat |
 | Het spel aanpassen aan je leeftijd en minderjarigen beschermen | geboortemaand en -jaar | Wettelijke verplichting, 6(1)(c) | Zolang het account bestaat |
 | Je toestemming vragen en bewijzen | toestemmingskeuzes en datum | Wettelijke verplichting, 6(1)(c) | Bewijs van toestemming: 5 jaar |
-| Aankopen: levering, limiet voor minderjarigen, terugbetalingen, boekhouding | aankopen (artikel, prijs, datum, bestelling) | Overeenkomst (het spel leveren), 6(1)(b) | Boekhoudkundige stukken van aankopen: 10 jaar |
+| Aankopen: levering, limiet voor minderjarigen, terugbetalingen, boekhouding | aankopen (artikel, prijs, datum, bestelling), pseudonieme ID | Overeenkomst (het spel leveren), 6(1)(b) | Boekhoudkundige stukken van aankopen: 10 jaar |
 | Teamchat en spelers blokkeren | team, berichten, geblokkeerde spelers | Overeenkomst (het spel leveren), 6(1)(b) | Chatberichten: 90 dagen ; Zolang het account bestaat |
 | Meldingen, moderatie en beroep | meldingen, beslissingen en motivering, beroepen, berichten in het spel | Wettelijke verplichting, 6(1)(c) | Meldingen: 2 jaar ; Moderatiebeslissingen: 2 jaar ; Beroepen: 2 jaar ; Berichten in het spel: 6 maanden |
 | Contactpunt en ondersteuning | bericht, e-mail (optioneel) | Wettelijke verplichting, 6(1)(c) | Verzoeken aan het contactpunt: 1 jaar |

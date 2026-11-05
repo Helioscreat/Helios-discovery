@@ -15,6 +15,10 @@ const config: CapacitorConfig = {
   ios: {
     contentInset: "never",
   },
+  plugins: {
+    // Aucune transaction clôturée avant la vérification du reçu par le serveur (crédit puis clôture).
+    NativePurchases: { autoFinishTransactions: false },
+  },
 };
 
 export default config;

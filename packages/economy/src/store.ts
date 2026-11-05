@@ -21,6 +21,12 @@ export interface StoreAdapter {
   platform: "google" | "apple" | "mock";
   products(ids: string[]): Promise<StoreProduct[]>;
   purchase(id: string): Promise<PurchaseOutcome>;
+  /** Clôt la transaction APRÈS crédit (Google : consommation ou acquittement ; Apple : finishTransaction). */
+  finish?(r: Receipt): Promise<void>;
+  /** Transactions payées mais pas encore clôturées (crédit interrompu, achat approuvé plus tard). */
+  unfinished?(): Promise<Receipt[]>;
+  /** Transaction arrivée hors du parcours d'achat (approbation parentale, renouvellement). */
+  onUpdate?(cb: (r: Receipt) => void): void;
 }
 
 /** Liens officiels : gestion / résiliation d'abonnement (COM-14) et remboursement (COM-12). */

@@ -65,7 +65,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 | (a) Responsable | L'AFFRERE |
 | (b) Finalité | Achats intégrés : livraison, plafond mensuel des mineurs, remboursements, comptabilité. Base : Art. 6(1)(b) exécution du contrat — Exécution du contrat (CGV) ; obligation comptable (C. com. L123-22) pour la conservation |
 | (c) Personnes concernées | Joueurs qui achètent |
-| (c) Catégories de données | Achats (article, prix, date, numéro de commande du store) |
+| (c) Catégories de données | Achats (article, prix, date, numéro de commande du store) ; Identifiant pseudonyme du compte (UUID) |
 | (d) Destinataires | Scaleway SAS ; Google Ireland Ltd (Google Play) ; Apple Distribution International |
 | (e) Transferts hors UE et garanties | Google Ireland Ltd (Google Play) : groupe établi aux États-Unis, cadre UE–États-Unis (décision du 10/07/2023) et clauses contractuelles types ; Apple Distribution International : groupe établi aux États-Unis, cadre UE–États-Unis (décision du 10/07/2023) et clauses contractuelles types |
 | (f) Délais d'effacement | ledger : 10 ans |

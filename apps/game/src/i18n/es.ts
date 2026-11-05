@@ -133,6 +133,8 @@ export const es: Record<MessageKey, string> = {
   "purchase.result.cap": "Se ha alcanzado el límite mensual de gasto de esta cuenta.",
   "purchase.result.oneTimeOwned": "Este artículo ya se ha obtenido.",
   "purchase.result.invalid": "La tienda no ha confirmado la compra. No se ha añadido nada.",
+  "purchase.result.offline": "Se necesita conexión: nuestro servidor verifica las compras antes de añadirlas. No se ha cobrado nada.",
+  "purchase.result.verifyLater": "Pago recibido, verificación en curso. El contenido se añadirá automáticamente en cuanto vuelva la conexión.",
   "rewards.title": "Recompensas gratuitas",
   "rewards.wheel": "Ruleta del día",
   "rewards.wheelRule": "Un giro gratuito al día. Las probabilidades de cada premio se muestran abajo.",

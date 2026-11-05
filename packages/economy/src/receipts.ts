@@ -12,8 +12,10 @@ import { credit, revoke, type Wallet } from "./wallet";
  */
 export interface Receipt {
   platform: "google" | "apple" | "mock";
+  /** Google : numéro de commande (GPA.…) ; Apple : identifiant de transaction. Clé d'unicité du crédit. */
   orderId: string;
   skuId: string;
+  /** Google : jeton d'achat (purchaseToken) ; Apple : identifiant de transaction ; simulé : signature de test. */
   token: string;
 }
 
@@ -23,10 +25,20 @@ export interface VerifiedPurchase {
   state: "purchased" | "pending" | "refunded" | "invalid";
   eurCents: number;
   at: number;
+  /** Abonnement : fin de la période payée, donnée par le store. */
+  expiresAt?: number;
+}
+
+export interface VerifyContext {
+  /** Identifiant pseudonyme du compte, transmis au store à l'achat (appAccountToken / obfuscatedAccountId). */
+  accountId: string;
 }
 
 export interface ReceiptVerifier {
-  verify(r: Receipt): Promise<VerifiedPurchase>;
+  /** Le reçu doit appartenir au compte : un reçu d'un autre compte est « invalid ». */
+  verify(r: Receipt, ctx?: VerifyContext): Promise<VerifiedPurchase>;
+  /** Google : acquitter l'achat côté serveur après crédit (sinon remboursement automatique au bout de 3 jours). */
+  acknowledge?(r: Receipt): Promise<void>;
 }
 
 export interface LedgerEntry {
@@ -68,7 +80,7 @@ export function applyVerified(acc: Account, v: VerifiedPurchase, now: number, ca
   if (sku.kind === "oneTime" && acc.wallet.ownedOnce.includes(sku.id)) return { ok: false, account: acc, reason: "achat unique déjà effectué" };
   let wallet = credit(acc.wallet, sku.contents, now);
   if (sku.kind === "oneTime") wallet = { ...wallet, ownedOnce: [...wallet.ownedOnce, sku.id] };
-  if (sku.kind === "subscription") wallet = { ...wallet, subscription: { skuId: sku.id, activeUntil: now + 30 * 86_400_000, lastPerkDay: -1 } };
+  if (sku.kind === "subscription") wallet = { ...wallet, subscription: { skuId: sku.id, activeUntil: v.expiresAt ?? now + 30 * 86_400_000, lastPerkDay: wallet.subscription?.lastPerkDay ?? -1 } };
   return {
     ok: true,
     credited: true,
