@@ -6,7 +6,7 @@ Version originale du document. Modèle à faire valider par un professionnel du 
 
 ## 1. Champ
 
-Ces conditions s'appliquent aux achats intégrés au jeu Helios Discovery. Le vendeur est ⟦À COMPLÉTER : raison sociale⟧. Le paiement est encaissé par le store (Google Play ou App Store) selon ses propres conditions.
+Ces conditions s'appliquent aux achats intégrés au jeu Helios Discovery. Le vendeur est L'AFFRERE. Le paiement est encaissé par le store (Google Play ou App Store) selon ses propres conditions.
 
 ## 2. Articles et prix
 
@@ -61,7 +61,7 @@ Tu bénéficies de la garantie légale de conformité des contenus numériques (
 
 ## 11. Réclamations et médiation
 
-Pour toute réclamation, contacte-nous à contact@helios-discovery.example. Si nous ne trouvons pas de solution, tu peux saisir gratuitement le médiateur de la consommation : ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
+Pour toute réclamation, contacte-nous à fleurant.m@icloud.com. Si nous ne trouvons pas de solution, tu peux saisir gratuitement le médiateur de la consommation : ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
 
 ## 12. Droit applicable
 

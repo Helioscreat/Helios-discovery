@@ -6,10 +6,10 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique | Valeur |
 |---|---|
-| Nom | ⟦À COMPLÉTER : raison sociale⟧ |
-| Forme | SASU |
+| Nom | L'AFFRERE |
+| Forme | SAS |
 | Adresse | ⟦À COMPLÉTER : adresse du siège⟧ |
-| Contact | contact@helios-discovery.example ; https://helios-discovery.example/contact |
+| Contact | fleurant.m@icloud.com ; ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧ |
 | Représentant dans l'UE | Sans objet (établi en France) |
 | Délégué à la protection des données | Non désigné (à réévaluer : suivi régulier et systématique à grande échelle ?) |
 
@@ -17,7 +17,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Fournir le jeu : compte pseudonyme, progression, synchronisation. Base : Art. 6(1)(b) exécution du contrat — Exécution du contrat (CGU) |
 | (c) Personnes concernées | Joueurs |
 | (c) Catégories de données | Identifiant pseudonyme du compte (UUID) ; Pays (déduit de la langue de l'appareil) ; Pseudonyme choisi pour l'équipe |
@@ -32,7 +32,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Adapter le jeu à l'âge : protections des mineurs, âge du consentement. Base : Art. 6(1)(c) obligation légale — RGPD art. 8 ; règlement (UE) 2022/2065 (DSA) art. 28 |
 | (c) Personnes concernées | Joueurs |
 | (c) Catégories de données | Mois et année de naissance |
@@ -47,7 +47,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Recueillir et prouver le consentement. Base : Art. 6(1)(c) obligation légale — RGPD art. 7(1) ; directive 2002/58 art. 5(3) |
 | (c) Personnes concernées | Joueurs |
 | (c) Catégories de données | Choix de mesure d'audience, statut renvoyé par Google UMP, date et version de la notice |
@@ -62,7 +62,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Achats intégrés : livraison, plafond mensuel des mineurs, remboursements, comptabilité. Base : Art. 6(1)(b) exécution du contrat — Exécution du contrat (CGV) ; obligation comptable (C. com. L123-22) pour la conservation |
 | (c) Personnes concernées | Joueurs qui achètent |
 | (c) Catégories de données | Achats (article, prix, date, numéro de commande du store) |
@@ -77,7 +77,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Chat d'équipe, blocage de joueurs. Base : Art. 6(1)(b) exécution du contrat — Exécution du contrat (fonction d'équipe) |
 | (c) Personnes concernées | Joueurs membres d'une équipe |
 | (c) Catégories de données | Équipe rejointe ; Messages du chat d'équipe ; Joueurs bloqués |
@@ -92,7 +92,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Signalements, modération, décisions motivées, recours. Base : Art. 6(1)(c) obligation légale — DSA art. 16, 17, 20 et 23 |
 | (c) Personnes concernées | Joueurs signalants et signalés |
 | (c) Catégories de données | Signalements envoyés (motif, précisions) ; Décisions de modération et leurs motifs ; Recours contre une décision ; Avis envoyés au joueur dans le jeu (décisions, résultats de recours) |
@@ -107,7 +107,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Point de contact unique et support. Base : Art. 6(1)(c) obligation légale — DSA art. 11 et 12 ; RGPD art. 12 (exercice des droits) |
 | (c) Personnes concernées | Joueurs, autorités, toute personne |
 | (c) Catégories de données | Message envoyé au point de contact ; Adresse e-mail pour la réponse (facultative) |
@@ -122,7 +122,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Exercice des droits : export, suppression du compte. Base : Art. 6(1)(c) obligation légale — RGPD art. 15, 17 et 20 |
 | (c) Personnes concernées | Joueurs |
 | (c) Catégories de données | Demande de suppression et échéance |
@@ -137,7 +137,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Mesure d'audience first-party pour améliorer les niveaux. Base : Art. 6(1)(a) consentement — Consentement (RGPD art. 6(1)(a) ; directive 2002/58 art. 5(3)) |
 | (c) Personnes concernées | Joueurs ayant consenti |
 | (c) Catégories de données | Événements de jeu (niveau joué, réussi, échoué ; boosters ; durée de session) |
@@ -152,7 +152,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Indicateurs agrégés de protection (revenus des mineurs, plafonds atteints, sessions longues). Base : Art. 6(1)(f) intérêt légitime — Intérêt légitime : vérifier que le jeu protège ses joueurs ; seuls des agrégats sont produits |
 | (c) Personnes concernées | Joueurs |
 | (c) Catégories de données | Achats (article, prix, date, numéro de commande du store) ; Événements de jeu (niveau joué, réussi, échoué ; boosters ; durée de session) |
@@ -167,7 +167,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Vidéos récompensées facultatives (Google AdMob) ; consentement recueilli par Google UMP. Base : Art. 6(1)(a) consentement — Consentement recueilli par Google UMP (TCF v2.2 ; RGPD art. 6(1)(a) ; directive 2002/58 art. 5(3)). Sans consentement : publicité limitée, sans traceur ni personnalisation, seulement sur une vidéo choisie par le joueur |
 | (c) Personnes concernées | Joueurs majeurs ou au-dessus de l'âge du consentement, dans les pays où la publicité est active |
 | (c) Catégories de données | Identifiant publicitaire et données techniques de l'appareil (SDK Google Mobile Ads) |
@@ -182,7 +182,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 
 | Rubrique (art. 30(1)) | Contenu |
 |---|---|
-| (a) Responsable | ⟦À COMPLÉTER : raison sociale⟧ |
+| (a) Responsable | L'AFFRERE |
 | (b) Finalité | Notifications facultatives (vies, équipe, saison). Base : Art. 6(1)(a) consentement — Consentement (opt-in, ePrivacy art. 13) |
 | (c) Personnes concernées | Joueurs ayant activé les notifications |
 | (c) Catégories de données | Jeton de notification de l'appareil (FCM, APNs) |

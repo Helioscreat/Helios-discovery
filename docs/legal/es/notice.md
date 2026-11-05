@@ -8,14 +8,14 @@ Traducción del original francés; todavía no la ha revisado un traductor jurí
 
 |  |  |
 |---|---|
-| Razón social | ⟦À COMPLÉTER : raison sociale⟧ |
-| Forma jurídica y capital | SASU, ⟦À COMPLÉTER : capital social⟧ |
+| Razón social | L'AFFRERE |
+| Forma jurídica y capital | SAS, ⟦À COMPLÉTER : capital social⟧ |
 | Domicilio social | ⟦À COMPLÉTER : adresse du siège⟧ |
 | Inscripción registral | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
 | Número SIREN | ⟦À COMPLÉTER : SIREN⟧ |
 | NIF-IVA intracomunitario | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
-| Director o directora de la publicación | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président de la SASU)⟧ |
-| Correo electrónico | contact@helios-discovery.example |
+| Director o directora de la publicación | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président ou la présidente de la SAS)⟧ |
+| Correo electrónico | fleurant.m@icloud.com |
 | Teléfono | ⟦À COMPLÉTER : téléphone⟧ |
 
 ## Alojamiento
@@ -28,7 +28,7 @@ Traducción del original francés; todavía no la ha revisado un traductor jurí
 
 ## Punto de contacto (DSA art. 11 y 12)
 
-Jugadores y autoridades: contact@helios-discovery.example o https://helios-discovery.example/contact. Idiomas aceptados: francés, inglés, neerlandés, alemán, español, italiano.
+Jugadores y autoridades: fleurant.m@icloud.com o ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧. Idiomas aceptados: francés, inglés, neerlandés, alemán, español, italiano.
 
 ## Reglamento de Servicios Digitales
 

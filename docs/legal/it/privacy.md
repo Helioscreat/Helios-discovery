@@ -13,7 +13,7 @@ Traduzione dell'originale francese; non ancora rivista da un traduttore giuridic
 
 ## 1. Titolare del trattamento
 
-⟦À COMPLÉTER : raison sociale⟧ (SASU), ⟦À COMPLÉTER : adresse du siège⟧, pubblica Helios Discovery e decide come vengono usati i tuoi dati. Contatto: contact@helios-discovery.example o il modulo https://helios-discovery.example/contact.
+L'AFFRERE (SAS), ⟦À COMPLÉTER : adresse du siège⟧, pubblica Helios Discovery e decide come vengono usati i tuoi dati. Contatto: fleurant.m@icloud.com o il modulo ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧.
 
 Non abbiamo nominato un responsabile della protezione dei dati. Ogni domanda sui tuoi dati arriva allo stesso indirizzo e riceve risposta entro un mese.
 
@@ -103,7 +103,7 @@ Non mostriamo mai pubblicità personalizzata ai minori. Sotto l'età del consens
 - opporti a un trattamento basato sul legittimo interesse;
 - revocare il consenso in qualsiasi momento, con la stessa facilità con cui l'hai dato (Impostazioni > Privacy > Gestisci le mie scelte sulla privacy); la revoca non pregiudica quanto fatto prima.
 
-Per ogni altro diritto, scrivici a contact@helios-discovery.example. Rispondiamo entro un mese. Puoi anche presentare un reclamo alla Commission nationale de l'informatique et des libertés (CNIL) (https://www.cnil.fr/fr/plaintes) o all'autorità di protezione dei dati del tuo paese.
+Per ogni altro diritto, scrivici a fleurant.m@icloud.com. Rispondiamo entro un mese. Puoi anche presentare un reclamo alla Commission nationale de l'informatique et des libertés (CNIL) (https://www.cnil.fr/fr/plaintes) o all'autorità di protezione dei dati del tuo paese.
 
 ## 9. Decisioni automatizzate
 

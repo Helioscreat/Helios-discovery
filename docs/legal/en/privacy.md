@@ -13,7 +13,7 @@ Translation of the French original; it has not yet been reviewed by a legal tran
 
 ## 1. Controller
 
-⟦À COMPLÉTER : raison sociale⟧ (SASU), ⟦À COMPLÉTER : adresse du siège⟧, publishes Helios Discovery and decides how your data is used. Contact: contact@helios-discovery.example or the form https://helios-discovery.example/contact.
+L'AFFRERE (SAS), ⟦À COMPLÉTER : adresse du siège⟧, publishes Helios Discovery and decides how your data is used. Contact: fleurant.m@icloud.com or the form ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧.
 
 We have not appointed a data protection officer. Any question about your data goes to the same address and is answered within one month.
 
@@ -103,7 +103,7 @@ We never show personalised advertising to minors. Below the age of consent in yo
 - object to processing based on legitimate interest;
 - withdraw your consent at any time, as easily as you gave it (Settings > Privacy > Manage my privacy choices); withdrawal does not affect what was done before.
 
-For any other right, write to us at contact@helios-discovery.example. We answer within one month. You can also lodge a complaint with the Commission nationale de l'informatique et des libertés (CNIL) (https://www.cnil.fr/fr/plaintes) or with the data protection authority of your country.
+For any other right, write to us at fleurant.m@icloud.com. We answer within one month. You can also lodge a complaint with the Commission nationale de l'informatique et des libertés (CNIL) (https://www.cnil.fr/fr/plaintes) or with the data protection authority of your country.
 
 ## 9. Automated decisions
 

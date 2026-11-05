@@ -9,7 +9,7 @@ const svc = new Service(db, {
   clock: () => Date.now(),
   deletionDelayMs: 7 * 86_400_000,
   moderators: (env.MODERATORS ?? "mod-a,mod-b").split(","),
-  contact: { email: env.CONTACT_EMAIL ?? "contact@helios-discovery.example", languages: ["fr", "en", "nl", "de", "es", "it"] },
+  contact: { email: env.CONTACT_EMAIL ?? "fleurant.m@icloud.com", languages: ["fr", "en", "nl", "de", "es", "it"] },
   minorCapCents: Number(env.MINOR_CAP_CENTS ?? 2000),
   adminKeys: (env.ADMIN_KEYS ?? "").split(",").filter(Boolean),
 });

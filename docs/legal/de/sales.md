@@ -6,7 +6,7 @@ Version 2026-11-v1, gültig seit 4. November 2026.
 
 ## 1. Geltungsbereich
 
-Diese Bedingungen gelten für In-App-Käufe im Spiel Helios Discovery. Verkäufer ist ⟦À COMPLÉTER : raison sociale⟧. Die Zahlung wird vom Store (Google Play oder App Store) nach dessen eigenen Bedingungen abgewickelt.
+Diese Bedingungen gelten für In-App-Käufe im Spiel Helios Discovery. Verkäufer ist L'AFFRERE. Die Zahlung wird vom Store (Google Play oder App Store) nach dessen eigenen Bedingungen abgewickelt.
 
 ## 2. Artikel und Preise
 
@@ -61,7 +61,7 @@ Für digitale Inhalte gilt die gesetzliche Gewährleistung (Richtlinie (EU) 2019
 
 ## 11. Beschwerden und Schlichtung
 
-Für Beschwerden erreichst du uns unter contact@helios-discovery.example. Finden wir keine Lösung, kannst du kostenlos die Verbraucherschlichtungsstelle anrufen: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
+Für Beschwerden erreichst du uns unter fleurant.m@icloud.com. Finden wir keine Lösung, kannst du kostenlos die Verbraucherschlichtungsstelle anrufen: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
 
 ## 12. Anwendbares Recht
 

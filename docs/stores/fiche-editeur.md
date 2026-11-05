@@ -4,9 +4,9 @@
 
 | Champ du store | Valeur |
 |---|---|
-| Nom ou raison sociale | ⟦À COMPLÉTER : raison sociale⟧ |
+| Nom ou raison sociale | L'AFFRERE |
 | Adresse | ⟦À COMPLÉTER : adresse du siège⟧ |
-| E-mail | contact@helios-discovery.example |
+| E-mail | fleurant.m@icloud.com |
 | Téléphone | ⟦À COMPLÉTER : téléphone⟧ |
 | Numéro d'immatriculation | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ ; SIREN ⟦À COMPLÉTER : SIREN⟧ |
 | TVA | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |

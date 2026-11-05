@@ -8,14 +8,14 @@ Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertal
 
 |  |  |
 |---|---|
-| Bedrijfsnaam | ⟦À COMPLÉTER : raison sociale⟧ |
-| Rechtsvorm en kapitaal | SASU, ⟦À COMPLÉTER : capital social⟧ |
+| Bedrijfsnaam | L'AFFRERE |
+| Rechtsvorm en kapitaal | SAS, ⟦À COMPLÉTER : capital social⟧ |
 | Maatschappelijke zetel | ⟦À COMPLÉTER : adresse du siège⟧ |
 | Inschrijving | ⟦À COMPLÉTER : RCS (ville et numéro)⟧ |
 | SIREN-nummer | ⟦À COMPLÉTER : SIREN⟧ |
 | Btw-nummer | ⟦À COMPLÉTER : numéro de TVA intracommunautaire⟧ |
-| Verantwoordelijke uitgever | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président de la SASU)⟧ |
-| E-mail | contact@helios-discovery.example |
+| Verantwoordelijke uitgever | ⟦À COMPLÉTER : directeur ou directrice de la publication (le président ou la présidente de la SAS)⟧ |
+| E-mail | fleurant.m@icloud.com |
 | Telefoon | ⟦À COMPLÉTER : téléphone⟧ |
 
 ## Hostingprovider
@@ -28,7 +28,7 @@ Vertaling van het Franse origineel; nog niet nagekeken door een juridisch vertal
 
 ## Contactpunt (DSA art. 11 en 12)
 
-Spelers en autoriteiten: contact@helios-discovery.example of https://helios-discovery.example/contact. Aanvaarde talen: Frans, Engels, Nederlands, Duits, Spaans, Italiaans.
+Spelers en autoriteiten: fleurant.m@icloud.com of ⟦À COMPLÉTER : adresse d'un formulaire de contact en ligne⟧. Aanvaarde talen: Frans, Engels, Nederlands, Duits, Spaans, Italiaans.
 
 ## Digitaledienstenverordening
 
