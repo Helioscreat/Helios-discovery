@@ -7,8 +7,8 @@ Le formulaire de consentement publicitaire est rendu par Google à partir de la 
 - Créer un message pour l'application Android et pour l'application iOS (même configuration).
 - Langues : fr, en, nl, de, es, it (mêmes langues que le jeu).
 - Activer le bouton de refus sur le premier écran (« Refuser » en français, « Do not consent » en anglais), au même niveau que « Autoriser » (GDPR-02, COM-04) ; vérifier sur une capture que les deux boutons ont la même taille et le même contraste. Vérifié le 2026-11-05 dans les 6 langues.
-- Désactiver la fonctionnalité spéciale « Utiliser des données de géolocalisation précises » : le jeu ne collecte aucune position (inventaire, Sécurité des données, IARC). Le formulaire ne doit plus mentionner la géolocalisation précise.
-- Désactiver l'intérêt légitime pour les partenaires : la politique de confidentialité fonde la publicité sur le consentement seul.
+- Géolocalisation précise : AdMob ne propose pas d'option pour la retirer ; la phrase fait partie du texte commun de Google (constat du 2026-11-05). Garantie côté jeu : aucune permission de localisation demandée (test « aucune position précise ») ; la politique de confidentialité l'explique.
+- Intérêt légitime : « Options concernant l'intérêt légitime » décoché (fait le 2026-11-05, réglage du compte). Le paragraphe générique reste dans le texte de Google ; la politique de confidentialité l'explique.
 - Ne sélectionner aucune « finalité concernant votre utilisation » (finalités de l'éditeur) : la mesure d'audience reste sur l'écran du jeu, car le plugin Capacitor ne transmet pas la chaîne TC au jeu, qui ne pourrait donc pas lire ce choix.
 - Dans AdMob, nommer l'application Android « Helios Discovery » (nom affiché dans le formulaire à la place de %%APP_NAME%%).
 - Garder « Gérer les options » pour le choix finalité par finalité.

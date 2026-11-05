@@ -225,8 +225,17 @@ describe("[T-STO-01] questionnaire IARC cohérent avec le catalogue et l'inventa
     expect(a["Achats d'éléments aléatoires payants (loot boxes)"]).toBe("Non");
     expect(a["Les utilisateurs peuvent interagir ou échanger du contenu"]).toBe("Oui");
     expect(a["Partage de la position de l'utilisateur"]).toBe("Non");
-    expect(DATA_TYPES.some((d) => /location/i.test(d.google))).toBe(false);
+    // Seule une position approximative (adresse IP) est collectée, par le SDK publicitaire, et jamais partagée avec d'autres joueurs.
+    expect(DATA_TYPES.filter((d) => /location/i.test(d.google)).map((d) => [d.id, d.by])).toEqual([["ads.approxLocation", "sdk"]]);
     expect(read("docs/stores/iarc.md")).toContain("Achats intégrés");
+  });
+});
+
+describe("aucune position précise", () => {
+  it("le code ne demande jamais la position de l'appareil (le texte générique du formulaire Google ne s'applique pas au jeu)", () => {
+    const files = [...SOURCES, "deploy/build.json"];
+    for (const f of files) expect(read(f), f).not.toMatch(/navigator\.geolocation|ACCESS_FINE_LOCATION|ACCESS_COARSE_LOCATION|NSLocation\w*UsageDescription|@capacitor\/geolocation/);
+    for (const p of ["apps/game", "apps/server"]) expect(Object.keys(JSON.parse(read(`${p}/package.json`)).dependencies ?? {}).some((d) => /geoloc|location/i.test(d)), p).toBe(false);
   });
 });
 
@@ -239,10 +248,11 @@ describe("[T-STO-02] formulaire « Sécurité des données » généré depuis l
     for (const d of DATA_TYPES.filter((x) => x.by === "code")) expect(annotated.has(d.id), `${d.id} sans annotation @collects`).toBe(true);
   });
 
-  it("le formulaire liste chaque catégorie Google de l'inventaire ; seul l'identifiant publicitaire est partagé", () => {
+  it("le formulaire liste chaque catégorie Google de l'inventaire ; seules les données du SDK publicitaire sont partagées", () => {
     const ds = read("docs/stores/data-safety.md");
     for (const d of DATA_TYPES) expect(ds, d.google).toContain(d.google);
-    expect(DATA_TYPES.filter((d) => d.shared).map((d) => d.id)).toEqual(["ads.deviceId"]);
+    expect(DATA_TYPES.filter((d) => d.shared).map((d) => d.id)).toEqual(["ads.deviceId", "ads.approxLocation", "ads.diagnostics"]);
+    for (const d of DATA_TYPES.filter((x) => x.shared)) expect(d.by, d.id).toBe("sdk");
   });
 });
 

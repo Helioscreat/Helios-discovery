@@ -170,7 +170,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne, généré depuis packages/le
 | (a) Responsable | L'AFFRERE |
 | (b) Finalité | Vidéos récompensées facultatives (Google AdMob) ; consentement recueilli par Google UMP. Base : Art. 6(1)(a) consentement — Consentement recueilli par Google UMP (TCF v2.2 ; RGPD art. 6(1)(a) ; directive 2002/58 art. 5(3)). Sans consentement : publicité limitée, sans traceur ni personnalisation, seulement sur une vidéo choisie par le joueur |
 | (c) Personnes concernées | Joueurs majeurs ou au-dessus de l'âge du consentement, dans les pays où la publicité est active |
-| (c) Catégories de données | Identifiant publicitaire et données techniques de l'appareil (SDK Google Mobile Ads) |
+| (c) Catégories de données | Identifiant publicitaire et données techniques de l'appareil (SDK Google Mobile Ads) ; Position approximative déduite de l'adresse IP (SDK Google Mobile Ads) ; Données de diagnostic et de performance des annonces (SDK Google Mobile Ads) |
 | (d) Destinataires | Google Ireland Ltd (UMP) ; Google Ireland Ltd (AdMob) |
 | (e) Transferts hors UE et garanties | Google Ireland Ltd (UMP) : groupe établi aux États-Unis, cadre UE–États-Unis (décision du 10/07/2023) et clauses contractuelles types ; Google Ireland Ltd (AdMob) : groupe établi aux États-Unis, cadre UE–États-Unis (décision du 10/07/2023) et clauses contractuelles types |
 | (f) Délais d'effacement | aucune donnée conservée sur nos serveurs (SDK du prestataire) |

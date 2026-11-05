@@ -117,6 +117,7 @@ function privacy(l: Locale): Doc {
       },
     },
     { p: P("privacy.recipients.google") },
+    { p: P("privacy.recipients.googleForm") },
     { p: P("privacy.transfers") },
     { h: 2, text: P("privacy.retention.title"), id: "retention" },
     { table: { head: [P("privacy.retention.head.what"), P("privacy.retention.head.duration")], rows: RETENTION.map((r) => [P(`rt.${r.table}` as keyof Phrases), duration(l, r.days)]) } },
