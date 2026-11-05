@@ -1,0 +1,77 @@
+# Compile les apps natives à chaque pull request et sur main : Android (APK debug) et iOS (simulateur, sans signature).
+# Vérifie que le projet natif, les plugins (AdMob/UMP) et la configuration se construisent réellement.
+name: Apps natives
+
+on:
+  pull_request:
+    paths: ["apps/game/**", "packages/**", "deploy/build.json", "package-lock.json", ".github/workflows/native.yml"]
+  push:
+    branches: ["**"]
+    paths: ["apps/game/**", "packages/**", "deploy/build.json", "package-lock.json", ".github/workflows/native.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - name: Jeu web + synchronisation Android
+        working-directory: apps/game
+        run: npx vite build --logLevel error && npx cap sync android
+      - name: Compilation (APK debug)
+        working-directory: apps/game/android
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Vérifier le manifeste fusionné (permissions réelles de l'APK)
+        working-directory: apps/game/android
+        run: |
+          M=app/build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml
+          test -f "$M" || M=$(find app/build -name AndroidManifest.xml -path "*merged_manifest*" | head -1)
+          echo "Manifeste : $M"
+          grep -o 'uses-permission[^>]*android:name="[^"]*"' "$M" | sort -u
+          if grep -Eq 'ACCESS_(FINE|COARSE)_LOCATION' "$M"; then echo "::error::permission de localisation dans l'APK"; exit 1; fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: helios-discovery-debug-apk
+          path: apps/game/android/app/build/outputs/apk/debug/*.apk
+          retention-days: 7
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Jeu web + synchronisation iOS
+        working-directory: apps/game
+        run: npx vite build --logLevel error && npx cap sync ios
+      - name: Compilation (simulateur, sans signature)
+        working-directory: apps/game/ios/App
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -40
+          test "${PIPESTATUS[0]}" -eq 0
+      - name: Vérifier que PrivacyInfo.xcprivacy est dans l'app
+        run: |
+          APP=$(find ~/Library/Developer/Xcode/DerivedData -name "App.app" -path "*iphonesimulator*" | head -1)
+          echo "App : $APP"
+          test -f "$APP/PrivacyInfo.xcprivacy"

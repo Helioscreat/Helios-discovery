@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Helios Discovery</string>
+    <string name="title_activity_main">Helios Discovery</string>
+    <string name="package_name">com.helioscreat.heliosdiscovery</string>
+    <string name="custom_url_scheme">com.helioscreat.heliosdiscovery</string>
+</resources>
