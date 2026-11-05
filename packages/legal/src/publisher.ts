@@ -21,7 +21,7 @@ export interface Publisher {
   website: string;
   contactLanguages: string[];
   /** Médiateur de la consommation (C. consom. L612-1) : obligatoire pour un professionnel français. */
-  mediator: { name: string; url: string; address: string };
+  mediator: { name: string; url: string; address: string; /** Formulaire de saisine en ligne pour les consommateurs. */ form: string };
   host: { name: string; address: string; phone: string };
   /** Autorité de contrôle chef de file (établissement principal en France). */
   supervisor: { name: string; url: string };
@@ -48,7 +48,12 @@ export const PUBLISHER: Publisher = {
   website: "https://helioscreat.github.io/Helios-discovery",
   /** Langues acceptées par le point de contact (DSA art. 12), identiques à celles du serveur. */
   contactLanguages: ["fr", "en", "nl", "de", "es", "it"],
-  mediator: { name: todo("médiateur de la consommation"), url: todo("site du médiateur"), address: todo("adresse du médiateur") },
+  mediator: {
+    name: "CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice",
+    address: "49 rue de Ponthieu, 75008 Paris, France",
+    url: "https://www.cm2c.net",
+    form: "https://www.cm2c.net/declarer-un-litige.php",
+  },
   host: { name: "Scaleway SAS", address: "8 rue de la Ville l'Évêque, 75008 Paris, France", phone: "+33 1 84 13 00 00" },
   supervisor: { name: "Commission nationale de l'informatique et des libertés (CNIL)", url: "https://www.cnil.fr/fr/plaintes" },
   accessibilityAuthority: "Direction générale de la concurrence, de la consommation et de la répression des fraudes (DGCCRF), https://signal.conso.gouv.fr",

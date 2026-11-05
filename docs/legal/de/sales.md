@@ -61,7 +61,7 @@ Für digitale Inhalte gilt die gesetzliche Gewährleistung (Richtlinie (EU) 2019
 
 ## 11. Beschwerden und Schlichtung
 
-Für Beschwerden erreichst du uns unter fleurant.m@icloud.com. Finden wir keine Lösung, kannst du kostenlos die Verbraucherschlichtungsstelle anrufen: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
+Für Beschwerden schreib uns zuerst an fleurant.m@icloud.com. Wird deine schriftliche Beschwerde nicht gelöst oder bleibt sie unbeantwortet, kannst du kostenlos die Verbraucherschlichtungsstelle anrufen, der L'AFFRERE angeschlossen ist (französisches Verbrauchergesetzbuch Art. L611-1 ff.): CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice, 49 rue de Ponthieu, 75008 Paris, France, https://www.cm2c.net. Die Anrufung muss innerhalb eines Jahres nach deiner schriftlichen Beschwerde erfolgen. Sie erfolgt online unter https://www.cm2c.net/declarer-un-litige.php unter Angabe der SIREN-Nummer von L'AFFRERE (990 851 503). Die Schlichtung findet auf Französisch statt.
 
 ## 12. Anwendbares Recht
 

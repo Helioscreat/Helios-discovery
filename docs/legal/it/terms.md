@@ -78,4 +78,4 @@ Ti informiamo nel gioco di ogni modifica importante almeno 30 giorni prima che s
 
 ## 15. Legge applicabile e controversie
 
-Queste condizioni sono regolate dal diritto francese. Se risiedi in un altro paese dell'Unione, mantieni la protezione delle norme imperative del tuo paese. In caso di controversia, contattaci prima; poi puoi rivolgerti gratuitamente al mediatore dei consumatori (⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : site du médiateur⟧) o al tribunale competente.
+Queste condizioni sono regolate dal diritto francese. Se risiedi in un altro paese dell'Unione, mantieni la protezione delle norme imperative del tuo paese. In caso di controversia, contattaci prima; poi puoi rivolgerti gratuitamente al mediatore dei consumatori (CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice, https://www.cm2c.net) o al tribunale competente.

@@ -61,7 +61,7 @@ Je geniet de wettelijke conformiteitsgarantie voor digitale inhoud (richtlijn (E
 
 ## 11. Klachten en bemiddeling
 
-Voor elke klacht kun je ons bereiken op fleurant.m@icloud.com. Als we geen oplossing vinden, kun je gratis de consumentenbemiddelaar inschakelen: ⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : adresse du médiateur⟧, ⟦À COMPLÉTER : site du médiateur⟧.
+Voor elke klacht schrijf je ons eerst op fleurant.m@icloud.com. Als je schriftelijke klacht niet is opgelost of onbeantwoord blijft, kun je gratis de consumentenbemiddelaar inschakelen waarbij L'AFFRERE is aangesloten (Franse consumentenwet, art. L611-1 en volgende): CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice, 49 rue de Ponthieu, 75008 Paris, France, https://www.cm2c.net. Dat moet binnen een jaar na je schriftelijke klacht gebeuren. Het verzoek gaat online via https://www.cm2c.net/declarer-un-litige.php, met vermelding van het SIREN-nummer van L'AFFRERE (990 851 503). De bemiddeling verloopt in het Frans.
 
 ## 12. Toepasselijk recht
 

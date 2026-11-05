@@ -78,4 +78,4 @@ Nous t'informons dans le jeu de toute modification importante au moins 30 jours 
 
 ## 15. Droit applicable et litiges
 
-Ces conditions sont soumises au droit français. Si tu résides dans un autre pays de l'Union, tu gardes la protection des règles impératives de ton pays. En cas de litige, contacte-nous d'abord ; tu peux ensuite recourir gratuitement au médiateur de la consommation (⟦À COMPLÉTER : médiateur de la consommation⟧, ⟦À COMPLÉTER : site du médiateur⟧) ou saisir le tribunal compétent.
+Ces conditions sont soumises au droit français. Si tu résides dans un autre pays de l'Union, tu gardes la protection des règles impératives de ton pays. En cas de litige, contacte-nous d'abord ; tu peux ensuite recourir gratuitement au médiateur de la consommation (CM2C – Centre de Médiation de la Consommation de Conciliateurs de Justice, https://www.cm2c.net) ou saisir le tribunal compétent.
