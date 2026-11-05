@@ -1,0 +1,9 @@
+# HTTPS automatique pour l'API ; journaux d'accès désactivés (pas d'adresses IP conservées par le proxy).
+{$API_DOMAIN} {
+	encode gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+	reverse_proxy api:8787
+}

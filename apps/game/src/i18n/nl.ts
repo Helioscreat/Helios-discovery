@@ -381,6 +381,7 @@ export const nl: Record<MessageKey, string> = {
   "settings.textScale": "Tekstgrootte",
   "settings.textScale.option": "{n} %",
   "settings.language": "Taal",
+  "native.att": "Deze toestemming dient alleen om aangepaste advertenties te tonen in optionele beloningsvideo's. Het spel blijft volledig speelbaar als je weigert.",
   "legal.title": "Juridische informatie",
   "legal.privacy": "Privacybeleid",
   "legal.terms": "Gebruiksvoorwaarden",

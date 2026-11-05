@@ -396,6 +396,7 @@ export const fr = {
   "settings.textScale": "Taille du texte",
   "settings.textScale.option": "{n} %",
   "settings.language": "Langue",
+  "native.att": "Cette autorisation sert uniquement à afficher des publicités adaptées dans les vidéos récompensées facultatives. Le jeu reste entièrement jouable si tu refuses.",
   "legal.title": "Informations légales",
   "legal.privacy": "Politique de confidentialité",
   "legal.terms": "Conditions d'utilisation",

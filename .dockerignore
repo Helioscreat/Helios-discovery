@@ -1,0 +1,13 @@
+**/node_modules
+**/dist
+.git
+apps/game/android
+apps/game/ios
+apps/game/public/legal
+packages/levels/data/generated
+packages/levels/out
+docs
+*.jks
+*.keystore
+*.p8
+*service-account*.json

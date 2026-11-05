@@ -392,6 +392,7 @@ export const en: Record<MessageKey, string> = {
   "settings.textScale": "Text size",
   "settings.textScale.option": "{n}%",
   "settings.language": "Language",
+  "native.att": "This permission is only used to show tailored ads in optional rewarded videos. The game remains fully playable if you decline.",
   "legal.title": "Legal information",
   "legal.privacy": "Privacy policy",
   "legal.terms": "Terms of use",

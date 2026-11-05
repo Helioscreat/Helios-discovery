@@ -1,0 +1,45 @@
+# Image Docker du serveur : construite et testée à chaque modification ; publiée sur ghcr.io depuis main.
+#   ghcr.io/helioscreat/helios-discovery-server:latest et :<commit>
+name: Image du serveur
+
+on:
+  pull_request:
+    paths: ["apps/server/**", "packages/compliance/**", "packages/config/**", "packages/economy/**", "package-lock.json", ".dockerignore", ".github/workflows/server-image.yml"]
+  push:
+    branches: ["**"]
+    paths: ["apps/server/**", "packages/compliance/**", "packages/config/**", "packages/economy/**", "package-lock.json", ".dockerignore", ".github/workflows/server-image.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: ghcr.io/helioscreat/helios-discovery-server
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construire (tests du serveur compris)
+        run: docker build -f apps/server/Dockerfile -t "$IMAGE:${GITHUB_SHA::12}" .
+      - name: Essai de démarrage (production, volume, santé, reçus simulés refusés)
+        run: |
+          docker volume create helios-data
+          docker run -d --name helios -p 8787:8787 -v helios-data:/data -e ADMIN_KEYS=ci-key "$IMAGE:${GITHUB_SHA::12}"
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8787/v1/health && break; sleep 1; done
+          curl -fsS http://127.0.0.1:8787/v1/health | grep -q '"ok":true'
+          T=$(curl -fsS -X POST http://127.0.0.1:8787/v1/accounts -H 'content-type: application/json' -d '{"country":"FR"}' | node -e 'process.stdin.on("data",d=>console.log(JSON.parse(d).token))')
+          S=$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:8787/v1/purchases/verify -H "authorization: Bearer $T" -H 'content-type: application/json' -d '{"receipt":{"platform":"mock","orderId":"X","skuId":"boosters_m","token":"signed:X:boosters_m"}}')
+          echo "reçu simulé en production : HTTP $S"; test "$S" = "503"
+          docker exec helios ls -la /data
+          docker logs helios
+          docker stop -t 15 helios
+          test "$(docker inspect -f '{{.State.ExitCode}}' helios)" = "0"
+      - name: Publier (main uniquement)
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          docker tag "$IMAGE:${GITHUB_SHA::12}" "$IMAGE:latest"
+          docker push "$IMAGE:${GITHUB_SHA::12}"
+          docker push "$IMAGE:latest"
