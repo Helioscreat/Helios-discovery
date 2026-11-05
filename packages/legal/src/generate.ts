@@ -48,5 +48,7 @@ export function outputs(): Output[] {
   out.push({ path: "docs/legal/internal/aipd.md", content: toMarkdown(dpia()) });
   for (const d of [dataSafety(), iarc(), traderSheet(), umpConfig()]) out.push({ path: `docs/stores/${d.id}.md`, content: toMarkdown(d) });
   out.push({ path: "docs/stores/PrivacyInfo.xcprivacy", content: privacyManifest() });
+  // Copie embarquée dans l'app iOS (référencée dans App.xcodeproj, phase Resources).
+  out.push({ path: "apps/game/ios/App/App/PrivacyInfo.xcprivacy", content: privacyManifest() });
   return out;
 }
