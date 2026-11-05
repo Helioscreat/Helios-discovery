@@ -137,6 +137,8 @@ export const en: Record<MessageKey, string> = {
   "purchase.result.cap": "Monthly spending cap reached for this account.",
   "purchase.result.oneTimeOwned": "You already have this item.",
   "purchase.result.invalid": "The store did not confirm the purchase. Nothing was added.",
+  "purchase.result.offline": "Connection required: purchases are verified by our server before being added. Nothing has been charged.",
+  "purchase.result.verifyLater": "Payment received, verification in progress. The content will be added automatically as soon as the connection is back.",
   "rewards.title": "Free rewards",
   "rewards.wheel": "Daily wheel",
   "rewards.wheelRule": "One free spin per day. The chance of each prize is shown below.",

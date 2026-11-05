@@ -24,7 +24,7 @@ Nous n'avons pas désigné de délégué à la protection des données. Toute qu
 | Fournir le jeu : compte, progression, synchronisation | identifiant pseudonyme, pays, pseudonyme | Contrat (fournir le jeu), 6(1)(b) | Durée du compte |
 | Adapter le jeu à ton âge et protéger les mineurs | mois et année de naissance | Obligation légale, 6(1)(c) | Durée du compte |
 | Recueillir et prouver ton consentement | choix de consentement et date | Obligation légale, 6(1)(c) | Preuves de consentement : 5 ans |
-| Achats : livraison, plafond des mineurs, remboursements, comptabilité | achats (article, prix, date, commande) | Contrat (fournir le jeu), 6(1)(b) | Pièces comptables des achats : 10 ans |
+| Achats : livraison, plafond des mineurs, remboursements, comptabilité | achats (article, prix, date, commande), identifiant pseudonyme | Contrat (fournir le jeu), 6(1)(b) | Pièces comptables des achats : 10 ans |
 | Chat d'équipe et blocage de joueurs | équipe, messages, joueurs bloqués | Contrat (fournir le jeu), 6(1)(b) | Messages du chat : 90 jours ; Durée du compte |
 | Signalements, modération et recours | signalements, décisions et motifs, recours, avis envoyés dans le jeu | Obligation légale, 6(1)(c) | Signalements : 2 ans ; Décisions de modération : 2 ans ; Recours : 2 ans ; Avis envoyés dans le jeu : 6 mois |
 | Point de contact et support | message, e-mail (facultatif) | Obligation légale, 6(1)(c) | Demandes au point de contact : 1 an |

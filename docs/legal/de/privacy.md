@@ -24,7 +24,7 @@ Wir haben keinen Datenschutzbeauftragten benannt. Jede Frage zu deinen Daten geh
 | Bereitstellung des Spiels: Konto, Fortschritt, Synchronisierung | pseudonyme ID, Land, Spitzname | Vertrag (Bereitstellung des Spiels), 6(1)(b) | Solange das Konto besteht |
 | Anpassung an dein Alter und Schutz Minderjähriger | Geburtsmonat und -jahr | Rechtliche Verpflichtung, 6(1)(c) | Solange das Konto besteht |
 | Einholen und Nachweisen deiner Einwilligung | Einwilligungsentscheidungen und Datum | Rechtliche Verpflichtung, 6(1)(c) | Einwilligungsnachweise: 5 Jahre |
-| Käufe: Lieferung, Grenze für Minderjährige, Erstattungen, Buchhaltung | Käufe (Artikel, Preis, Datum, Bestellung) | Vertrag (Bereitstellung des Spiels), 6(1)(b) | Buchhaltungsbelege der Käufe: 10 Jahre |
+| Käufe: Lieferung, Grenze für Minderjährige, Erstattungen, Buchhaltung | Käufe (Artikel, Preis, Datum, Bestellung), pseudonyme ID | Vertrag (Bereitstellung des Spiels), 6(1)(b) | Buchhaltungsbelege der Käufe: 10 Jahre |
 | Team-Chat und Blockieren von Spielern | Team, Nachrichten, blockierte Spieler | Vertrag (Bereitstellung des Spiels), 6(1)(b) | Chat-Nachrichten: 90 Tage ; Solange das Konto besteht |
 | Meldungen, Moderation und Beschwerden | Meldungen, Entscheidungen und Begründungen, Beschwerden, Mitteilungen im Spiel | Rechtliche Verpflichtung, 6(1)(c) | Meldungen: 2 Jahre ; Moderationsentscheidungen: 2 Jahre ; Beschwerden: 2 Jahre ; Mitteilungen im Spiel: 6 Monate |
 | Kontaktstelle und Support | Nachricht, E-Mail (freiwillig) | Rechtliche Verpflichtung, 6(1)(c) | Anfragen an die Kontaktstelle: 1 Jahr |

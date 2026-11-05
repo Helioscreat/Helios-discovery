@@ -133,6 +133,8 @@ export const de: Record<MessageKey, string> = {
   "purchase.result.cap": "Das monatliche Ausgabenlimit dieses Kontos ist erreicht.",
   "purchase.result.oneTimeOwned": "Du hast diesen Artikel bereits.",
   "purchase.result.invalid": "Der Store hat die Zahlung nicht bestätigt. Es wurde nichts hinzugefügt.",
+  "purchase.result.offline": "Verbindung erforderlich: Käufe werden von unserem Server geprüft, bevor sie hinzugefügt werden. Es wurde nichts abgebucht.",
+  "purchase.result.verifyLater": "Zahlung erhalten, Prüfung läuft. Der Inhalt wird automatisch hinzugefügt, sobald die Verbindung wieder da ist.",
   "rewards.title": "Kostenlose Belohnungen",
   "rewards.wheel": "Rad des Tages",
   "rewards.wheelRule": "Ein kostenloser Dreh pro Tag. Die Chance jedes Preises steht unten.",

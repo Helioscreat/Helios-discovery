@@ -9,7 +9,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne. Motif : traitement de donné
 | account | Fournir le jeu : compte pseudonyme, progression, synchronisation | Art. 6(1)(b) exécution du contrat | Identifiant pseudonyme du compte (UUID) ; Pays (déduit de la langue de l'appareil) ; Pseudonyme choisi pour l'équipe |
 | age | Adapter le jeu à l'âge : protections des mineurs, âge du consentement | Art. 6(1)(c) obligation légale | Mois et année de naissance |
 | consent | Recueillir et prouver le consentement | Art. 6(1)(c) obligation légale | Choix de mesure d'audience, statut renvoyé par Google UMP, date et version de la notice |
-| purchases | Achats intégrés : livraison, plafond mensuel des mineurs, remboursements, comptabilité | Art. 6(1)(b) exécution du contrat | Achats (article, prix, date, numéro de commande du store) |
+| purchases | Achats intégrés : livraison, plafond mensuel des mineurs, remboursements, comptabilité | Art. 6(1)(b) exécution du contrat | Achats (article, prix, date, numéro de commande du store) ; Identifiant pseudonyme du compte (UUID) |
 | chat | Chat d'équipe, blocage de joueurs | Art. 6(1)(b) exécution du contrat | Équipe rejointe ; Messages du chat d'équipe ; Joueurs bloqués |
 | moderation | Signalements, modération, décisions motivées, recours | Art. 6(1)(c) obligation légale | Signalements envoyés (motif, précisions) ; Décisions de modération et leurs motifs ; Recours contre une décision ; Avis envoyés au joueur dans le jeu (décisions, résultats de recours) |
 | support | Point de contact unique et support | Art. 6(1)(c) obligation légale | Message envoyé au point de contact ; Adresse e-mail pour la réponse (facultative) |

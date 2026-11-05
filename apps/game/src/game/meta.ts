@@ -2,7 +2,7 @@ import type { Booster } from "@helios/core";
 import {
   applyVerified, CATALOG, credit, DAY, isProtected, MockStore, MockVerifier, newFreeRewards, newIsland, newSeasonState, newWallet,
   purchaseGate, recordResult, tickLives, type Account, type AgeBand, type Contents, type FreeRewardsState, type IslandState,
-  type SeasonDef, type SeasonState, type Sku, type StoreAdapter, type StoreProduct,
+  skuById, type Receipt, type SeasonDef, type SeasonState, type Sku, type StoreAdapter, type StoreProduct, type VerifiedPurchase,
 } from "@helios/economy";
 import type { Profile } from "./profile";
 
@@ -75,7 +75,15 @@ export function grant(meta: MetaState, profile: Profile, c: Contents, now: numbe
 
 export const protectedPlayer = (m: MetaState) => isProtected(m.age);
 
-export type PurchaseResult = { ok: true } | { ok: false; reason: "cancelled" | "pending" | "cap" | "oneTimeOwned" | "invalid" };
+export type PurchaseResult = { ok: true } | { ok: false; reason: "cancelled" | "pending" | "cap" | "oneTimeOwned" | "invalid" | "offline" | "verifyLater" };
+
+/** Serveur de l'éditeur : autorise l'achat (plafond des mineurs) et vérifie le reçu auprès du store. */
+export interface PurchaseRemote {
+  /** Identifiant pseudonyme du compte, transmis au store pour lier l'achat au compte. */
+  accountId(): string | null;
+  authorize(skuId: string): Promise<{ allowed: boolean; reason?: string }>;
+  verify(r: Receipt): Promise<VerifiedPurchase>;
+}
 
 /**
  * Parcours d'achat complet : autorisation (plafond, achat unique) → flux du store → vérification du reçu
@@ -85,6 +93,8 @@ export class Shop {
   readonly store: StoreAdapter;
   readonly verifier: MockVerifier;
   private prices: Map<string, StoreProduct> = new Map();
+  /** Branché par le jeu une fois le compte connu. Obligatoire pour un store réel (Google, Apple). */
+  remote: PurchaseRemote | null = null;
 
   constructor(private readonly clock: () => number, store?: StoreAdapter) {
     this.store = store ?? new MockStore(CATALOG, typeof navigator !== "undefined" ? navigator.language : "fr-FR", "EUR");
@@ -105,13 +115,42 @@ export class Shop {
     const now = this.clock();
     const gate = purchaseGate(meta.age, meta.account.ledger, sku, meta.account.wallet.ownedOnce, now);
     if (!gate.allowed) return { ok: false, reason: gate.reason };
+    const real = this.store.platform !== "mock";
+    if (real) {
+      // Store réel : rien sans le serveur (plafond calculé sur les reçus vérifiés, reçu vérifié auprès du store).
+      if (!this.remote) return { ok: false, reason: "offline" };
+      const auth = await this.remote.authorize(sku.id).catch(() => null);
+      if (!auth) return { ok: false, reason: "offline" };
+      if (!auth.allowed) return { ok: false, reason: auth.reason === "oneTimeOwned" ? "oneTimeOwned" : auth.reason === "cap" ? "cap" : "invalid" };
+    }
     const out = await this.store.purchase(sku.id);
     if (out.kind === "cancelled") return { ok: false, reason: "cancelled" };
     if (out.kind === "pending") return { ok: false, reason: "pending" };
-    const verified = await this.verifier.verify(out.receipt);
+    return this.settle(meta, profile, out.receipt);
+  }
+
+  /**
+   * Vérifie un reçu (serveur pour un store réel, doublure pour le store simulé), crédite une seule fois,
+   * puis clôt la transaction. Si le serveur ne répond pas, la transaction reste ouverte et sera reprise.
+   */
+  async settle(meta: MetaState, profile: Profile, receipt: Receipt): Promise<PurchaseResult> {
+    const now = this.clock();
+    let verified: VerifiedPurchase;
+    if (receipt.platform === "mock") verified = await this.verifier.verify(receipt);
+    else {
+      if (!this.remote) return { ok: false, reason: "verifyLater" };
+      try {
+        verified = await this.remote.verify(receipt);
+      } catch {
+        return { ok: false, reason: "verifyLater" };
+      }
+    }
+    if (verified.state === "pending") return { ok: false, reason: "pending" };
     const before = meta.account.wallet;
     const r = applyVerified(meta.account, verified, now);
     if (!r.ok) return { ok: false, reason: "invalid" };
+    // Crédité (ou déjà crédité) : la transaction peut être clôturée chez le store.
+    if (verified.state === "purchased") await this.store.finish?.(receipt).catch(() => undefined);
     // Les boosters crédités passent dans la réserve du profil.
     const gained = r.account.wallet.boosters;
     for (const b of Object.keys(gained) as Booster[]) {
@@ -120,6 +159,19 @@ export class Shop {
     }
     meta.account = { ...r.account, wallet: { ...r.account.wallet, boosters: before.boosters } };
     return { ok: true };
+  }
+
+  /** Au lancement et à chaque transaction reçue hors parcours : crédite les achats payés mais non clôturés. */
+  async recover(meta: MetaState, profile: Profile, list?: Receipt[]): Promise<Sku[]> {
+    const pending = list ?? (await this.store.unfinished?.().catch(() => [] as Receipt[])) ?? [];
+    const credited: Sku[] = [];
+    for (const r of pending) {
+      if (!CATALOG.some((s) => s.id === r.skuId)) continue;
+      const known = meta.account.ledger.some((e) => e.orderId === r.orderId && e.state === "credited");
+      const res = await this.settle(meta, profile, r);
+      if (res.ok && !known) credited.push(skuById(r.skuId));
+    }
+    return credited;
   }
 }
 

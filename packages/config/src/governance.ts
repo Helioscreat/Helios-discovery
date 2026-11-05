@@ -38,7 +38,7 @@ export interface Subprocessor {
 
 export const SUBPROCESSORS: Subprocessor[] = [
   { name: "Scaleway SAS", role: "Hébergement du serveur et de la base de données (région fr-par)", country: "FR", hosts: ["api.helios-discovery.example"], safeguard: "UE", dpa: "https://www.scaleway.com/en/contracts/", afterConsent: false },
-  { name: "Google Ireland Ltd (Google Play)", role: "Paiement et vérification des achats (Android)", country: "IE", hosts: ["androidpublisher.googleapis.com"], safeguard: "DPF + CCT", dpa: "https://business.safety.google/processorterms/", afterConsent: false },
+  { name: "Google Ireland Ltd (Google Play)", role: "Paiement et vérification des achats (Android)", country: "IE", hosts: ["androidpublisher.googleapis.com", "oauth2.googleapis.com"], safeguard: "DPF + CCT", dpa: "https://business.safety.google/processorterms/", afterConsent: false },
   { name: "Apple Distribution International", role: "Paiement et vérification des achats (iOS)", country: "IE", hosts: ["api.storekit.itunes.apple.com"], safeguard: "DPF + CCT", dpa: "https://www.apple.com/legal/internet-services/", afterConsent: false },
   // UMP est contacté avant le choix, pour l'afficher : seulement pour un joueur à qui la publicité peut être proposée (âge, pays).
   { name: "Google Ireland Ltd (UMP)", role: "Plateforme de consentement certifiée (TCF v2.2) pour la publicité", country: "IE", hosts: ["fundingchoicesmessages.google.com"], safeguard: "DPF + CCT", dpa: "https://business.safety.google/adsprocessorterms/", afterConsent: false },

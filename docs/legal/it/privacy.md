@@ -24,7 +24,7 @@ Non abbiamo nominato un responsabile della protezione dei dati. Ogni domanda sui
 | Fornire il gioco: account, progressi, sincronizzazione | identificativo pseudonimo, paese, nickname | Contratto (fornire il gioco), 6(1)(b) | Finché l'account esiste |
 | Adattare il gioco alla tua età e proteggere i minori | mese e anno di nascita | Obbligo legale, 6(1)(c) | Finché l'account esiste |
 | Raccogliere e provare il tuo consenso | scelte di consenso e data | Obbligo legale, 6(1)(c) | Prove del consenso: 5 anni |
-| Acquisti: consegna, limite per i minori, rimborsi, contabilità | acquisti (articolo, prezzo, data, ordine) | Contratto (fornire il gioco), 6(1)(b) | Scritture contabili degli acquisti: 10 anni |
+| Acquisti: consegna, limite per i minori, rimborsi, contabilità | acquisti (articolo, prezzo, data, ordine), identificativo pseudonimo | Contratto (fornire il gioco), 6(1)(b) | Scritture contabili degli acquisti: 10 anni |
 | Chat di squadra e blocco dei giocatori | squadra, messaggi, giocatori bloccati | Contratto (fornire il gioco), 6(1)(b) | Messaggi della chat: 90 giorni ; Finché l'account esiste |
 | Segnalazioni, moderazione e reclami | segnalazioni, decisioni e motivazioni, reclami, avvisi inviati nel gioco | Obbligo legale, 6(1)(c) | Segnalazioni: 2 anni ; Decisioni di moderazione: 2 anni ; Reclami: 2 anni ; Avvisi inviati nel gioco: 6 mesi |
 | Punto di contatto e assistenza | messaggio, e-mail (facoltativa) | Obbligo legale, 6(1)(c) | Richieste al punto di contatto: 1 anno |

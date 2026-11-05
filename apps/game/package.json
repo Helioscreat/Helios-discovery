@@ -16,6 +16,7 @@
     "@capacitor/android": "8.5.3",
     "@capacitor/core": "8.5.3",
     "@capacitor/ios": "8.5.3",
+    "@capgo/native-purchases": "8.9.6",
     "@helios/compliance": "0.1.0",
     "@helios/config": "0.1.0",
     "@helios/core": "0.1.0",

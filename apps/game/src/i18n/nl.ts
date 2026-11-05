@@ -133,6 +133,8 @@ export const nl: Record<MessageKey, string> = {
   "purchase.result.cap": "De maandelijkse bestedingslimiet van dit account is bereikt.",
   "purchase.result.oneTimeOwned": "Je hebt dit artikel al.",
   "purchase.result.invalid": "De store heeft de aankoop niet bevestigd. Er is niets toegevoegd.",
+  "purchase.result.offline": "Verbinding nodig: aankopen worden door onze server gecontroleerd voordat ze worden toegevoegd. Er is niets afgeschreven.",
+  "purchase.result.verifyLater": "Betaling ontvangen, controle bezig. De inhoud wordt automatisch toegevoegd zodra de verbinding terug is.",
   "rewards.title": "Gratis beloningen",
   "rewards.wheel": "Rad van de dag",
   "rewards.wheelRule": "Eén gratis draai per dag. De kans op elke prijs staat hieronder.",

@@ -3,7 +3,7 @@ import {
   ageFromBirth, ageFromBirthMonth, ageProfile, checkMessage, checkNickname, CONSENT_NOTICE_VERSION, normalizeConsent, PRESET_MESSAGES, UMP_STATUSES, type UmpStatus,
   REPORT_REASONS, statementOfReasons, UNKNOWN_AGE, validateDecision, type AgeProfile, type ConsentChoice, type DecisionInput, type ReportReason,
 } from "@helios/compliance";
-import { applyVerified, CATALOG, MockVerifier, newWallet, purchaseGate, skuById, type Receipt } from "@helios/economy";
+import { applyVerified, CATALOG, MockVerifier, newWallet, purchaseGate, skuById, type Receipt, type ReceiptVerifier, type VerifiedPurchase } from "@helios/economy";
 import { DEFAULT_CONFIG, resolveConfig, validateConfig, type RemoteConfig } from "@helios/config";
 import { dashboard, DEFAULT_THRESHOLDS, runRetentionJob, storeEvent, validateEvent, type Thresholds } from "./analytics";
 import { PERSONAL_TABLES, PSEUDONYMIZED_TABLES, type Db } from "./db";
@@ -25,7 +25,8 @@ export interface ServiceConfig {
   minorCapCents: number;
   adminKeys?: string[];
   thresholds?: Thresholds;
-  verifier?: { verify(r: Receipt): Promise<{ orderId: string; skuId: string; state: "purchased" | "pending" | "refunded" | "invalid"; eurCents: number; at: number }> };
+  /** Vérificateurs des stores (stores.ts). Absent : store simulé, uniquement pour le développement et les tests. */
+  verifier?: ReceiptVerifier;
 }
 
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
@@ -131,8 +132,20 @@ export class Service {
     return g.allowed ? { allowed: true } : { allowed: false, reason: g.reason };
   }
 
-  async verifyPurchase(p: PlayerRow, receipt: Receipt): Promise<{ credited: boolean; state: string }> {
-    const v = await this.verifier.verify(receipt);
+  /**
+   * Vérifie un reçu auprès du store, l'inscrit au grand livre (une seule fois par commande), puis l'acquitte.
+   * Renvoie l'achat vérifié : le jeu ne crédite le contenu qu'à partir de cette réponse.
+   */
+  async verifyPurchase(p: PlayerRow, receipt: Receipt): Promise<{ credited: boolean; state: string; purchase: VerifiedPurchase }> {
+    if (!receipt || typeof receipt.token !== "string" || typeof receipt.skuId !== "string" || !["google", "apple", "mock"].includes(receipt.platform)) throw new ApiError(422, "receiptInvalid");
+    if (!CATALOG.some((s) => s.id === receipt.skuId)) throw new ApiError(422, "receiptInvalid", "article inconnu");
+    let v: VerifiedPurchase;
+    try {
+      v = await this.verifier.verify(receipt, { accountId: p.id });
+    } catch (e) {
+      // Store injoignable ou non configuré : rien n'est crédité, le jeu garde la transaction ouverte et réessaiera.
+      throw new ApiError(503, "storeUnavailable", (e as Error).message);
+    }
     const acc = { wallet: newWallet(this.cfg.clock()), ledger: this.ledgerOf(p.id) };
     const r = applyVerified(acc, v, this.cfg.clock());
     if (!r.ok) throw new ApiError(422, "receiptInvalid", r.reason);
@@ -140,7 +153,8 @@ export class Service {
       // @collects purchase.history
       this.db.prepare("INSERT INTO ledger VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(order_id) DO UPDATE SET state = excluded.state").run(e.orderId, p.id, e.skuId, e.eurCents, e.at, e.state);
     }
-    return { credited: r.credited, state: v.state };
+    if (v.state === "purchased") await this.verifier.acknowledge?.(receipt).catch(() => undefined);
+    return { credited: r.credited, state: v.state, purchase: v };
   }
 
   // ───────────── chat d'équipe ─────────────

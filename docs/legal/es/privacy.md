@@ -24,7 +24,7 @@ No hemos designado delegado de protección de datos. Cualquier pregunta sobre tu
 | Prestar el juego: cuenta, progreso, sincronización | identificador seudónimo, país, seudónimo | Contrato (prestar el juego), 6(1)(b) | Mientras exista la cuenta |
 | Adaptar el juego a tu edad y proteger a los menores | mes y año de nacimiento | Obligación legal, 6(1)(c) | Mientras exista la cuenta |
 | Recoger y acreditar tu consentimiento | opciones de consentimiento y fecha | Obligación legal, 6(1)(c) | Pruebas del consentimiento: 5 años |
-| Compras: entrega, límite para menores, reembolsos, contabilidad | compras (artículo, precio, fecha, pedido) | Contrato (prestar el juego), 6(1)(b) | Justificantes contables de las compras: 10 años |
+| Compras: entrega, límite para menores, reembolsos, contabilidad | compras (artículo, precio, fecha, pedido), identificador seudónimo | Contrato (prestar el juego), 6(1)(b) | Justificantes contables de las compras: 10 años |
 | Chat de equipo y bloqueo de jugadores | equipo, mensajes, jugadores bloqueados | Contrato (prestar el juego), 6(1)(b) | Mensajes del chat: 90 días ; Mientras exista la cuenta |
 | Denuncias, moderación y recursos | denuncias, decisiones y motivos, recursos, avisos enviados en el juego | Obligación legal, 6(1)(c) | Denuncias: 2 años ; Decisiones de moderación: 2 años ; Recursos: 2 años ; Avisos enviados en el juego: 6 meses |
 | Punto de contacto y soporte | mensaje, correo electrónico (opcional) | Obligación legal, 6(1)(c) | Solicitudes al punto de contacto: 1 año |
