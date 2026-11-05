@@ -31,7 +31,7 @@ Nous n'avons pas désigné de délégué à la protection des données. Toute qu
 | Export et suppression de tes données | demande de suppression | Obligation légale, 6(1)(c) | Durée du compte |
 | Mesure d'audience pour améliorer les niveaux | événements de jeu (niveaux, boosters, durée de session) | Consentement, 6(1)(a) | Événements de mesure d'audience : 13 mois |
 | Indicateurs agrégés de protection des joueurs | achats (article, prix, date, commande), événements de jeu (niveaux, boosters, durée de session) | Intérêt légitime, 6(1)(f) | Pièces comptables des achats : 10 ans ; Événements de mesure d'audience : 13 mois |
-| Vidéos récompensées facultatives et choix de consentement | identifiant publicitaire, données techniques de l'appareil | Consentement, 6(1)(a) | Rien sur nos serveurs ; conditions du prestataire |
+| Vidéos récompensées facultatives et choix de consentement | identifiant publicitaire, données techniques de l'appareil, position approximative déduite de l'adresse IP, données de diagnostic des annonces | Consentement, 6(1)(a) | Rien sur nos serveurs ; conditions du prestataire |
 | Notifications facultatives | jeton de notification | Consentement, 6(1)(a) | Rien sur nos serveurs ; conditions du prestataire |
 
 ## 3. Intérêt légitime
@@ -53,6 +53,8 @@ Seules les personnes de notre équipe qui en ont besoin accèdent à tes donnée
 | Apple Distribution International (APNs) | Envoi des notifications sur iOS (seulement après ton accord) | Irlande | Cadre UE–États-Unis et clauses types |
 
 Pour la publicité personnalisée, Google agit comme responsable de traitement indépendant, selon ses propres règles : https://policies.google.com/privacy
+
+Le formulaire de Google utilise un texte commun à toutes les applications. Il mentionne la géolocalisation précise et l'intérêt légitime. Pour Helios Discovery : le jeu ne demande jamais l'accès à ta position, donc aucune position précise ne peut être collectée ; seule une position approximative, déduite de ton adresse IP, est utilisée par Google. Nous avons désactivé l'intérêt légitime : la publicité repose uniquement sur ton consentement.
 
 Certains prestataires appartiennent à des groupes établis aux États-Unis. Un éventuel transfert repose sur le cadre de protection des données UE–États-Unis (décision d'adéquation du 10 juillet 2023) et sur les clauses contractuelles types de la Commission européenne.
 

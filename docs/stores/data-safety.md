@@ -25,5 +25,7 @@ Réponses générées depuis packages/legal/src/inventory.ts (2026-11-v1). À re
 | Personal info › Email address | Oui | Non | Facultatif | Fonctionnement de l'application | support.email |
 | App activity › App interactions | Oui | Non | Facultatif | Analyses | analytics.events |
 | Device or other IDs | Oui | Oui (ads.deviceId) | Facultatif | Publicité ou marketing ; Prévention des fraudes, sécurité et conformité ; Fonctionnement de l'application | ads.deviceId, push.token |
+| Location › Approximate location | Oui | Oui (ads.approxLocation) | Facultatif | Publicité ou marketing ; Prévention des fraudes, sécurité et conformité | ads.approxLocation |
+| App info and performance › Diagnostics | Oui | Oui (ads.diagnostics) | Facultatif | Publicité ou marketing ; Prévention des fraudes, sécurité et conformité | ads.diagnostics |
 
-« Partagée » signifie transmise à un tiers pour son propre compte : seul l'identifiant publicitaire l'est (SDK Google Mobile Ads, après consentement). Les données traitées par nos sous-traitants pour notre compte ne sont pas « partagées » au sens de Google.
+« Partagée » signifie transmise à un tiers pour son propre compte : seules les données collectées par le SDK Google Mobile Ads le sont (identifiant publicitaire, position approximative déduite de l'adresse IP, diagnostics), pour un joueur à qui la publicité est proposée. Les données traitées par nos sous-traitants pour notre compte ne sont pas « partagées » au sens de Google. Vérifier ces catégories avec la déclaration publiée par Google pour le SDK Google Mobile Ads, version utilisée.

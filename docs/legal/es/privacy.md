@@ -31,7 +31,7 @@ No hemos designado delegado de protección de datos. Cualquier pregunta sobre tu
 | Exportación y eliminación de tus datos | solicitud de eliminación | Obligación legal, 6(1)(c) | Mientras exista la cuenta |
 | Medición de audiencia para mejorar los niveles | eventos de juego (niveles, potenciadores, duración de la sesión) | Consentimiento, 6(1)(a) | Eventos de medición de audiencia: 13 meses |
 | Indicadores agregados de protección de los jugadores | compras (artículo, precio, fecha, pedido), eventos de juego (niveles, potenciadores, duración de la sesión) | Interés legítimo, 6(1)(f) | Justificantes contables de las compras: 10 años ; Eventos de medición de audiencia: 13 meses |
-| Vídeos con recompensa opcionales y opciones de consentimiento | identificador publicitario, datos técnicos del dispositivo | Consentimiento, 6(1)(a) | Nada en nuestros servidores; condiciones del proveedor |
+| Vídeos con recompensa opcionales y opciones de consentimiento | identificador publicitario, datos técnicos del dispositivo, ubicación aproximada deducida de la dirección IP, datos de diagnóstico de los anuncios | Consentimiento, 6(1)(a) | Nada en nuestros servidores; condiciones del proveedor |
 | Notificaciones opcionales | token de notificación | Consentimiento, 6(1)(a) | Nada en nuestros servidores; condiciones del proveedor |
 
 ## 3. Interés legítimo
@@ -53,6 +53,8 @@ Solo las personas de nuestro equipo que lo necesitan acceden a tus datos. Nuestr
 | Apple Distribution International (APNs) | Envío de notificaciones en iOS (solo tras tu consentimiento) | Irlanda | Marco UE-EE. UU. y cláusulas tipo |
 
 Para la publicidad personalizada, Google actúa como responsable independiente, según sus propias normas: https://policies.google.com/privacy
+
+El formulario de Google usa un texto común a todas las aplicaciones. Menciona la geolocalización precisa y el interés legítimo. En Helios Discovery: el juego nunca pide acceso a tu ubicación, así que no se puede recoger ninguna ubicación precisa; Google solo usa una ubicación aproximada, deducida de tu dirección IP. Hemos desactivado el interés legítimo: la publicidad se basa únicamente en tu consentimiento.
 
 Algunos proveedores pertenecen a grupos establecidos en Estados Unidos. Una eventual transferencia se basa en el Marco de Privacidad de Datos UE-EE. UU. (decisión de adecuación de 10 de julio de 2023) y en las cláusulas contractuales tipo de la Comisión Europea.
 

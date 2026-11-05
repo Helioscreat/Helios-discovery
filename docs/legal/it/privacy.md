@@ -31,7 +31,7 @@ Non abbiamo nominato un responsabile della protezione dei dati. Ogni domanda sui
 | Esportazione ed eliminazione dei tuoi dati | richiesta di eliminazione | Obbligo legale, 6(1)(c) | Finché l'account esiste |
 | Misurazione del pubblico per migliorare i livelli | eventi di gioco (livelli, potenziamenti, durata della sessione) | Consenso, 6(1)(a) | Eventi di misurazione del pubblico: 13 mesi |
 | Indicatori aggregati di protezione dei giocatori | acquisti (articolo, prezzo, data, ordine), eventi di gioco (livelli, potenziamenti, durata della sessione) | Legittimo interesse, 6(1)(f) | Scritture contabili degli acquisti: 10 anni ; Eventi di misurazione del pubblico: 13 mesi |
-| Video con ricompensa facoltativi e scelte di consenso | identificativo pubblicitario, dati tecnici del dispositivo | Consenso, 6(1)(a) | Niente sui nostri server; condizioni del fornitore |
+| Video con ricompensa facoltativi e scelte di consenso | identificativo pubblicitario, dati tecnici del dispositivo, posizione approssimativa ricavata dall'indirizzo IP, dati diagnostici degli annunci | Consenso, 6(1)(a) | Niente sui nostri server; condizioni del fornitore |
 | Notifiche facoltative | token di notifica | Consenso, 6(1)(a) | Niente sui nostri server; condizioni del fornitore |
 
 ## 3. Legittimo interesse
@@ -53,6 +53,8 @@ Solo le persone del nostro team che ne hanno bisogno accedono ai tuoi dati. I no
 | Apple Distribution International (APNs) | Invio delle notifiche su iOS (solo dopo il tuo consenso) | Irlanda | Quadro UE-USA e clausole tipo |
 
 Per la pubblicità personalizzata, Google agisce come titolare autonomo, secondo le proprie regole: https://policies.google.com/privacy
+
+Il modulo di Google usa un testo comune a tutte le app. Menziona la geolocalizzazione precisa e il legittimo interesse. Per Helios Discovery: il gioco non chiede mai l'accesso alla tua posizione, quindi non può essere raccolta alcuna posizione precisa; Google usa solo una posizione approssimativa, ricavata dal tuo indirizzo IP. Abbiamo disattivato il legittimo interesse: la pubblicità si basa solo sul tuo consenso.
 
 Alcuni fornitori appartengono a gruppi con sede negli Stati Uniti. Un eventuale trasferimento si basa sul quadro UE-USA per la protezione dei dati (decisione di adeguatezza del 10 luglio 2023) e sulle clausole contrattuali tipo della Commissione europea.
 

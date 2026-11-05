@@ -16,7 +16,7 @@ Version 2026-11-v1 du 2026-11-04. Document interne. Motif : traitement de donné
 | rights | Exercice des droits : export, suppression du compte | Art. 6(1)(c) obligation légale | Demande de suppression et échéance |
 | analytics | Mesure d'audience first-party pour améliorer les niveaux | Art. 6(1)(a) consentement | Événements de jeu (niveau joué, réussi, échoué ; boosters ; durée de session) |
 | protection | Indicateurs agrégés de protection (revenus des mineurs, plafonds atteints, sessions longues) | Art. 6(1)(f) intérêt légitime | Achats (article, prix, date, numéro de commande du store) ; Événements de jeu (niveau joué, réussi, échoué ; boosters ; durée de session) |
-| ads | Vidéos récompensées facultatives (Google AdMob) ; consentement recueilli par Google UMP | Art. 6(1)(a) consentement | Identifiant publicitaire et données techniques de l'appareil (SDK Google Mobile Ads) |
+| ads | Vidéos récompensées facultatives (Google AdMob) ; consentement recueilli par Google UMP | Art. 6(1)(a) consentement | Identifiant publicitaire et données techniques de l'appareil (SDK Google Mobile Ads) ; Position approximative déduite de l'adresse IP (SDK Google Mobile Ads) ; Données de diagnostic et de performance des annonces (SDK Google Mobile Ads) |
 | notifications | Notifications facultatives (vies, équipe, saison) | Art. 6(1)(a) consentement | Jeton de notification de l'appareil (FCM, APNs) |
 
 Public : 13 ans et plus, dont des mineurs. Âges du consentement appliqués : FR 15, BE 13, DE 16, ES 14, IT 14, NL 16. Pays : FR, BE, DE, ES, IT, NL.

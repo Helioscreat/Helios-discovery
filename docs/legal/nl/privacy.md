@@ -31,7 +31,7 @@ We hebben geen functionaris voor gegevensbescherming aangesteld. Elke vraag over
 | Export en verwijdering van je gegevens | verwijderingsverzoek | Wettelijke verplichting, 6(1)(c) | Zolang het account bestaat |
 | Bezoekersmeting om de levels te verbeteren | spelgebeurtenissen (levels, boosters, sessieduur) | Toestemming, 6(1)(a) | Gebeurtenissen van de bezoekersmeting: 13 maanden |
 | Geaggregeerde indicatoren voor spelersbescherming | aankopen (artikel, prijs, datum, bestelling), spelgebeurtenissen (levels, boosters, sessieduur) | Gerechtvaardigd belang, 6(1)(f) | Boekhoudkundige stukken van aankopen: 10 jaar ; Gebeurtenissen van de bezoekersmeting: 13 maanden |
-| Optionele beloningsvideo's en toestemmingskeuzes | advertentie-ID, technische apparaatgegevens | Toestemming, 6(1)(a) | Niets op onze servers; voorwaarden van de dienstverlener |
+| Optionele beloningsvideo's en toestemmingskeuzes | advertentie-ID, technische apparaatgegevens, bij benadering bepaalde locatie op basis van het IP-adres, diagnostische gegevens van advertenties | Toestemming, 6(1)(a) | Niets op onze servers; voorwaarden van de dienstverlener |
 | Optionele meldingen | meldingstoken | Toestemming, 6(1)(a) | Niets op onze servers; voorwaarden van de dienstverlener |
 
 ## 3. Gerechtvaardigd belang
@@ -53,6 +53,8 @@ Alleen de leden van ons team die ze nodig hebben, hebben toegang tot je gegevens
 | Apple Distribution International (APNs) | Versturen van meldingen op iOS (alleen na je toestemming) | Ierland | EU-VS-kader en standaardbepalingen |
 
 Voor gepersonaliseerde reclame treedt Google op als zelfstandige verwerkingsverantwoordelijke, volgens zijn eigen regels: https://policies.google.com/privacy
+
+Het formulier van Google gebruikt een tekst die voor alle apps hetzelfde is. Het vermeldt precieze geolocatie en gerechtvaardigd belang. Voor Helios Discovery: het spel vraagt nooit toegang tot je locatie, dus er kan geen precieze locatie worden verzameld; Google gebruikt alleen een bij benadering bepaalde locatie op basis van je IP-adres. We hebben het gerechtvaardigd belang uitgeschakeld: reclame berust alleen op je toestemming.
 
 Sommige dienstverleners behoren tot groepen die in de Verenigde Staten gevestigd zijn. Een eventuele doorgifte berust op het EU-VS-kader voor gegevensbescherming (adequaatheidsbesluit van 10 juli 2023) en op de standaardcontractbepalingen van de Europese Commissie.
 

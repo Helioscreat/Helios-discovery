@@ -31,7 +31,7 @@ Wir haben keinen Datenschutzbeauftragten benannt. Jede Frage zu deinen Daten geh
 | Export und Löschung deiner Daten | Löschantrag | Rechtliche Verpflichtung, 6(1)(c) | Solange das Konto besteht |
 | Reichweitenmessung zur Verbesserung der Level | Spielereignisse (Level, Booster, Sitzungsdauer) | Einwilligung, 6(1)(a) | Ereignisse der Reichweitenmessung: 13 Monate |
 | Zusammengefasste Kennzahlen zum Spielerschutz | Käufe (Artikel, Preis, Datum, Bestellung), Spielereignisse (Level, Booster, Sitzungsdauer) | Berechtigtes Interesse, 6(1)(f) | Buchhaltungsbelege der Käufe: 10 Jahre ; Ereignisse der Reichweitenmessung: 13 Monate |
-| Freiwillige Belohnungsvideos und Einwilligungsauswahl | Werbe-ID, technische Gerätedaten | Einwilligung, 6(1)(a) | Nichts auf unseren Servern; Bedingungen des Dienstleisters |
+| Freiwillige Belohnungsvideos und Einwilligungsauswahl | Werbe-ID, technische Gerätedaten, ungefährer Standort, abgeleitet aus der IP-Adresse, Diagnosedaten der Anzeigen | Einwilligung, 6(1)(a) | Nichts auf unseren Servern; Bedingungen des Dienstleisters |
 | Freiwillige Benachrichtigungen | Benachrichtigungs-Token | Einwilligung, 6(1)(a) | Nichts auf unseren Servern; Bedingungen des Dienstleisters |
 
 ## 3. Berechtigtes Interesse
@@ -53,6 +53,8 @@ Nur die Mitglieder unseres Teams, die sie brauchen, haben Zugriff auf deine Date
 | Apple Distribution International (APNs) | Versand von Benachrichtigungen unter iOS (erst nach deiner Einwilligung) | Irland | EU-US-Rahmen und Standardklauseln |
 
 Für personalisierte Werbung handelt Google als eigenständiger Verantwortlicher nach seinen eigenen Regeln: https://policies.google.com/privacy
+
+Das Formular von Google verwendet einen Text, der für alle Apps gleich ist. Er erwähnt genaue Standortdaten und berechtigtes Interesse. Für Helios Discovery gilt: Das Spiel fragt nie nach Zugriff auf deinen Standort, daher kann kein genauer Standort erfasst werden; Google nutzt nur einen ungefähren Standort, abgeleitet aus deiner IP-Adresse. Das berechtigte Interesse haben wir abgeschaltet: Werbung beruht nur auf deiner Einwilligung.
 
 Einige Dienstleister gehören zu Unternehmensgruppen mit Sitz in den Vereinigten Staaten. Eine etwaige Übermittlung stützt sich auf den EU-US-Datenschutzrahmen (Angemessenheitsbeschluss vom 10. Juli 2023) und auf die Standardvertragsklauseln der Europäischen Kommission.
 

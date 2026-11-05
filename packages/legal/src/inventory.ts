@@ -11,11 +11,11 @@ export type GoogleCategory =
   | "Personal info › User IDs" | "Personal info › Name" | "Personal info › Email address" | "Personal info › Other info"
   | "Financial info › Purchase history" | "Messages › Other in-app messages"
   | "App activity › App interactions" | "App activity › Other user-generated content" | "App activity › Other actions"
-  | "Device or other IDs";
+  | "Device or other IDs" | "Location › Approximate location" | "App info and performance › Diagnostics";
 
 /** Types Apple (NSPrivacyCollectedDataType…). */
 export type AppleType =
-  | "UserID" | "EmailAddress" | "PurchaseHistory" | "OtherUserContent" | "CustomerSupport" | "ProductInteraction" | "DeviceID" | "OtherDataTypes";
+  | "UserID" | "EmailAddress" | "PurchaseHistory" | "OtherUserContent" | "CustomerSupport" | "ProductInteraction" | "DeviceID" | "OtherDataTypes" | "CoarseLocation" | "OtherDiagnosticData";
 
 export type Purpose = "AppFunctionality" | "Analytics" | "ThirdPartyAdvertising" | "FraudPrevention" | "AccountManagement" | "LegalCompliance";
 
@@ -54,6 +54,10 @@ export const DATA_TYPES: DataType[] = [
   { id: "rights.deletionRequest", label: "Demande de suppression et échéance", google: "App activity › Other actions", apple: "OtherDataTypes", by: "code", optional: true, shared: false, tracking: false, purposes: ["LegalCompliance"] },
   { id: "analytics.events", label: "Événements de jeu (niveau joué, réussi, échoué ; boosters ; durée de session)", google: "App activity › App interactions", apple: "ProductInteraction", by: "code", optional: true, shared: false, tracking: false, purposes: ["Analytics"] },
   { id: "ads.deviceId", label: "Identifiant publicitaire et données techniques de l'appareil (SDK Google Mobile Ads)", google: "Device or other IDs", apple: "DeviceID", by: "sdk", optional: true, shared: true, tracking: true, purposes: ["ThirdPartyAdvertising", "FraudPrevention"] },
+  // Collectés par le SDK Google Mobile Ads lui-même (déclaration de Google pour ce SDK) : position approximative déduite de
+  // l'adresse IP et diagnostics. Le jeu ne demande jamais la permission de localisation : aucune position précise possible.
+  { id: "ads.approxLocation", label: "Position approximative déduite de l'adresse IP (SDK Google Mobile Ads)", google: "Location › Approximate location", apple: "CoarseLocation", by: "sdk", optional: true, shared: true, tracking: false, purposes: ["ThirdPartyAdvertising", "FraudPrevention"] },
+  { id: "ads.diagnostics", label: "Données de diagnostic et de performance des annonces (SDK Google Mobile Ads)", google: "App info and performance › Diagnostics", apple: "OtherDiagnosticData", by: "sdk", optional: true, shared: true, tracking: false, purposes: ["ThirdPartyAdvertising", "FraudPrevention"] },
   { id: "push.token", label: "Jeton de notification de l'appareil (FCM, APNs)", google: "Device or other IDs", apple: null, by: "sdk", optional: true, shared: false, tracking: false, purposes: ["AppFunctionality"] },
 ];
 
@@ -90,7 +94,7 @@ export const TREATMENTS: Treatment[] = [
   { id: "rights", purpose: "Exercice des droits : export, suppression du compte", basis: "c", basisDetail: "RGPD art. 15, 17 et 20", subjects: "Joueurs", data: ["rights.deletionRequest"], retention: { tables: [], account: true }, recipients: ["Scaleway SAS"], minors: "Export et suppression accessibles depuis les paramètres, sans démarche externe.", automatedDecision: false },
   { id: "analytics", purpose: "Mesure d'audience first-party pour améliorer les niveaux", basis: "a", basisDetail: "Consentement (RGPD art. 6(1)(a) ; directive 2002/58 art. 5(3))", subjects: "Joueurs ayant consenti", data: ["analytics.events"], retention: { tables: ["events"] }, recipients: ["Scaleway SAS"], minors: "Proposé seulement au-dessus de l'âge du consentement ; aucune donnée publicitaire ; schéma fermé sans texte libre.", automatedDecision: false },
   { id: "protection", purpose: "Indicateurs agrégés de protection (revenus des mineurs, plafonds atteints, sessions longues)", basis: "f", basisDetail: "Intérêt légitime : vérifier que le jeu protège ses joueurs ; seuls des agrégats sont produits", subjects: "Joueurs", data: ["purchase.history", "analytics.events"], retention: { tables: ["ledger", "events"] }, recipients: ["Scaleway SAS"], minors: "Aucune mesure individuelle n'est prise à partir de ces indicateurs.", automatedDecision: false },
-  { id: "ads", purpose: "Vidéos récompensées facultatives (Google AdMob) ; consentement recueilli par Google UMP", basis: "a", basisDetail: "Consentement recueilli par Google UMP (TCF v2.2 ; RGPD art. 6(1)(a) ; directive 2002/58 art. 5(3)). Sans consentement : publicité limitée, sans traceur ni personnalisation, seulement sur une vidéo choisie par le joueur", subjects: "Joueurs majeurs ou au-dessus de l'âge du consentement, dans les pays où la publicité est active", data: ["ads.deviceId"], retention: { tables: [] }, recipients: ["Google Ireland Ltd (UMP)", "Google Ireland Ltd (AdMob)"], minors: "Mineurs : jamais de publicité personnalisée (DSA art. 28(2)) ; sous l'âge du consentement : aucune publicité.", automatedDecision: false },
+  { id: "ads", purpose: "Vidéos récompensées facultatives (Google AdMob) ; consentement recueilli par Google UMP", basis: "a", basisDetail: "Consentement recueilli par Google UMP (TCF v2.2 ; RGPD art. 6(1)(a) ; directive 2002/58 art. 5(3)). Sans consentement : publicité limitée, sans traceur ni personnalisation, seulement sur une vidéo choisie par le joueur", subjects: "Joueurs majeurs ou au-dessus de l'âge du consentement, dans les pays où la publicité est active", data: ["ads.deviceId", "ads.approxLocation", "ads.diagnostics"], retention: { tables: [] }, recipients: ["Google Ireland Ltd (UMP)", "Google Ireland Ltd (AdMob)"], minors: "Mineurs : jamais de publicité personnalisée (DSA art. 28(2)) ; sous l'âge du consentement : aucune publicité.", automatedDecision: false },
   { id: "notifications", purpose: "Notifications facultatives (vies, équipe, saison)", basis: "a", basisDetail: "Consentement (opt-in, ePrivacy art. 13)", subjects: "Joueurs ayant activé les notifications", data: ["push.token"], retention: { tables: [] }, recipients: ["Google Ireland Ltd (Firebase Cloud Messaging)", "Apple Distribution International (APNs)"], minors: "Aucune notification commerciale pour un joueur protégé ; au plus 2 par jour, jamais entre 22 h et 8 h.", automatedDecision: false },
 ];
 

@@ -31,7 +31,7 @@ We have not appointed a data protection officer. Any question about your data go
 | Export and deletion of your data | deletion request | Legal obligation, 6(1)(c) | As long as the account exists |
 | Audience measurement to improve the levels | game events (levels, boosters, session length) | Consent, 6(1)(a) | Audience measurement events: 13 months |
 | Aggregated player-protection indicators | purchases (item, price, date, order), game events (levels, boosters, session length) | Legitimate interest, 6(1)(f) | Purchase accounting records: 10 years ; Audience measurement events: 13 months |
-| Optional rewarded videos and consent choices | advertising identifier, technical device data | Consent, 6(1)(a) | Nothing on our servers; provider's terms |
+| Optional rewarded videos and consent choices | advertising identifier, technical device data, approximate location derived from the IP address, ad diagnostic data | Consent, 6(1)(a) | Nothing on our servers; provider's terms |
 | Optional notifications | notification token | Consent, 6(1)(a) | Nothing on our servers; provider's terms |
 
 ## 3. Legitimate interest
@@ -53,6 +53,8 @@ Only the members of our team who need it can access your data. Our providers pro
 | Apple Distribution International (APNs) | Sending notifications on iOS (only after your consent) | Ireland | EU–US framework and standard clauses |
 
 For personalised advertising, Google acts as an independent controller, under its own rules: https://policies.google.com/privacy
+
+Google's form uses a text shared by all apps. It mentions precise geolocation and legitimate interest. For Helios Discovery: the game never asks for access to your location, so no precise location can be collected; only an approximate location, derived from your IP address, is used by Google. We have switched off legitimate interest: advertising relies on your consent only.
 
 Some providers belong to groups established in the United States. Any transfer relies on the EU–US Data Privacy Framework (adequacy decision of 10 July 2023) and on the European Commission's standard contractual clauses.
 
